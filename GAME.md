@@ -62,7 +62,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - [x] Compass strip / bearing on callouts HUD
 
-- [x] Reload tap animation + empty-mag click
+- [x] Reload tap animation + empty-mag clip
 
 - [x] Bot grenade toss when player camps extract
 - [x] Dust motes in hangar volume + door light leak
@@ -89,6 +89,14 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Distant thunder rumble loop
 - [x] Sliding on Shift+Ctrl
 - [x] Extract chopper silhouette after hold completes
-- [ ] Killfeed icon ticks
+- [x] Killfeed icon ticks
 - [x] Hangar fan blades turning
-- [ ] Ammo crate restock point
+- [x] Ammo crate restock point
+- [x] Muzzle flash pop
+- [x] Low-HP vignette pulse
+
+## Later
+- [x] Breath hold on Shift while ADS
+- [x] Bot scope glint when peeking
+- [ ] Match-end score card overlay
+- [ ] Smoke pop on extract complete
