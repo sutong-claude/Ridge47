@@ -24,13 +24,14 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Distinct 3D viewmodels: carbine, dual-tube scatter (pump), sidearm (slide) — never a photo gun.
 - Dusk quarry + night hangar wing with door gap, crate collision, extract crate + hangar door extract.
 - Six hostiles: cover, peek-shoot, flank; suppress and duck when ADS'd; flank callout beeps + bearing.
-- Grenade (G) projectile + splash.
-- Pooled footstep dust + blood decals.
-- Minimap top-right (flare ping when extract starts; hangar door mark).
-- Extract hold 20s (F near amber crate OR hangar door when ≤2 hostiles remain); flare + smoke on start.
-- Inspect on I. RMB ADS tightens spread + shrinks cross.
-- Hitmarker + floating damage numbers. Empty-mag click. Reload pose.
+- Grenade (G) projectile + splash. Bots toss nades if you camp extract.
+- Pooled footstep dust + blood decals. Flanker dust. Crate sparks.
+- Minimap top-right (flare ping; hangar door; hostile nade rings).
+- Extract hold 20s (F near amber crate OR hangar door when ≤2 hostiles remain); flare + smoke + siren; restart on complete.
+- Inspect on I. RMB ADS tightens spread + shrinks cross. Q/E lean with FOV bias.
+- Hitmarker + floating damage numbers. Empty-mag click. Reload pose. Low-ammo pulse.
 - Compass strip. Sprint FOV punch. Landing thud + pitch kick.
+- Hangar motes, door light leak, oil sheen.
 - Distance-attenuated WebAudio pops.
 - Desktop [ ] sensitivity, -/= FOV.
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
@@ -62,8 +63,19 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Sprint FOV punch + landing thud
 - [x] Compass strip / bearing on callouts HUD
 - [x] Reload tap animation + empty-mag click
+- [x] Bot grenade toss when player camps extract
+- [x] Dust motes in hangar volume + door light leak
+- [x] Lean on Q/E with peek FOV bias
+- [x] Bot nade warning ping on minimap
+- [x] Shoulder clip on lean vs crates
+- [x] Extract siren loop while holding
+- [x] Bot footstep dust when flanking
+- [x] Low-ammo HUD pulse
+- [x] Hangar interior oil sheen
+- [x] Crate bullet spark
+- [x] Match restart on extract complete
 
 ## Next backlog
-- [ ] Bot grenade toss when player camps extract
-- [ ] Dust motes in hangar volume + door light leak
-- [ ] Lean on Q/E with peek FOV bias
+- [ ] Death cam snap on drop
+- [ ] Bot reload pose
+- [ ] Wind grit particles on quarry floor
