@@ -16,7 +16,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - Copyrighted names from commercial shooters.
 - New SearchAdapters.
-- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
+- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from view center.
 
 ## Playable core (this hour)
 
@@ -100,10 +100,16 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Bot scope glint when peeking
 - [x] Match-end score card overlay
 - [x] Smoke pop on extract complete
-
-## Next
 - [x] Radio ping on V (bearing + minimap pulse)
 - [x] Hangar floodlight flicker
-- [ ] Extract slab dust when door rises
-- [ ] Match-end freeze camera drift
-- [ ] Bot ragdoll settle thud
+- [x] Extract slab dust when door rises
+- [x] Match-end freeze camera drift
+- [x] Bot ragdoll settle thud
+- [x] Compass extract / door pips
+- [x] Door-rise rumble kick
+
+## Next
+- [x] Bot last-known chevron on compass
+- [ ] Extract zone ground heat shimmer
+- [ ] Viewmodel heat haze after long burst
+- [ ] Distant gun echo slapback
