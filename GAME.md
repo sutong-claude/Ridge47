@@ -62,7 +62,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - [x] Compass strip / bearing on callouts HUD
 
-- [x] Reload tap animation + empty-mag clip
+- [x] Reload tap animation + empty-mag click
 
 - [x] Bot grenade toss when player camps extract
 - [x] Dust motes in hangar volume + door light leak
@@ -98,5 +98,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 ## Later
 - [x] Breath hold on Shift while ADS
 - [x] Bot scope glint when peeking
-- [ ] Match-end score card overlay
-- [ ] Smoke pop on extract complete
+- [x] Match-end score card overlay
+- [x] Smoke pop on extract complete
+
+## Next
+- [x] Radio ping on V (bearing + minimap pulse)
+- [x] Hangar floodlight flicker
+- [ ] Extract slab dust when door rises
+- [ ] Match-end freeze camera drift
+- [ ] Bot ragdoll settle thud
