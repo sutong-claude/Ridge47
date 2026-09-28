@@ -123,4 +123,9 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Quarry cliff rim silhouette lights
 - [x] Extract zone air wobble (camera)
 - [x] Bot tracer color vs player tracer
-- [ ] Next: owner topics or more juice (mag drop mesh, quarry birds)
+- [x] Mag drop mesh on reload (player + bot)
+- [x] Quarry rim birds that circle and spook on fire/nade
+- [x] Slide grit burst
+- [x] Distant wind howl + bird call
+- [x] Crate stencil label decals
+- [ ] Next: owner topics or more juice (distant ridge haze, ammo crate lid lift)
