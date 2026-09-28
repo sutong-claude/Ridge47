@@ -16,7 +16,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - Copyrighted names from commercial shooters.
 - New SearchAdapters.
-- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from view center.
+- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
 
 ## Playable core (this hour)
 
@@ -110,6 +110,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 ## Next
 - [x] Bot last-known chevron on compass
-- [ ] Extract zone ground heat shimmer
-- [ ] Viewmodel heat haze after long burst
-- [ ] Distant gun echo slapback
+- [x] Extract zone ground heat shimmer
+- [x] Viewmodel heat haze after long burst
+- [x] Distant gun echo slapback
+- [x] Extract pad heat wisps when nearby
+- [x] Distant bot fire slapback
+
+## Later
+- [x] Tracer fade stretch (not instant pop)
+- [x] Reload brass ping on mag seat
+- [x] ADS scope dust specks
+- [x] Quarry cliff rim silhouette lights
+- [x] Extract zone air wobble (camera)
+- [x] Bot tracer color vs player tracer
+- [ ] Next: owner topics or more juice (mag drop mesh, quarry birds)
