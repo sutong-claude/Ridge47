@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ridge 47</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0c0a; font-family: "Segoe UI", system-ui, sans-serif; }
+    canvas { display: block; width: 100%; height: 100%; }
+    #hud { position: fixed; inset: 0; pointer-events: none; color: #d8e0d0; }
+    #cross { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; }
+    #cross::before, #cross::after { content: ""; position: absolute; background: #e8f0c8; opacity: 0.85; }
+    #cross::before { left: 8px; top: 0; width: 2px; height: 18px; }
+    #cross::after { left: 0; top: 8px; width: 18px; height: 2px; }
+    #ammo { position: absolute; right: 28px; bottom: 24px; font-size: 28px; letter-spacing: 2px; text-shadow: 0 1px 4px #000; }
+    #ammo small { font-size: 14px; opacity: 0.7; }
+    #hp { position: absolute; left: 28px; bottom: 24px; width: 220px; }
+    #hp .bar { height: 10px; background: #1a2218; border: 1px solid #4a5a3a; }
+    #hp .fill { height: 100%; background: linear-gradient(90deg, #6a2, #ad4); width: 100%; }
+    #hp label { font-size: 12px; letter-spacing: 1px; opacity: 0.8; }
+    #clock { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); font-size: 13px; letter-spacing: 2px; opacity: 0.8; }
+    #feed { position: absolute; left: 28px; top: 48px; font-size: 13px; line-height: 1.5; text-shadow: 0 1px 3px #000; }
+    #minimap { position: absolute; right: 20px; top: 20px; width: 148px; height: 148px; border: 1px solid #5a6a48; background: rgba(8,12,6,0.72); }
+    #banner { position: absolute; left: 50%; top: 18%; transform: translateX(-50%); text-align: center; font-size: 22px; letter-spacing: 3px; text-shadow: 0 2px 8px #000; }
+    #hint { position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%); font-size: 14px; opacity: 0.85; text-align: center; }
+    #settings { position: absolute; left: 28px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.7; line-height: 1.6; }
+    #extract { position: absolute; left: 50%; bottom: 72px; transform: translateX(-50%); width: 280px; display: none; }
+    #extract .bar { height: 8px; background: #1a2218; border: 1px solid #8a8a40; }
+    #extract .fill { height: 100%; width: 0; background: #cdc04a; }
+    #dmg { position: absolute; inset: 0; background: radial-gradient(transparent 50%, rgba(80,0,0,0.35)); opacity: 0; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <div id="dmg"></div>
+    <div id="cross"></div>
+    <div id="ammo">30 <small>/ 90 · CARBINE</small></div>
+    <div id="hp"><label>VITALS</label><div class="bar"><div class="fill" id="hpfill"></div></div></div>
+    <div id="clock">00:00 · 0 K</div>
+    <div id="feed"></div>
+    <canvas id="minimap" width="148" height="148"></canvas>
+    <div id="banner">RIDGE 47</div>
+    <div id="hint">Click to lock · WASD · Shift sprint · Ctrl crouch · Space jump · 1/2/3 guns · I inspect · G grenade · R reload · F extract</div>
+    <div id="settings">SENS <span id="sensv">1.0</span>  [ / ]<br/>FOV <span id="fovv">75</span>  - / =</div>
+    <div id="extract"><label>EXTRACTING</label><div class="bar"><div class="fill" id="exfill"></div></div></div>
+  </div>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+  <script type="module" src="./src/game/main.js"></script>
+</body>
+</html>
