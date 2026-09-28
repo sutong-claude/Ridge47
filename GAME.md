@@ -21,17 +21,18 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 ## Playable core (this hour)
 
 - Pointer-lock FPS, WASD strafe (A left, D right), mouse look, hitscan from view center.
-- 3D box viewmodel (carbine / scatter / sidearm) — never a photo gun.
+- Distinct 3D viewmodels: carbine, dual-tube scatter (pump), sidearm (slide) — never a photo gun.
 - Dusk quarry + night hangar wing, crate collision, extract crate.
-- Six hostiles: cover on nearest crate, peek-shoot, every other bot flanks.
+- Six hostiles: cover, peek-shoot, flank; suppress and duck when ADS'd.
 - Grenade (G) projectile + splash.
 - Pooled footstep dust + blood decals.
-- Minimap top-right.
-- Extract hold 20s (F near amber crate when ≤2 hostiles remain).
-- Inspect on I. Extract on F in the amber zone. RMB ADS tightens spread.
+- Minimap top-right (flare ping when extract starts).
+- Extract hold 20s (F near amber crate when ≤2 hostiles remain); flare + smoke on start.
+- Inspect on I. Extract on F in the amber zone. RMB ADS tightens spread + shrinks cross.
 - Distance-attenuated WebAudio pops.
 - Desktop [ ] sensitivity, -/= FOV.
-- Match clock + kill count.
+- Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
+- Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
 ## Backlog
 
@@ -45,8 +46,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Sound mix (distance attenuation)
 - [x] Desktop settings: sensitivity, FOV
 - [x] Harder bots that flank
-- [ ] Bot cover uses actual LOS ray vs crates (refine peek corners)
+- [x] Bot cover uses actual LOS ray vs crates (refine peek corners)
 - [x] ADS / hold-breath tightness
 - [x] Match timer + score strip
-- [ ] More hangar interior clutter
-- [ ] Recoil pattern per gun (not only kick)
+- [x] More hangar interior clutter
+- [x] Recoil pattern per gun (not only kick)
+- [x] Bot suppression when player is ADS on them
+- [x] Distinct viewmodel per gun (scatter tube / sidearm slide)
+- [x] Extract flare / smoke when hold starts
+
+## Next backlog
+- [ ] Bot voice / callout beeps when flanking
+- [ ] Hitmarker + damage numbers
+- [ ] Night hangar door as extract alternate
+- [ ] Sprint FOV punch + landing thud
