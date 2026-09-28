@@ -22,13 +22,15 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - Pointer-lock FPS, WASD strafe (A left, D right), mouse look, hitscan from view center.
 - Distinct 3D viewmodels: carbine, dual-tube scatter (pump), sidearm (slide) — never a photo gun.
-- Dusk quarry + night hangar wing, crate collision, extract crate.
-- Six hostiles: cover, peek-shoot, flank; suppress and duck when ADS'd.
+- Dusk quarry + night hangar wing with door gap, crate collision, extract crate + hangar door extract.
+- Six hostiles: cover, peek-shoot, flank; suppress and duck when ADS'd; flank callout beeps + bearing.
 - Grenade (G) projectile + splash.
 - Pooled footstep dust + blood decals.
-- Minimap top-right (flare ping when extract starts).
-- Extract hold 20s (F near amber crate when ≤2 hostiles remain); flare + smoke on start.
-- Inspect on I. Extract on F in the amber zone. RMB ADS tightens spread + shrinks cross.
+- Minimap top-right (flare ping when extract starts; hangar door mark).
+- Extract hold 20s (F near amber crate OR hangar door when ≤2 hostiles remain); flare + smoke on start.
+- Inspect on I. RMB ADS tightens spread + shrinks cross.
+- Hitmarker + floating damage numbers. Empty-mag click. Reload pose.
+- Compass strip. Sprint FOV punch. Landing thud + pitch kick.
 - Distance-attenuated WebAudio pops.
 - Desktop [ ] sensitivity, -/= FOV.
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
@@ -54,9 +56,14 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Bot suppression when player is ADS on them
 - [x] Distinct viewmodel per gun (scatter tube / sidearm slide)
 - [x] Extract flare / smoke when hold starts
+- [x] Bot voice / callout beeps when flanking
+- [x] Hitmarker + damage numbers
+- [x] Night hangar door as extract alternate
+- [x] Sprint FOV punch + landing thud
+- [x] Compass strip / bearing on callouts HUD
+- [x] Reload tap animation + empty-mag click
 
 ## Next backlog
-- [ ] Bot voice / callout beeps when flanking
-- [ ] Hitmarker + damage numbers
-- [ ] Night hangar door as extract alternate
-- [ ] Sprint FOV punch + landing thud
+- [ ] Bot grenade toss when player camps extract
+- [ ] Dust motes in hangar volume + door light leak
+- [ ] Lean on Q/E with peek FOV bias
