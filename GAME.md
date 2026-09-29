@@ -242,4 +242,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Melee knife viewmodel
 - [x] Compass wind pip
 - [x] Hangar door wind whistle when slab is up
+- [x] NVG battery drain + flicker + dead cell
+- [x] IR laser (L) on viewmodel
+- [x] Flash charge (Y) + bot stun + player blind
+- [x] Whistle (P) draws nearby hostiles
+- [x] Hangar bot lamp cones
+- [x] Extract inbound radio at 10s hold
+- [x] Rain puddle ripples
+- [x] Wind viewmodel sway
+- [x] Prone crawl grit
 - [ ] Next: owner topics or more juice
