@@ -34,12 +34,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
 - Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
-## Shipped 2026-09-29 ~12:03 PDT
-- [x] Satchel charge (7) timed fuse blast
-- [x] Field radio beacon (8) pulse + attract
-- [x] Quarry mortar inbound + crater
-- [x] Wind-sway grass tufts
-- [x] Shifting wind pip
-- [x] Night owl call
-- [x] Bot fire compass flash
+## Shipped 2026-09-29 ~13:06 PDT
+- [x] Distress beacon toss (9) pulse + attract
+- [x] Sprint/slide knife lunge (X)
+- [x] Quarry jackrabbits that dart and spook
+- [x] Hangar conduit spark bursts
+- [x] Crate-hug scrape ticks
+- [x] Low-HP ragged breath hiss
+- [x] Extract HOLD seconds readout
 - [ ] Next: owner topics or more juice
