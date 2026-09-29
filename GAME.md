@@ -251,4 +251,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Rain puddle ripples
 - [x] Wind viewmodel sway
 - [x] Prone crawl grit
+- [x] Smoke pot (J) + lingering screen cloud
+- [x] Tactical map expand (M)
+- [x] Binos rangefinder when glassed
+- [x] NVG heat blobs on live hostiles
+- [x] Compass PAD / HANG labels
+- [x] Wind drift on thrown pots
+- [x] Canteen sip count (H × N)
+- [x] Death-net last call on bot settle
+- [x] Smoke spoils bot hits
 - [ ] Next: owner topics or more juice
