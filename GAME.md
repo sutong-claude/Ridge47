@@ -128,4 +128,24 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Slide grit burst
 - [x] Distant wind howl + bird call
 - [x] Crate stencil label decals
-- [ ] Next: owner topics or more juice (distant ridge haze, ammo crate lid lift)
+- [x] Distant ridge haze bands
+- [x] Ammo crate lid lift on restock
+- [x] Quarry floor mirage sheets
+- [x] Crate rope ties
+- [x] Idle bot cover sway
+- [x] Compass degree tick marks
+- [x] Extract pad chevrons
+- [x] Hangar ceiling drip
+- [x] Hit-direction pips + camera shake on incoming fire
+- [x] Headshot blood mist
+- [x] Nade concussion (tinnitus + punch)
+- [x] Weapon swap toss
+- [x] Low-HP heartbeat
+- [x] Crate bullet holes
+- [x] Distant ridge muzzle flashes
+- [x] Landing grit burst
+- [x] Bot flank footstep ticks
+- [x] Kill confirm sting
+- [x] Stance strip (stand/sprint/crouch/slide)
+- [x] Wounded bot limp
+- [ ] Next: owner topics or more juice
