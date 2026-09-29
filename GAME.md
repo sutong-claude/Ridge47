@@ -16,7 +16,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - Copyrighted names from commercial shooters.
 - New SearchAdapters.
-- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
+- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from view center.
 
 ## Playable core (this hour)
 
@@ -148,4 +148,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Kill confirm sting
 - [x] Stance strip (stand/sprint/crouch/slide)
 - [x] Wounded bot limp
+- [x] Player footstep ticks by stance
+- [x] Dynamic crosshair gap (move / sprint / burst / ADS)
+- [x] Nade linger smoke cloud
+- [x] Bot rifle drop on settle
+- [x] Extract range + live count HUD
+- [x] Shell bounce brass ping
+- [x] ADS breath sway
+- [x] Extract ring pulse while holding
 - [ ] Next: owner topics or more juice
