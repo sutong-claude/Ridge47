@@ -213,4 +213,14 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Auto-loot when walking over a corpse
 - [x] Extract-hold break beep
 - [x] ADS crosshair hue when a hostile is under the pip
+- [x] Empty-mag inspect click
+- [x] Lightning flash + bolt on thunder
+- [x] Hit flinch + blood drip HUD
+- [x] Inspect mag readout (I)
+- [x] Hostile tag ping when C aims at a bot
+- [x] Sprint grit puffs
+- [x] Nearby hostile foot ticks
+- [x] Compass heading degrees
+- [x] Breath-hold pip
+- [x] Dying bot lamp flicker
 - [ ] Next: owner topics or more juice
