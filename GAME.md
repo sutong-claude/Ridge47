@@ -260,4 +260,11 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Canteen sip count (H × N)
 - [x] Death-net last call on bot settle
 - [x] Smoke spoils bot hits
+- [x] Illum star (U) hanging ridge light
+- [x] Field wrap (4) channel heal
+- [x] Death drop pack + loot
+- [x] Extract rush: live bots sprint the pad
+- [x] Compass threat range
+- [x] Stance change thud
+- [x] Rain beads on viewmodel
 - [ ] Next: owner topics or more juice
