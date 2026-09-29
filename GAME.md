@@ -36,6 +36,6 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 ## Backlog
 
-Shipped through 2026-09-28 22:03 PDT juice pack: stars+fog, shadow disc, loot glow, ADS click, hangar reverb, cicada, death gasp, idle sway, cook G, death-cam unit tag, nade grit, dust devil, unit IDs.
+Shipped through 2026-09-28 23:03 PDT juice: auto-reload, swap plate, streak HUD, ground hits, footprints, flyover, dusk cycle, loot floats, extract-open banner, heading-up minimap.
 
 - [ ] Next: owner topics or more juice
