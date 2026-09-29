@@ -223,4 +223,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Compass heading degrees
 - [x] Breath-hold pip
 - [x] Dying bot lamp flicker
+- [x] Headshot sting
+- [x] Prone (Z) + vault over low crates
+- [x] NVG toggle (N)
+- [x] Binoculars glass (B)
+- [x] Helmet ricochet chance
+- [x] Bot peek lean
+- [x] Storm rain after lightning
+- [x] Hostile radio chatter
+- [x] Extract rotor wash grit
 - [ ] Next: owner topics or more juice
