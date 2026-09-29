@@ -34,8 +34,14 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
 - Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
-## Backlog
-
-See workspace GAME.md for full checked list. This hour: trip stake (K), overwatch (O), extract wheels-down, barrel steam, bot muzzle dust, last-contact net, dry canteen click.
-
+## This hour
+- [x] Bot buddy revive channel
+- [x] Shoulder swap (Alt)
+- [x] ADS zeroing (mouse wheel)
+- [x] Tactical dump reload (Shift+R)
+- [x] Last-five mag ticks
+- [x] Extract pad strobes
+- [x] Hangar radio static
+- [x] Crate cover hug
+- [x] High-track jet contrail
 - [ ] Next: owner topics or more juice
