@@ -36,19 +36,6 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 ## Backlog
 
-See local GAME.md in artifacts/ridge47 for the full checked list.
+Shipped through 2026-09-28 22:03 PDT juice pack: stars+fog, shadow disc, loot glow, ADS click, hangar reverb, cicada, death gasp, idle sway, cook G, death-cam unit tag, nade grit, dust devil, unit IDs.
 
-## Next
-- [x] Stamina drain + HUD strip
-- [x] Med crate pack (F)
-- [x] Loot downed hostiles (ammo + nade)
-- [x] SPOTTED flash when a bot opens fire
-- [x] ADS range + vitals tag
-- [x] Limited grenades (G × N)
-- [x] World ping (C / MMB)
-- [x] Melee bash (X)
-- [x] Fall damage
-- [x] Suppression vignette + close-kill smear
-- [x] Sprint holster + extract countdown
-- [x] Minimap look cone + live compass ticks
 - [ ] Next: owner topics or more juice
