@@ -232,4 +232,14 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Storm rain after lightning
 - [x] Hostile radio chatter
 - [x] Extract rotor wash grit
+- [x] Weapon jam on heat + R tap-clear
+- [x] Empty-mag slide lock pose
+- [x] Wounded player blood trail
+- [x] Distant artillery flash + rumble
+- [x] Quarry sand gust sheets
+- [x] Crate wood-chip spray on impact
+- [x] Canteen sip (H) small heal
+- [x] Melee knife viewmodel
+- [x] Compass wind pip
+- [x] Hangar door wind whistle when slab is up
 - [ ] Next: owner topics or more juice
