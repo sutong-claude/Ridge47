@@ -16,7 +16,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - Copyrighted names from commercial shooters.
 - New SearchAdapters.
-- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from view center.
+- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
 
 ## Playable core (this hour)
 
@@ -156,4 +156,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Shell bounce brass ping
 - [x] ADS breath sway
 - [x] Extract ring pulse while holding
+- [x] Walk bob + crouch eye lerp
+- [x] Hangar metal footsteps
+- [x] Tactical lamp (T)
+- [x] Near-miss whip
+- [x] Interact prompt + reload bar
+- [x] Extract beacon pillar
+- [x] Last-round empty ping
+- [x] Extract hold tick beeps
+- [x] ADS veil
 - [ ] Next: owner topics or more juice
