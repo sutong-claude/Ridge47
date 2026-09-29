@@ -45,4 +45,10 @@ See local GAME.md in artifacts/ridge47 for the full checked list.
 - [x] SPOTTED flash when a bot opens fire
 - [x] ADS range + vitals tag
 - [x] Limited grenades (G × N)
+- [x] World ping (C / MMB)
+- [x] Melee bash (X)
+- [x] Fall damage
+- [x] Suppression vignette + close-kill smear
+- [x] Sprint holster + extract countdown
+- [x] Minimap look cone + live compass ticks
 - [ ] Next: owner topics or more juice
