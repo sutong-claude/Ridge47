@@ -10,15 +10,18 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~00:03 PDT
+## 2026-09-30 ~01:03 PDT
 
-- [x] F12 KIT card (gun + tools)
-- [x] 2:00 eve / 1:00 ridge clock ticks
-- [x] Wind-shift plate + bearing
-- [x] Quarry raven croak + distant howl
-- [x] Extract-pad dusk beetles
-- [x] Hangar pipe clang after indoor fire
-- [x] Shift+H helm tap + scratch
-- [x] Double-N NVG pulse boost
-- [x] Extract-hold moth motes
+- [x] Double-B binos focus zoom
+- [x] Double-T lamp strobe
+- [x] Shift+P silent fist signal (attract nearby)
+- [x] Extract HOLD STEADY at 8s
+- [x] Sprint swap sling snap
+- [x] Stance pack rustle + prone mag grit
+- [x] Low-mag click cadence
+- [x] Quarry dusk scorpion clicks + freight rumble
+- [x] Near-crate tarp flap + hug creak
+- [x] Night idle visor breath fog
+- [x] Hangar ballast flicker on burst
+- [x] 0:30 ridge clock tick
 - [ ] Next: owner topics or more juice
