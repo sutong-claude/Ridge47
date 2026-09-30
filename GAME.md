@@ -10,11 +10,12 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~12:03 PDT
+## 2026-09-30 ~13:03 PDT
 
-- [x] SE crusher house (door gap + jaws + collision + motes)
-- [x] Compass / minimap CRUSH pip + indoor loc tag
-- [x] Bot BREACH through crusher door when player camps CRUSH
-- [x] Conveyor trestle west of crusher + rolling drums
-- [x] Crusher-door berms + cook-off drums
+- [x] East loading dock (door gap + pallets + collision + motes)
+- [x] Compass / minimap DOCK pip + indoor loc tag
+- [x] Bot BREACH through dock door when player camps DOCK
+- [x] Dock forklift silhouette + fork bob
+- [x] Wrecked flatbed south of dock + door berms
+- [x] Dock-door cook-off drums
 - [ ] Next: owner topics or more juice
