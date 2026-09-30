@@ -10,11 +10,11 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~05:04 PDT
+## 2026-09-30 ~06:04 PDT
 
-- [x] North radio bunker (door gap + consoles + collision + motes)
-- [x] Compass / minimap RAD pip + indoor loc tag
-- [x] Bot BREACH through radio door when player camps bunker
-- [x] Shallow quarry trench cover (vaultable)
-- [x] Wrecked comms truck hull east of radio bunker
+- [x] South machine shop (door gap + benches + lathe + collision + motes)
+- [x] Compass / minimap SHOP pip + indoor loc tag
+- [x] Bot BREACH through shop door when player camps machine shop
+- [x] Scrap hopper + crane boom west of shop
+- [x] Sandbag berms at shop door
 - [ ] Next: owner topics or more juice
