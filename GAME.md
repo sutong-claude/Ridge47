@@ -10,11 +10,11 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~15:03 PDT
+## 2026-09-30 ~16:03 PDT
 
-- [x] South weigh station (door gap + scale boom + collision + motes)
-- [x] Compass / minimap WEIGH pip + indoor loc tag
-- [x] Bot BREACH through weigh door when player camps WEIGH
-- [x] Weigh-door berms + cook-off drums
-- [x] Wrecked hopper truck south of weigh
+- [x] West generator shack (door gap + gensets + fan + collision + motes)
+- [x] Compass / minimap GEN pip + indoor loc tag
+- [x] Bot BREACH through generator door when player camps GEN
+- [x] Gen-door berms + cook-off drums
+- [x] Wrecked service van south of generator
 - [ ] Next: owner topics or more juice
