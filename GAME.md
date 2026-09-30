@@ -34,13 +34,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
 - Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
-## Shipped 2026-09-29 ~20:03 PDT
-- [x] F5 range card (pad/door + nearest live)
-- [x] Extract FINAL radio at 18s hold
-- [x] Hangar generator hum + amber lamp
-- [x] Radio V copy from nearby units
-- [x] Thrown-knife recover on walkover
-- [x] Ammo crate restocks knives + smoke
-- [x] Med pack refills sips + wraps
-- [x] Storm flash locust swell
+## Shipped 2026-09-29 ~21:03 PDT
+- [x] Sprint+Z dive-to-prone + grit burst
+- [x] F6 last-known / aimed pin on compass + minimap
+- [x] F7 net mute (drops NET copy)
+- [x] F8 blade / smear wipe
+- [x] Extract pad flood cone on hold
+- [x] Hangar oil drip ticks + visor specks
+- [x] ADS heartbeat when aimed hostile is wounded
+- [x] 5:00 ridge clock chime
 - [ ] Next: owner topics or more juice
