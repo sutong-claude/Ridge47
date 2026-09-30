@@ -10,11 +10,11 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~14:03 PDT
+## 2026-09-30 ~15:03 PDT
 
-- [x] NW assay office (door gap + benches + scale + collision + motes)
-- [x] Compass / minimap ASSAY pip + indoor loc tag
-- [x] Bot BREACH through assay door when player camps ASSAY
-- [x] Assay-door berms + cook-off drums
-- [x] Wrecked core truck south of assay
+- [x] South weigh station (door gap + scale boom + collision + motes)
+- [x] Compass / minimap WEIGH pip + indoor loc tag
+- [x] Bot BREACH through weigh door when player camps WEIGH
+- [x] Weigh-door berms + cook-off drums
+- [x] Wrecked hopper truck south of weigh
 - [ ] Next: owner topics or more juice
