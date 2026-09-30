@@ -16,7 +16,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 
 - Copyrighted names from commercial shooters.
 - New SearchAdapters.
-- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
+- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from view center.
 
 ## Playable core (this hour)
 
@@ -34,13 +34,15 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
 - Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
-## Shipped 2026-09-29 ~21:03 PDT
-- [x] Sprint+Z dive-to-prone + grit burst
-- [x] F6 last-known / aimed pin on compass + minimap
-- [x] F7 net mute (drops NET copy)
-- [x] F8 blade / smear wipe
-- [x] Extract pad flood cone on hold
-- [x] Hangar oil drip ticks + visor specks
-- [x] ADS heartbeat when aimed hostile is wounded
-- [x] 5:00 ridge clock chime
+## Shipped 2026-09-29 ~22:03 PDT
+- [x] F9 INTEL card (live / pad / door / wind / last / mag)
+- [x] F10 compact HUD
+- [x] Tab mid-match score peek
+- [x] Double-V SOS radio + attract
+- [x] Extract LIFT radio at 19.2s
+- [x] 4:00 dusk clock tick
+- [x] Hangar rat scurry ticks
+- [x] Casing pile brass glint
+- [x] Still-stance stam regen
+- [x] Barrel heat HUD strip
 - [ ] Next: owner topics or more juice
