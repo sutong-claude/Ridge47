@@ -10,11 +10,11 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~04:03 PDT
+## 2026-09-30 ~05:04 PDT
 
-- [x] SW lookout tower (ladder + walkable deck + lamp)
-- [x] Explosive fuel drums (hitscan / blast cook-off)
-- [x] Sandbag berms (vaultable low cover)
-- [x] Bot OVERWATCH rush to lookout deck
-- [x] Compass / minimap LOOK pip + indoor loc tag
+- [x] North radio bunker (door gap + consoles + collision + motes)
+- [x] Compass / minimap RAD pip + indoor loc tag
+- [x] Bot BREACH through radio door when player camps bunker
+- [x] Shallow quarry trench cover (vaultable)
+- [x] Wrecked comms truck hull east of radio bunker
 - [ ] Next: owner topics or more juice
