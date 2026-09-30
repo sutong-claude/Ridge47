@@ -10,13 +10,11 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~07:03 PDT
+## 2026-09-30 ~09:03 PDT
 
-- [x] NE filter hut (door gap + pumps + collision + motes)
-- [x] Compass / minimap HUT pip + indoor loc tag
-- [x] Bot BREACH through hut door when player camps filter hut
-- [x] NE cistern tower (ladder + walkable tank deck + lamp)
-- [x] Compass / minimap TANK pip + CISTERN feed
-- [x] Bot OVERWATCH rush to nearest lookout or cistern
-- [x] Sluice pipe shed → hut + hut-door berms
+- [x] West blasting magazine (door gap + crates + collision + motes)
+- [x] Compass / minimap MAG pip + indoor loc tag
+- [x] Bot BREACH through magazine door when player camps MAG
+- [x] Wrecked rotary drill east of magazine
+- [x] Magazine-door berms + extra drums
 - [ ] Next: owner topics or more juice
