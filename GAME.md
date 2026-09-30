@@ -2,20 +2,23 @@
 
 Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable slices.
 
-## Every hour (mandatory)
-
-You have **the full hour**. Do not stop after one file. Keep implementing until the hour is nearly used.
-
-1. Play / read GAME.md + last commits.
-2. Pick one slice from the backlog that raises feel or readability.
-3. Implement it. Keep the match playable.
-4. Do not add OpenAlex adapters. Do not idle.
-5. Commit a clear message.
-
 ## Frozen
 
 - Copyrighted names from commercial shooters.
 - New SearchAdapters.
 - Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
 
-See artifacts/ridge47 GAME.md for full checked backlog including F11 weather, double-C urgent ping, pad static, low-HP heartbeat, 3:00 clock, GO lock plate, last-round rattle, hangar tin rain, bot reload ticks, dusk crickets.
+See artifacts/ridge47 GAME.md for the full checked backlog.
+
+## 2026-09-30 ~00:03 PDT
+
+- [x] F12 KIT card (gun + tools)
+- [x] 2:00 eve / 1:00 ridge clock ticks
+- [x] Wind-shift plate + bearing
+- [x] Quarry raven croak + distant howl
+- [x] Extract-pad dusk beetles
+- [x] Hangar pipe clang after indoor fire
+- [x] Shift+H helm tap + scratch
+- [x] Double-N NVG pulse boost
+- [x] Extract-hold moth motes
+- [ ] Next: owner topics or more juice
