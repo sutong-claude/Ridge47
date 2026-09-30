@@ -34,17 +34,15 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
 - Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
-## Shipped 2026-09-29 ~17:03 PDT
-- [x] Extract pad wind sock
-- [x] Ridge searchlight sweep
-- [x] Dry-fire CLICK plate
-- [x] Reload cancel on trigger
-- [x] Corpse blood pool grow
-- [x] Helmet visor scratch overlay
-- [x] Distant quarry dog bark
-- [x] Sprint holster click
-- [x] Close-bot radio static hiss
-- [x] Heading PAD range meters
-- [x] F1 hide hint
-- [x] Low-vitals banner pulse
+## Shipped 2026-09-29 ~18:03 PDT
+- [x] Throwing knife (Shift+X)
+- [x] Sticky hostile lock (F2)
+- [x] Incoming sonic crack on near-miss
+- [x] Bot death radio cut
+- [x] Compass snap ticks on fast turn
+- [x] Canteen slosh on sprint
+- [x] Idle net scan hiss
+- [x] Rain visor fog
+- [x] Extract pad grit kick
+- [x] Holster slap on gun swap
 - [ ] Next: owner topics or more juice
