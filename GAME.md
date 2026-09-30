@@ -34,14 +34,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
 - Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
-## Shipped 2026-09-29 ~16:03 PDT
-- [x] Fire-mode toggle (;) SEMI/AUTO on carbine
-- [x] Wounded player limp
-- [x] Quarry sprint twig snap
-- [x] Close-contact banner when a bot fires inside 14m
-- [x] Hangar visor drip on #drip
-- [x] Threat range under compass
-- [x] Fire-mode plate + ammo SEMI tag
-- [x] Wounded-bot moan within 22m
-- [x] Low-ammo restock compass ping
+## Shipped 2026-09-29 ~17:03 PDT
+- [x] Extract pad wind sock
+- [x] Ridge searchlight sweep
+- [x] Dry-fire CLICK plate
+- [x] Reload cancel on trigger
+- [x] Corpse blood pool grow
+- [x] Helmet visor scratch overlay
+- [x] Distant quarry dog bark
+- [x] Sprint holster click
+- [x] Close-bot radio static hiss
+- [x] Heading PAD range meters
+- [x] F1 hide hint
+- [x] Low-vitals banner pulse
 - [ ] Next: owner topics or more juice
