@@ -158,6 +158,10 @@ export function inBin(pos) {
   return pos.x > -2.9 && pos.x < 4.1 && pos.z > -46.6 && pos.z < -40.05;
 }
 
+export function inTail(pos) {
+  return pos.x > 9.4 && pos.x < 19.2 && pos.z > -46.4 && pos.z < -38.6;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -3540,7 +3544,37 @@ export function buildMap(scene) {
   box(scene, MAP.binBrake.x, 0.5, MAP.binBrake.z, 0.32, 0.6, 0.32, rust);
   MAP.binPocket = { x: incB.x, z: incB.z + 0.8, hx: 1.6, hz: 1.4 };
 
-    // Extra berms + drums at the hut door
+    // South tailings basin — berm walls, sludge slow, scraper wreck
+  const tlX = 14.2;
+  const tlZ = -42.6;
+  const sludge = new THREE.MeshLambertMaterial({ color: 0x4a4030 });
+  const pond = box(scene, tlX, 0.06, tlZ, 8.4, 0.1, 6.2, sludge);
+  pond.receiveShadow = true;
+  MAP.tail = { x: tlX, z: tlZ };
+  const berm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.55, z, sx, 1.1, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.1, sz, climb: true });
+  };
+  berm(tlX, -45.9, 8.6, 0.7);
+  berm(9.85, tlZ, 0.7, 6.4);
+  berm(18.55, tlZ, 0.7, 6.4);
+  berm(12.2, -39.2, 3.2, 0.65);
+  berm(16.6, -39.2, 3.2, 0.65);
+  box(scene, tlX, 0.18, tlZ, 7.2, 0.08, 5.2, new THREE.MeshLambertMaterial({ color: 0x3a3428 }));
+  const scX = 18.8;
+  const scZ = -40.4;
+  box(scene, scX, 0.7, scZ, 3.2, 0.48, 1.4, rust);
+  box(scene, scX, 1.2, scZ, 1.6, 0.7, 1.1, steel);
+  box(scene, scX - 1.2, 0.32, scZ + 0.5, 0.36, 0.6, 0.18, oil);
+  box(scene, scX + 1.2, 0.32, scZ - 0.5, 0.36, 0.6, 0.18, oil);
+  MAP.tailTruck = new THREE.Vector3(scX, 0, scZ);
+  MAP.crates.push({ pos: MAP.tailTruck.clone(), mesh: pond, sx: 3.2, sy: 1.2, sz: 1.4 });
+  const tlLamp = new THREE.PointLight(0xc8a060, 0.45, 10);
+  tlLamp.position.set(tlX, 2.2, tlZ);
+  scene.add(tlLamp);
+  MAP.tailLamp = tlLamp;
+
+  // Extra berms + drums at the hut door
   const hutBag = box(scene, 25.4, 0.28, 28.8, 1.7, 0.56, 0.85, bagMat);
   MAP.crates.push({ pos: new THREE.Vector3(25.4, 0, 28.8), mesh: hutBag, sx: 1.7, sy: 0.56, sz: 0.85, climb: true });
   const hutBag2 = box(scene, 29.2, 0.26, 28.6, 1.5, 0.52, 0.8, bagMat);
