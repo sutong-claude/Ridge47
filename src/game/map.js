@@ -138,6 +138,22 @@ export function inAdit(pos) {
   return pos.x > -17.55 && pos.x < -10.45 && pos.z > -43.15 && pos.z < -29.35;
 }
 
+export function inWinze(pos) {
+  return pos.x > -38.0 && pos.x < -31.2 && pos.z > -39.6 && pos.z < -32.8;
+}
+
+export function inCross(pos) {
+  return pos.x > -31.2 && pos.x < -17.7 && pos.z > -37.35 && pos.z < -35.05;
+}
+
+export function inRaise(pos) {
+  return pos.x > 28.7 && pos.x < 35.7 && pos.z > -36.0 && pos.z < -29.1;
+}
+
+export function inVent(pos) {
+  return pos.x > 31.05 && pos.x < 33.35 && pos.z > -29.2 && pos.z < -16.4;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -151,7 +167,7 @@ export function onBelt(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos);
 }
 
 export function floorY(x, z) {
@@ -3018,7 +3034,9 @@ export function buildMap(scene) {
     return m;
   };
   adWall(adX, -43.15, 7.2, 0.42);
-  adWall(-17.55, adZ, 0.42, 13.6);
+  // West wall split so the winze crosscut can join the drift
+  adWall(-17.55, -40.2, 0.42, 5.6);
+  adWall(-17.55, -32.22, 0.42, 5.65);
   adWall(-10.45, adZ, 0.42, 13.6);
   adWall(-16.05, -29.35, 2.5, 0.42);
   adWall(-11.95, -29.35, 2.5, 0.42);
@@ -3128,6 +3146,256 @@ export function buildMap(scene) {
   const adBed = box(scene, avX, 0.55, avZ - 2.1, 1.7, 0.7, 2.2, steel);
   MAP.crates.push({ pos: new THREE.Vector3(avX, 0, avZ - 2.1), mesh: adBed, sx: 1.7, sy: 0.9, sz: 2.2 });
   MAP.aditTruck = new THREE.Vector3(avX, 0, avZ);
+
+  // West winze collar — door gap north, crosscut east into the adit
+  const wnX = -34.6;
+  const wnZ = -36.2;
+  const wnWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.45, z, sx, 2.9, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 2.9, sz });
+    return m;
+  };
+  wnWall(wnX, -39.75, 7.3, 0.42);
+  wnWall(-38.15, wnZ, 0.42, 6.7);
+  wnWall(-36.55, -32.65, 2.7, 0.42);
+  wnWall(-32.65, -32.65, 2.7, 0.42);
+  wnWall(-31.05, -38.35, 0.42, 2.4);
+  wnWall(-31.05, -34.05, 0.42, 2.4);
+  box(scene, wnX, 2.75, -32.65, 2.15, 0.38, 0.42, timber);
+  box(scene, -31.05, 2.75, wnZ, 0.42, 0.38, 2.2, timber);
+  box(scene, wnX, 3.05, wnZ, 7.5, 0.18, 7.3, rock);
+  MAP.winzeDoor = new THREE.Vector3(wnX, 0, -32.4);
+  MAP.winze = new THREE.Vector3(wnX, 0, wnZ);
+  const wnFloor = box(scene, wnX, 0.04, wnZ, 6.5, 0.08, 6.5, concrete);
+  wnFloor.receiveShadow = true;
+  const wnLamp = new THREE.PointLight(0xffb060, 0.7, 10);
+  wnLamp.position.set(wnX, 2.35, wnZ);
+  scene.add(wnLamp);
+  MAP.winzeLamp = wnLamp;
+  const wnRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.05, 1.28, 16),
+    new THREE.MeshBasicMaterial({ color: 0xe0a060, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+  );
+  wnRing.rotation.x = -Math.PI / 2;
+  wnRing.position.copy(MAP.winzeDoor).setY(0.05);
+  scene.add(wnRing);
+  MAP.winzeRing = wnRing;
+  // Crosscut timber: winze east gap to adit west gap
+  const xcX = -24.3;
+  const xcZ = -36.2;
+  const xcN = box(scene, xcX, 1.35, -37.5, 13.5, 2.7, 0.32, timber);
+  MAP.crates.push({ pos: new THREE.Vector3(xcX, 0, -37.5), mesh: xcN, sx: 13.5, sy: 2.7, sz: 0.32 });
+  const xcS = box(scene, xcX, 1.35, -34.9, 13.5, 2.7, 0.32, timber);
+  MAP.crates.push({ pos: new THREE.Vector3(xcX, 0, -34.9), mesh: xcS, sx: 13.5, sy: 2.7, sz: 0.32 });
+  box(scene, xcX, 2.72, xcZ, 13.6, 0.16, 2.7, rock);
+  for (let i = 0; i < 5; i++) {
+    const x = -30.2 + i * 2.4;
+    box(scene, x, 1.2, -37.15, 0.18, 2.2, 0.18, timber);
+    box(scene, x, 1.2, -35.25, 0.18, 2.2, 0.18, timber);
+    box(scene, x, 2.5, xcZ, 0.16, 0.14, 2.2, timber);
+  }
+  const xcFloor = box(scene, xcX, 0.03, xcZ, 13.2, 0.06, 2.15, concrete);
+  xcFloor.receiveShadow = true;
+  MAP.cross = { x: xcX, z: xcZ, hx: 6.7, hz: 1.05 };
+  const floodMesh = box(scene, xcX, 0.08, xcZ, 12.6, 0.12, 1.85, new THREE.MeshLambertMaterial({ color: 0x2a4038, transparent: true, opacity: 0.45 }));
+  floodMesh.castShadow = false;
+  MAP.sumpWater = floodMesh;
+  const floodCrate = { pos: new THREE.Vector3(xcX, 0, xcZ), mesh: floodMesh, sx: 12.6, sy: 1.55, sz: 1.85, walkOn: true, dead: true, sump: true };
+  MAP.crates.push(floodCrate);
+  MAP.sumpCrate = floodCrate;
+  MAP.sump = { on: false, x: wnX + 1.5, z: wnZ + 1.6, t: 0 };
+  const lever = box(scene, MAP.sump.x, 1.05, MAP.sump.z, 0.12, 0.7, 0.12, steel);
+  MAP.sumpLever = lever;
+  box(scene, MAP.sump.x, 0.55, MAP.sump.z, 0.35, 0.7, 0.35, rust);
+  // Rideable cage inside the collar — climbs to a deck
+  const wCage = new THREE.Group();
+  const wDeck = box(scene, 0, 0.08, 0, 1.5, 0.12, 1.4, steel);
+  const wRail = box(scene, 0, 0.55, -0.62, 1.5, 0.08, 0.08, steel);
+  wCage.add(wDeck, wRail);
+  wCage.position.set(wnX - 1.7, 0.15, wnZ - 1.35);
+  scene.add(wCage);
+  MAP.winzeCageMesh = wCage;
+  MAP.winzeCage = { x: wnX - 1.7, z: wnZ - 1.35, y: 0.15, sx: 1.5, sz: 1.4, top: 0.32 };
+  MAP.platforms.push(MAP.winzeCage);
+  MAP.winzeCageDir = 1;
+  const wSheave = box(scene, wnX - 1.7, 2.85, wnZ - 1.35, 0.55, 0.55, 0.18, steel);
+  MAP.winzeSheave = wSheave;
+  box(scene, wnX - 1.7, 1.6, wnZ - 2.15, 0.12, 3.0, 0.12, steel);
+  box(scene, wnX - 1.7, 1.6, wnZ - 0.55, 0.12, 3.0, 0.12, steel);
+  const wnMoteN = 22;
+  const wnGeo = new THREE.BufferGeometry();
+  const wnPos = new Float32Array(wnMoteN * 3);
+  const wnPhase = new Float32Array(wnMoteN);
+  for (let i = 0; i < wnMoteN; i++) {
+    wnPos[i * 3] = wnX + (Math.random() - 0.5) * 5.2;
+    wnPos[i * 3 + 1] = 0.3 + Math.random() * 1.8;
+    wnPos[i * 3 + 2] = wnZ + (Math.random() - 0.5) * 5.2;
+    wnPhase[i] = Math.random() * Math.PI * 2;
+  }
+  wnGeo.setAttribute("position", new THREE.BufferAttribute(wnPos, 3));
+  const wnMotes = new THREE.Points(wnGeo, new THREE.PointsMaterial({ color: 0xc8a070, size: 0.045, transparent: true, opacity: 0.45 }));
+  scene.add(wnMotes);
+  MAP.winzeMotes = wnMotes;
+  MAP.winzeMotePhase = wnPhase;
+  // Door berms + cook-off drums + wrecked truck north of the collar
+  const wnBerm = box(scene, wnX - 2.4, 0.38, -31.2, 1.5, 0.7, 0.7, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(wnX - 2.4, 0, -31.2), mesh: wnBerm, sx: 1.5, sy: 0.7, sz: 0.7, climb: true });
+  const wnBerm2 = box(scene, wnX + 2.4, 0.36, -31.15, 1.4, 0.66, 0.68, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(wnX + 2.4, 0, -31.15), mesh: wnBerm2, sx: 1.4, sy: 0.66, sz: 0.68, climb: true });
+  const wnDrum = box(scene, wnX - 3.3, 0.55, -31.0, 0.62, 1.1, 0.62, drumMat);
+  MAP.crates.push({ pos: new THREE.Vector3(wnX - 3.3, 0, -31.0), mesh: wnDrum, sx: 0.62, sy: 1.1, sz: 0.62, drum: true });
+  MAP.drums.push(MAP.crates[MAP.crates.length - 1]);
+  const wnDrum2 = box(scene, wnX + 3.3, 0.55, -30.9, 0.58, 1.08, 0.58, drumMat);
+  MAP.crates.push({ pos: new THREE.Vector3(wnX + 3.3, 0, -30.9), mesh: wnDrum2, sx: 0.58, sy: 1.08, sz: 0.58, drum: true });
+  MAP.drums.push(MAP.crates[MAP.crates.length - 1]);
+  const wvX = -34.6;
+  const wvZ = -28.6;
+  const wnCab = box(scene, wvX, 0.7, wvZ, 1.5, 1.15, 1.7, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(wvX, 0, wvZ), mesh: wnCab, sx: 1.5, sy: 1.3, sz: 1.7 });
+  const wnBed = box(scene, wvX, 0.55, wvZ + 2.05, 1.7, 0.7, 2.1, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(wvX, 0, wvZ + 2.05), mesh: wnBed, sx: 1.7, sy: 0.9, sz: 2.1 });
+  MAP.winzeTruck = new THREE.Vector3(wvX, 0, wvZ);
+
+  // South-east vent raise — door gap north into a timber drift toward the crusher
+  const rsX = 32.2;
+  const rsZ = -32.5;
+  const rsWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.45, z, sx, 2.9, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 2.9, sz });
+    return m;
+  };
+  rsWall(rsX, -35.85, 7.2, 0.42);
+  rsWall(28.75, rsZ, 0.42, 6.5);
+  rsWall(35.65, rsZ, 0.42, 6.5);
+  rsWall(30.35, -29.15, 2.6, 0.42);
+  rsWall(34.05, -29.15, 2.6, 0.42);
+  box(scene, rsX, 2.75, -29.15, 2.2, 0.38, 0.42, timber);
+  box(scene, rsX, 3.05, rsZ, 7.4, 0.18, 7.1, rock);
+  MAP.raiseDoor = new THREE.Vector3(rsX, 0, -29.05);
+  MAP.raise = new THREE.Vector3(rsX, 0, rsZ);
+  const rsFloor = box(scene, rsX, 0.04, rsZ, 6.4, 0.08, 6.4, concrete);
+  rsFloor.receiveShadow = true;
+  const rsLamp = new THREE.PointLight(0xffc070, 0.75, 11);
+  rsLamp.position.set(rsX, 2.4, rsZ);
+  scene.add(rsLamp);
+  MAP.raiseLamp = rsLamp;
+  const rsRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.05, 1.28, 16),
+    new THREE.MeshBasicMaterial({ color: 0xe8a040, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+  );
+  rsRing.rotation.x = -Math.PI / 2;
+  rsRing.position.copy(MAP.raiseDoor).setY(0.05);
+  scene.add(rsRing);
+  MAP.raiseRing = rsRing;
+  // Timber vent drift: raise north gap toward the crusher approach
+  const vdZ = -22.6;
+  box(scene, 31.15, 1.35, vdZ, 0.28, 2.7, 12.4, timber);
+  MAP.crates.push({ pos: new THREE.Vector3(31.15, 0, vdZ), mesh: scene.children[scene.children.length - 1], sx: 0.28, sy: 2.7, sz: 12.4 });
+  box(scene, 33.25, 1.35, vdZ, 0.28, 2.7, 12.4, timber);
+  MAP.crates.push({ pos: new THREE.Vector3(33.25, 0, vdZ), mesh: scene.children[scene.children.length - 1], sx: 0.28, sy: 2.7, sz: 12.4 });
+  box(scene, rsX, 2.72, vdZ, 2.4, 0.16, 12.4, timber);
+  for (const oz of [-27.4, -23.6, -19.8, -17.2]) {
+    box(scene, rsX, 2.55, oz, 2.35, 0.12, 0.16, steel);
+  }
+  // Axial fan + lever. Dust curtain blocks hitscan only while the fan is running.
+  const fanHub = box(scene, rsX, 1.55, -31.15, 0.28, 0.28, 0.28, steel);
+  const fanBlades = new THREE.Group();
+  for (let i = 0; i < 4; i++) {
+    const blade = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.08, 0.22), rust);
+    blade.position.x = 0.55;
+    blade.rotation.z = (i / 4) * Math.PI * 2;
+    const wrap = new THREE.Group();
+    wrap.rotation.z = (i / 4) * Math.PI * 2;
+    wrap.add(blade);
+    blade.position.set(0.62, 0, 0);
+    fanBlades.add(wrap);
+  }
+  fanBlades.position.set(rsX, 1.55, -31.15);
+  scene.add(fanBlades);
+  MAP.fanBlades = fanBlades;
+  MAP.fanHub = fanHub;
+  const dustMat = new THREE.MeshLambertMaterial({ color: 0xc4a070, transparent: true, opacity: 0.08 });
+  const dustMesh = box(scene, rsX, 1.15, -22.8, 1.7, 2.1, 8.6, dustMat);
+  dustMesh.castShadow = false;
+  const fanCrate = { pos: new THREE.Vector3(rsX, 0, -22.8), mesh: dustMesh, sx: 1.7, sy: 2.1, sz: 8.6, walkOn: true, dead: true, fan: true };
+  MAP.crates.push(fanCrate);
+  MAP.fanCrate = fanCrate;
+  MAP.fanDust = dustMesh;
+  MAP.fan = { on: false, x: 30.15, z: -31.6, t: 0, spin: 0 };
+  const fanLever = box(scene, MAP.fan.x, 1.05, MAP.fan.z, 0.12, 0.7, 0.12, steel);
+  MAP.fanLever = fanLever;
+  box(scene, MAP.fan.x, 0.55, MAP.fan.z, 0.35, 0.7, 0.35, rust);
+  // Rails + rideable man-car along the drift
+  for (const ox of [-0.55, 0.55]) {
+    box(scene, rsX + ox, 0.08, vdZ, 0.08, 0.08, 12.2, steel);
+  }
+  const carPath = [new THREE.Vector3(rsX, 0, -28.4), new THREE.Vector3(rsX, 0, -17.6)];
+  MAP.carPath = carPath;
+  MAP.carT = 0;
+  MAP.carDir = 1;
+  const car = new THREE.Group();
+  const carBed = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.16, 1.7), steel);
+  carBed.position.y = 0.28;
+  const carLip = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.42, 0.08), rust);
+  carLip.position.set(0, 0.48, 0.8);
+  const carLip2 = carLip.clone();
+  carLip2.position.z = -0.8;
+  car.add(carBed, carLip, carLip2);
+  car.position.copy(carPath[0]);
+  scene.add(car);
+  MAP.carMesh = car;
+  const carCrate = { pos: carPath[0].clone(), mesh: car, sx: 1.4, sy: 1.05, sz: 1.75, walkOn: true, car: true };
+  MAP.crates.push(carCrate);
+  MAP.carCrate = carCrate;
+  MAP.carDx = 0;
+  MAP.carDz = 0;
+  const rsMoteN = 28;
+  const rsGeo = new THREE.BufferGeometry();
+  const rsPos = new Float32Array(rsMoteN * 3);
+  const rsPhase = new Float32Array(rsMoteN);
+  for (let i = 0; i < rsMoteN; i++) {
+    rsPos[i * 3] = rsX + (Math.random() - 0.5) * 5.0;
+    rsPos[i * 3 + 1] = 0.3 + Math.random() * 1.8;
+    rsPos[i * 3 + 2] = rsZ + (Math.random() - 0.5) * 5.0;
+    rsPhase[i] = Math.random() * Math.PI * 2;
+  }
+  rsGeo.setAttribute("position", new THREE.BufferAttribute(rsPos, 3));
+  const rsMotes = new THREE.Points(rsGeo, new THREE.PointsMaterial({ color: 0xd0a868, size: 0.05, transparent: true, opacity: 0.48 }));
+  scene.add(rsMotes);
+  MAP.raiseMotes = rsMotes;
+  MAP.raiseMotePhase = rsPhase;
+  const rsBerm = box(scene, rsX - 2.35, 0.36, -28.2, 1.45, 0.68, 0.68, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(rsX - 2.35, 0, -28.2), mesh: rsBerm, sx: 1.45, sy: 0.68, sz: 0.68, climb: true });
+  const rsBerm2 = box(scene, rsX + 2.35, 0.34, -28.15, 1.4, 0.64, 0.66, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(rsX + 2.35, 0, -28.15), mesh: rsBerm2, sx: 1.4, sy: 0.64, sz: 0.66, climb: true });
+  const rsDrum = box(scene, rsX - 3.25, 0.55, -28.05, 0.6, 1.1, 0.6, drumMat);
+  MAP.crates.push({ pos: new THREE.Vector3(rsX - 3.25, 0, -28.05), mesh: rsDrum, sx: 0.6, sy: 1.1, sz: 0.6, drum: true });
+  MAP.drums.push(MAP.crates[MAP.crates.length - 1]);
+  const rsDrum2 = box(scene, rsX + 3.25, 0.55, -27.95, 0.58, 1.06, 0.58, drumMat);
+  MAP.crates.push({ pos: new THREE.Vector3(rsX + 3.25, 0, -27.95), mesh: rsDrum2, sx: 0.58, sy: 1.06, sz: 0.58, drum: true });
+  MAP.drums.push(MAP.crates[MAP.crates.length - 1]);
+  const rvX = 36.4;
+  const rvZ = -36.2;
+  const rsCab = box(scene, rvX, 0.7, rvZ, 1.5, 1.15, 1.7, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(rvX, 0, rvZ), mesh: rsCab, sx: 1.5, sy: 1.3, sz: 1.7 });
+  const rsBed = box(scene, rvX, 0.55, rvZ + 2.05, 1.7, 0.7, 2.1, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(rvX, 0, rvZ + 2.05), mesh: rsBed, sx: 1.7, sy: 0.9, sz: 2.1 });
+  MAP.raiseTruck = new THREE.Vector3(rvX, 0, rvZ);
+  // Drop gate at the north mouth of the vent. Solid when down, blocks shots and bodies.
+  const gate = box(scene, rsX, 2.55, -16.55, 1.85, 2.15, 0.22, steel);
+  const gateCrate = { pos: new THREE.Vector3(rsX, 0, -16.55), mesh: gate, sx: 1.85, sy: 2.15, sz: 0.28, dead: true, gate: true };
+  MAP.crates.push(gateCrate);
+  MAP.gateCrate = gateCrate;
+  MAP.gateMesh = gate;
+  MAP.gate = { on: false, x: 34.55, z: -16.7 };
+  const gateLever = box(scene, MAP.gate.x, 1.05, MAP.gate.z, 0.12, 0.68, 0.12, steel);
+  MAP.gateLever = gateLever;
+  box(scene, MAP.gate.x, 0.52, MAP.gate.z, 0.32, 0.62, 0.32, rust);
+  box(scene, rsX - 1.15, 1.35, -16.55, 0.16, 2.7, 0.28, rust);
+  box(scene, rsX + 1.15, 1.35, -16.55, 0.16, 2.7, 0.28, rust);
+
+
+
 
 
 
@@ -4784,6 +5052,105 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     MAP.cage.top = MAP.cage.y + 0.2;
     MAP.cageMesh.position.y = MAP.cage.y;
     if (MAP.cageSheave) MAP.cageSheave.rotation.x += dt * 1.6 * MAP.cageDir;
+  }
+  if (MAP.winzeCage && MAP.winzeCageMesh) {
+    const prev = MAP.winzeCage.y;
+    MAP.winzeCage.y += dt * 0.7 * MAP.winzeCageDir;
+    if (MAP.winzeCage.y >= 2.45) {
+      MAP.winzeCage.y = 2.45;
+      MAP.winzeCageDir = -1;
+      MAP.winzeBell = true;
+    } else if (MAP.winzeCage.y <= 0.15) {
+      MAP.winzeCage.y = 0.15;
+      MAP.winzeCageDir = 1;
+      MAP.winzeBell = true;
+    }
+    MAP.winzeCageDy = MAP.winzeCage.y - prev;
+    MAP.winzeCage.top = MAP.winzeCage.y + 0.18;
+    MAP.winzeCageMesh.position.y = MAP.winzeCage.y;
+    if (MAP.winzeSheave) MAP.winzeSheave.rotation.z += dt * 1.4 * MAP.winzeCageDir;
+  }
+  if (MAP.sump && MAP.sumpWater) {
+    const target = MAP.sump.on ? 0.62 : 0.06;
+    MAP.sumpWater.position.y += (target - MAP.sumpWater.position.y) * Math.min(1, dt * 1.6);
+    MAP.sumpWater.material.opacity = MAP.sump.on ? 0.62 : 0.22;
+    if (MAP.sumpLever) MAP.sumpLever.rotation.z = MAP.sump.on ? -0.8 : 0.35;
+    if (MAP.sumpCrate) MAP.sumpCrate.dead = !MAP.sump.on;
+  }
+  if (MAP.winzeMotes) {
+    const arr = MAP.winzeMotes.geometry.attributes.position.array;
+    const ph = MAP.winzeMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      arr[i * 3 + 1] += Math.sin(performance.now() * 0.0011 + ph[i]) * 0.003;
+      if (arr[i * 3 + 1] > 2.2) arr[i * 3 + 1] = 0.25;
+    }
+    MAP.winzeMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.fan) {
+    const spin = MAP.fan.on ? 9.5 : 0.35;
+    MAP.fan.spin += dt * spin;
+    if (MAP.fanBlades) MAP.fanBlades.rotation.z = MAP.fan.spin;
+    if (MAP.fanLever) MAP.fanLever.rotation.z = MAP.fan.on ? -0.85 : 0.4;
+    if (MAP.fanDust) {
+      MAP.fanDust.material.opacity = MAP.fan.on ? 0.34 : 0.05;
+      MAP.fanDust.position.z = -22.8 + Math.sin(performance.now() * 0.004) * (MAP.fan.on ? 0.35 : 0.05);
+    }
+    if (MAP.fanCrate) MAP.fanCrate.dead = !MAP.fan.on;
+    if (MAP.raiseLamp) MAP.raiseLamp.intensity = MAP.fan.on ? 1.15 : 0.7;
+  }
+  if (MAP.gateMesh && MAP.gate) {
+    const target = MAP.gate.on ? 1.15 : 2.7;
+    MAP.gateMesh.position.y += (target - MAP.gateMesh.position.y) * Math.min(1, dt * 2.4);
+    if (MAP.gateLever) MAP.gateLever.rotation.z = MAP.gate.on ? -0.8 : 0.35;
+    if (MAP.gateCrate) MAP.gateCrate.dead = MAP.gateMesh.position.y > 2.05;
+  }
+  if (MAP.carMesh && MAP.carPath && MAP.carCrate) {
+    const path = MAP.carPath;
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+      const L = path[i].distanceTo(path[i + 1]);
+      lens.push(L);
+      total += L;
+    }
+    MAP.carT += dt * 2.4 * MAP.carDir;
+    if (MAP.carT >= total) {
+      MAP.carT = total;
+      MAP.carDir = -1;
+      MAP.carBell = true;
+    } else if (MAP.carT <= 0) {
+      MAP.carT = 0;
+      MAP.carDir = 1;
+      MAP.carBell = true;
+    }
+    let remain = MAP.carT;
+    for (let i = 0; i < lens.length; i++) {
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        const nx = path[i].x + (path[i + 1].x - path[i].x) * t;
+        const nz = path[i].z + (path[i + 1].z - path[i].z) * t;
+        MAP.carDx = nx - MAP.carCrate.pos.x;
+        MAP.carDz = nz - MAP.carCrate.pos.z;
+        MAP.carCrate.pos.x = nx;
+        MAP.carCrate.pos.z = nz;
+        MAP.carMesh.position.set(nx, 0.02, nz);
+        break;
+      }
+      remain -= lens[i];
+    }
+    MAP.carClack = (MAP.carClack || 0) - dt;
+  }
+  if (MAP.raiseMotes) {
+    const arr = MAP.raiseMotes.geometry.attributes.position.array;
+    const ph = MAP.raiseMotePhase;
+    const push = MAP.fan && MAP.fan.on ? 0.02 : 0;
+    for (let i = 0; i < ph.length; i++) {
+      arr[i * 3 + 1] += Math.sin(performance.now() * 0.0013 + ph[i]) * 0.003;
+      arr[i * 3 + 2] += push;
+      if (arr[i * 3 + 1] > 2.3) arr[i * 3 + 1] = 0.25;
+      if (arr[i * 3 + 2] > -16) arr[i * 3 + 2] = -35.5;
+    }
+    MAP.raiseMotes.geometry.attributes.position.needsUpdate = true;
   }
   if (MAP.sluiceWash) {
     MAP.sluiceWash.position.z = MAP.sluice.z + Math.sin(performance.now() * 0.0018) * 0.15;

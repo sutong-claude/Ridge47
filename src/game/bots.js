@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -271,6 +271,14 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                 ? MAP.tipDoor
                                                                 : inAdit(playerPos) && MAP.aditDoor
                                                                   ? MAP.aditDoor
+                                                                  : inWinze(playerPos) && MAP.winzeDoor
+                                                                    ? MAP.winzeDoor
+                                                                    : inCross(playerPos) && MAP.winzeDoor
+                                                                      ? MAP.winzeDoor
+                                                                      : inRaise(playerPos) && MAP.raiseDoor
+                                                                        ? MAP.raiseDoor
+                                                                        : inVent(playerPos) && MAP.raiseDoor
+                                                                          ? MAP.raiseDoor
                                                                   : MAP.hangarDoor;
       cover.copy(door);
       cover.y = 0;
@@ -321,6 +329,23 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
         b.pos.x += MAP.sluice.vx * dt;
         b.pos.z += MAP.sluice.vz * dt;
         collideXZ(b.pos, 0.4);
+      }
+      if (inCross(b.pos) && MAP.sump && MAP.sump.on) {
+        b.pos.x += 1.4 * dt;
+        collideXZ(b.pos, 0.4);
+      }
+      if (inVent(b.pos) && MAP.fan && MAP.fan.on) {
+        b.pos.z += 2.6 * dt;
+        collideXZ(b.pos, 0.4);
+      }
+      if (MAP.carCrate) {
+        const c = MAP.carCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        if (Math.abs(dx) < c.sx * 0.42 && Math.abs(dz) < c.sz * 0.42) {
+          b.pos.x += MAP.carDx || 0;
+          b.pos.z += MAP.carDz || 0;
+        }
       }
       if (onBelt(b.pos) && MAP.belt) {
         b.pos.x += MAP.belt.vx * dt;

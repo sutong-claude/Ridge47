@@ -594,4 +594,20 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Sluice flume east of the pad shoves the player and bots downstream
 - [x] Adit mud slows movement
 - [x] Crusher conveyor belt carries anyone standing on the trestle toward the pad
+- [x] West winze collar (door gap + rideable cage + collision + motes)
+- [x] Compass / minimap WINZE pip + indoor loc tag
+- [x] Bot BREACH through winze door when player camps WINZE
+- [x] Winze-door berms + cook-off drums
+- [x] Wrecked winze truck north of the collar
+- [x] Timber crosscut linking winze to the adit (walkable, blocks shots)
+- [x] Sump lever (F) floods the crosscut: slows player and bots, blocks hitscan, shove downstream
+- [x] South-east vent raise (door gap + fan + collision + motes)
+- [x] Compass / minimap RAISE pip + indoor loc tag
+- [x] Bot BREACH through raise door when player camps RAISE or VENT
+- [x] Raise-door berms + cook-off drums
+- [x] Wrecked raise truck east of the house
+- [x] Timber vent drift north toward the crusher, walkable, blocks side shots
+- [x] Fan lever (F) spins the raise fan, shoves player and bots north, dust curtain blocks hitscan
+- [x] Man-car on the drift rails: rideable solid cover, clack + end bell
+- [x] Drop gate (F) at the vent mouth seals shots and bodies when down
 - [ ] Next: owner topics or more juice
