@@ -10,11 +10,16 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~19:03 PDT
+## 2026-09-30 ~21:03 PDT
 
-- [x] South wash rack (door gap + spray wand + collision + motes)
-- [x] Compass / minimap WASH pip + indoor loc tag
-- [x] Bot BREACH through wash door when player camps WASH
-- [x] Wash-door berms + cook-off drums
-- [x] Wrecked tanker south of wash
+- [x] North parts crib (door gap + bins + spinning carousel + collision + motes)
+- [x] Compass / minimap PARTS pip + indoor loc tag
+- [x] Bot BREACH through parts door when player camps PARTS
+- [x] Parts-door berms + cook-off drums
+- [x] Wrecked parts truck south of crib
+- [x] South weld bay (door gap + benches + torch arm + collision + motes)
+- [x] Compass / minimap WELD pip + indoor loc tag
+- [x] Bot BREACH through weld door when player camps WELD
+- [x] Weld-door berms + cook-off drums
+- [x] Wrecked weld truck east of bay
 - [ ] Next: owner topics or more juice
