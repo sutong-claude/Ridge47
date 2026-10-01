@@ -618,4 +618,6 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Incline skip: rideable solid cover from bin throat to dump pocket, blocks hitscan, player and bots ride, clack + end bell
 - [x] Brake lever (F) stops the skip
 - [x] Dump dust at the head blocks hitscan and shoves anyone in the pocket
+- [x] South tailings basin (berm walls + sludge slow + scraper wreck)
+- [x] Compass / minimap TAIL pip + loc tag
 - [ ] Next: owner topics or more juice
