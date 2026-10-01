@@ -685,4 +685,48 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Sampler-door berms + cook-off drums
 - [x] Wrecked sampler truck south of the house
 - [x] West-wall notch; clutch (F) swings the cutter as moving cover; reject flume shoves east; cut dust blocks the mouth
+- [x] Northeast pellet disc (door gap + spinning pan + collision + motes)
+- [x] Compass / minimap PEL pip + indoor loc tag + disc pip
+- [x] Bot BREACH through pellet door when player camps PEL, the disc, or the chute
+- [x] Pellet-door berms + cook-off drums
+- [x] Wrecked pellet truck east of the house
+- [x] Clutch (F) spins the disc as moving cover; player and bots ride; door dust blocks hitscan; chute shoves south
+- [x] Southwest clarifier (door gap + tank + sweeping bridge + collision + motes)
+- [x] Compass / minimap CLAR pip + indoor loc tag + underflow pip
+- [x] Bot BREACH through clarifier door when player camps CLAR, the bridge, or the underflow
+- [x] Clarifier-door berms + cook-off drums
+- [x] Wrecked clarifier truck west of the house
+- [x] Valve (F) sweeps the bridge as moving cover; underflow shoves east and door dust blocks hitscan
+- [x] North reagent silo (door gap + bin + collision + motes)
+- [x] Compass / minimap SILO pip + indoor loc tag + screw pip
+- [x] Bot BREACH through silo door when player camps SILO or the screw
+- [x] Silo-door berms + cook-off drums
+- [x] Wrecked silo truck north of the house
+- [x] Clutch (F) runs the screw; player and bots ride east; door dust blocks hitscan
+- [x] South jig house (door gap + oscillating deck + collision + motes)
+- [x] Compass / minimap JIG pip + indoor loc tag + hutch pip
+- [x] Bot BREACH through jig door when player camps JIG, the deck, or the hutch
+- [x] Jig-door berms + cook-off drums
+- [x] Wrecked jig truck south of the house
+- [x] Clutch (F) runs the deck as moving cover; player and bots ride; hutch shoves west; door dust blocks hitscan
+- [x] North rotary cooler (door gap + kiln shell + rideable car + collision + motes)
+- [x] Compass / minimap COOL pip + indoor loc tag + drum pip
+- [x] Bot BREACH through cooler door when player camps COOL, the car, or the quench
+- [x] Cooler-door berms + cook-off drums
+- [x] Wrecked cooler truck east of the house
+- [x] Clutch (F) runs the car as moving cover; quench mist shoves south and door dust blocks hitscan; shell heat scalds
+- [x] North blast face plunger (F) arms a fuse; rock curtain blocks hitscan, shoves south, and damages anyone in the lane
+- [x] Fall leaves climbable rubble cover for a few seconds
+- [x] Southwest baghouse (door gap + shaking rack + collision + motes)
+- [x] Compass / minimap BAG pip + indoor loc tag + fines pip
+- [x] Bot BREACH through baghouse door when player camps BAG, the rack, or the fines flume
+- [x] Baghouse-door berms + cook-off drums
+- [x] Wrecked bag truck east of the house
+- [x] Clutch (F) shakes the rack as moving cover; player and bots ride; fines flume shoves north; door dust blocks hitscan
+- [x] Northwest dryer house (door gap + rideable shell + collision + motes)
+- [x] Compass / minimap DRY pip + indoor loc tag + exhaust pip
+- [x] Bot BREACH through dryer door when player camps DRY, the shell, or the exhaust
+- [x] Dryer-door berms + cook-off drums
+- [x] Wrecked dryer truck east of the house
+- [x] Clutch (F) runs the shell as moving cover; player and bots ride; exhaust shoves south and door dust blocks hitscan; shell heat scalds
 - [ ] Next: owner topics or more juice
