@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -3051,7 +3051,7 @@ function tick(now) {
   }
   player.gaspT = Math.max(0, player.gaspT - dt);
   const limp = player.hp < 35 ? 0.72 : 1;
-  const mud = (inCross(player.pos) && MAP.sump && MAP.sump.on) ? 0.48 : inTail(player.pos) ? 0.52 : (inLaunder(player.pos) && MAP.thick && MAP.thick.on) ? 0.5 : (inBall(player.pos) && MAP.ball && MAP.ball.on) ? 0.62 : (inSpiral(player.pos) && MAP.cyc && MAP.cyc.on) ? 0.58 : (inOverflow(player.pos) && MAP.cyc && MAP.cyc.on) ? 0.46 : (inPress(player.pos) && MAP.press && MAP.press.on) ? 0.7 : (inMilk(player.pos)) ? 0.42 : (inSlake(player.pos) && MAP.slake && MAP.slake.on) ? 0.62 : (inSinter(player.pos) && MAP.sinter && MAP.sinter.on) ? 0.58 : inReject(player.pos) ? 0.5 : inSample(player.pos) ? 0.84 : (inFloat(player.pos) && MAP.float && MAP.float.on) ? 0.55 : inFroth(player.pos) ? 0.48 : inCyc(player.pos) || inPress(player.pos) || inFloat(player.pos) || inStack(player.pos) ? 0.84 : (inVent(player.pos) && MAP.fan && MAP.fan.on) ? 0.7 : inAdit(player.pos) || inWinze(player.pos) || inRaise(player.pos) || inThick(player.pos) ? 0.82 : 1;
+  const mud = (inJig(player.pos) && MAP.jig && MAP.jig.on) ? 0.6 : inHutch(player.pos) ? 0.5 : (inCool(player.pos) && MAP.cool && MAP.cool.on) ? 0.64 : inQuench(player.pos) ? 0.48 : inFall(player.pos) ? 0.55 : (inBag(player.pos) && MAP.bag && MAP.bag.on) ? 0.66 : inFines(player.pos) ? 0.5 : (inDry(player.pos) && MAP.dry && MAP.dry.on) ? 0.6 : inExhaust(player.pos) ? 0.48 : (inCross(player.pos) && MAP.sump && MAP.sump.on) ? 0.48 : inTail(player.pos) ? 0.52 : (inLaunder(player.pos) && MAP.thick && MAP.thick.on) ? 0.5 : (inBall(player.pos) && MAP.ball && MAP.ball.on) ? 0.62 : (inSpiral(player.pos) && MAP.cyc && MAP.cyc.on) ? 0.58 : (inOverflow(player.pos) && MAP.cyc && MAP.cyc.on) ? 0.46 : (inPress(player.pos) && MAP.press && MAP.press.on) ? 0.7 : (inMilk(player.pos)) ? 0.42 : (inSlake(player.pos) && MAP.slake && MAP.slake.on) ? 0.62 : (inSinter(player.pos) && MAP.sinter && MAP.sinter.on) ? 0.58 : inReject(player.pos) ? 0.5 : inSample(player.pos) ? 0.84 : (inPellet(player.pos) && MAP.pellet && MAP.pellet.on) ? 0.7 : inClar(player.pos) ? 0.78 : inUnder(player.pos) ? 0.5 : (inSilo(player.pos) && MAP.silo && MAP.silo.on) ? 0.72 : onScrew(player.pos) ? 0.64 : (inFloat(player.pos) && MAP.float && MAP.float.on) ? 0.55 : inFroth(player.pos) ? 0.48 : inCyc(player.pos) || inPress(player.pos) || inFloat(player.pos) || inStack(player.pos) ? 0.84 : (inVent(player.pos) && MAP.fan && MAP.fan.on) ? 0.7 : inAdit(player.pos) || inWinze(player.pos) || inRaise(player.pos) || inThick(player.pos) ? 0.82 : 1;
   const speed = (player.slide > 0 ? 11.2 : (player.prone ? 1.7 : player.crouch ? 3.2 : player.sprint ? 8.4 : 5.6)) * limp * mud;
   if (moving) wish.normalize().multiplyScalar(speed);
   player.pos.x += wish.x * dt;
@@ -3190,6 +3190,120 @@ function tick(now) {
       feed("SINTER STRAND");
     }
   } else player._strandOn = false;
+
+
+
+  if (onJigDeck(player.pos) && player.grounded) {
+    player.pos.z += MAP.jigDeck.dz || 0;
+    if (!player._jigOn) { player._jigOn = true; feed("JIG DECK"); }
+    if (Math.random() < dt * 2) beep(84 + Math.random() * 16, 0.03, 0.012, 1, "square");
+  } else player._jigOn = false;
+  if (inHutch(player.pos) && player.grounded) {
+    player.pos.x += (MAP.hutch ? MAP.hutch.vx : -2.2) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._hutchOn) { player._hutchOn = true; feed("JIG HUTCH"); }
+  } else player._hutchOn = false;
+  if (inJig(player.pos) && MAP.jig && MAP.jig.on && player.grounded) {
+    player.hp = Math.max(8, player.hp - 2.4 * dt);
+  }
+  if (onCoolCar(player.pos) && player.grounded) {
+    player.pos.x += MAP.coolCar.dx || 0;
+    if (!player._coolOn) { player._coolOn = true; feed("COOLER CAR"); }
+  } else player._coolOn = false;
+  if (inQuench(player.pos) && player.grounded) {
+    player.pos.z += (MAP.quench ? MAP.quench.vz : -2.1) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._quenchOn) { player._quenchOn = true; feed("QUENCH MIST"); }
+  } else player._quenchOn = false;
+  if (inCool(player.pos) && MAP.cool && MAP.cool.on && player.grounded) {
+    player.hp = Math.max(8, player.hp - 3.4 * dt);
+  }
+
+  if (onBagRack(player.pos) && player.grounded) {
+    player.pos.x += MAP.bagRack.dx || 0;
+    if (!player._bagOn) { player._bagOn = true; feed("BAG RACK"); }
+  } else player._bagOn = false;
+  if (inFines(player.pos) && player.grounded) {
+    player.pos.z += (MAP.fines ? MAP.fines.vz : 2.2) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._finesOn) { player._finesOn = true; feed("FINES FLUME"); }
+  } else player._finesOn = false;
+  if (inBag(player.pos) && MAP.bag && MAP.bag.on && player.grounded) {
+    player.hp = Math.max(8, player.hp - 1.8 * dt);
+  }
+  if (onDryShell(player.pos) && player.grounded) {
+    player.pos.x += MAP.dryShell.dx || 0;
+    if (!player._dryOn) { player._dryOn = true; feed("DRYER SHELL"); }
+  } else player._dryOn = false;
+  if (inExhaust(player.pos) && player.grounded) {
+    player.pos.z += (MAP.exhaust ? MAP.exhaust.vz : -2.3) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._exhOn) { player._exhOn = true; feed("DRYER EXHAUST"); }
+  } else player._exhOn = false;
+  if (inDry(player.pos) && MAP.dry && MAP.dry.on && player.grounded) {
+    player.hp = Math.max(8, player.hp - 3.1 * dt);
+  }
+  if (inFall(player.pos) && player.grounded) {
+    player.pos.z += (MAP.fall ? MAP.fall.vz : -2.6) * dt;
+    player.hp = Math.max(6, player.hp - 8 * dt);
+    collideXZ(player.pos, 0.35);
+    if (!player._fallOn) { player._fallOn = true; feed("ROCKFALL"); }
+  } else player._fallOn = false;
+
+  if (onScrew(player.pos) && player.grounded) {
+    player.pos.x += (MAP.screw ? MAP.screw.vx : 2.15) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._screwOn) {
+      player._screwOn = true;
+      feed("SILO SCREW");
+    }
+    if (Math.random() < dt * 2) beep(96 + Math.random() * 18, 0.035, 0.012, 1, "square");
+  } else player._screwOn = false;
+  if (onDisc(player.pos) && MAP.disc && player.grounded) {
+    const ang = (MAP.disc._omega || 0.85) * dt;
+    const dx = player.pos.x - MAP.disc.x;
+    const dz = player.pos.z - MAP.disc.z;
+    const c = Math.cos(ang);
+    const sn = Math.sin(ang);
+    player.pos.x = MAP.disc.x + dx * c - dz * sn;
+    player.pos.z = MAP.disc.z + dx * sn + dz * c;
+    if (!player._discOn) {
+      player._discOn = true;
+      feed("PELLET DISC");
+    }
+    if (Math.random() < dt * 2) beep(70 + Math.random() * 20, 0.04, 0.014, 1, "sawtooth");
+  } else player._discOn = false;
+  if (inChute(player.pos) && player.grounded) {
+    player.pos.z += (MAP.chute ? MAP.chute.vz : -2.4) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._chuteOn) {
+      player._chuteOn = true;
+      feed("PELLET CHUTE");
+    }
+  } else player._chuteOn = false;
+  if (inPellet(player.pos) && MAP.pellet && MAP.pellet.on && player.grounded) {
+    player.hp = Math.max(8, player.hp - 3.2 * dt);
+    if (!player._pelHeat) {
+      player._pelHeat = true;
+      feed("DISC HEAT");
+    }
+  } else player._pelHeat = false;
+  if (onBridge(player.pos) && MAP.clar && MAP.clar.on && player.grounded) {
+    player.pos.x += MAP.clarBridge.dx || 0;
+    if (!player._bridgeOn) {
+      player._bridgeOn = true;
+      feed("CLARIFIER BRIDGE");
+    }
+  } else player._bridgeOn = false;
+  if (inUnder(player.pos) && player.grounded) {
+    player.pos.x += (MAP.under ? MAP.under.vx : 2.2) * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._underOn) {
+      player._underOn = true;
+      feed("UNDERFLOW");
+    }
+    if (Math.random() < dt * 2.4) beep(120 + Math.random() * 24, 0.04, 0.012, 1, "sine");
+  } else player._underOn = false;
   if (onSampleBoom(player.pos) && MAP.sample && MAP.sample.on && player.grounded) {
     player.pos.x += MAP.sampleBoom.dx || 0;
     player.pos.z += MAP.sampleBoom.dz || 0;
@@ -4205,6 +4319,67 @@ function tick(now) {
     MAP.strandBell = false;
     if (MAP.strand) sfxAt(new THREE.Vector3(MAP.strand.x, 1.2, MAP.strand.z), 160, 0.07, 0.03, "square");
   }
+  MAP.pelletClack = Math.max(0, (MAP.pelletClack || 0) - dt);
+  if (MAP.pellet && MAP.pellet.on && MAP.pelletDoor && (MAP.pelletClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.pelletDoor);
+    if (d < 28) {
+      MAP.pelletClack = 0.55;
+      sfxAt(MAP.pelletDoor, 68 + (d < 8 ? 16 : 0), 0.045, 0.02, "sawtooth");
+    }
+  }
+  MAP.clarClack = Math.max(0, (MAP.clarClack || 0) - dt);
+  if (MAP.clar && MAP.clar.on && MAP.clarDoor && (MAP.clarClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.clarDoor);
+    if (d < 28) {
+      MAP.clarClack = 0.7;
+      sfxAt(MAP.clarDoor, 84 + (d < 8 ? 12 : 0), 0.04, 0.018, "square");
+    }
+  }
+  MAP.siloClack = Math.max(0, (MAP.siloClack || 0) - dt);
+  if (MAP.jig && MAP.jig.on && MAP.jigDoor && (MAP.jigClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.jigDoor);
+    if (d < 22) {
+      MAP.jigClack = 0.55;
+      sfxAt(MAP.jigDoor, 96 + (d < 8 ? 12 : 0), 0.03, 0.014, "square");
+    }
+  } else MAP.jigClack = Math.max(0, (MAP.jigClack || 0) - dt);
+
+  if (MAP.bag && MAP.bag.on && MAP.bagDoor && (MAP.bagClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.bagDoor);
+    if (d < 24) {
+      MAP.bagClack = 0.42;
+      sfxAt(MAP.bagDoor, 92 + (d < 8 ? 18 : 0), 0.04, 0.02, "square");
+    }
+  } else MAP.bagClack = Math.max(0, (MAP.bagClack || 0) - dt);
+  if (MAP.dry && MAP.dry.on && MAP.dryDoor && (MAP.dryClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.dryDoor);
+    if (d < 24) {
+      MAP.dryClack = 0.62;
+      sfxAt(MAP.dryDoor, 74 + (d < 8 ? 12 : 0), 0.05, 0.02, "sawtooth");
+    }
+  } else MAP.dryClack = Math.max(0, (MAP.dryClack || 0) - dt);
+  if (MAP.cool && MAP.cool.on && MAP.coolDoor && (MAP.coolClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.coolDoor);
+    if (d < 22) {
+      MAP.coolClack = 0.7;
+      sfxAt(MAP.coolDoor, 62 + (d < 8 ? 10 : 0), 0.032, 0.015, "sawtooth");
+    }
+  } else MAP.coolClack = Math.max(0, (MAP.coolClack || 0) - dt);
+  if (MAP.coolBell) {
+    MAP.coolBell = false;
+    if (MAP.coolDoor && player.pos.distanceTo(MAP.coolDoor) < 26) sfxAt(MAP.coolDoor, 140, 0.04, 0.08, "sine");
+  }
+  if (MAP.fallBell) {
+    MAP.fallBell = false;
+    if (MAP.face) sfxAt(new THREE.Vector3(MAP.face.x, 0, MAP.face.z), 48, 0.08, 0.2, "sawtooth");
+  }
+  if (MAP.silo && MAP.silo.on && MAP.siloDoor && (MAP.siloClack || 0) <= 0) {
+    const d = player.pos.distanceTo(MAP.siloDoor);
+    if (d < 26) {
+      MAP.siloClack = 0.48;
+      sfxAt(MAP.siloDoor, 110 + (d < 8 ? 14 : 0), 0.035, 0.016, "square");
+    }
+  }
   if (MAP.sample && MAP.sample.on && MAP.sampleDoor && (MAP.sampleClack || 0) <= 0) {
     const d = player.pos.distanceTo(MAP.sampleDoor);
     if (d < 22) {
@@ -4619,6 +4794,66 @@ function tick(now) {
     feed(MAP.sample.on ? "SAMPLER CUT" : "SAMPLER HOLD");
     beep(MAP.sample.on ? 92 : 150, 0.12, 0.04, 1, "square");
   }
+
+  const nearPellet = MAP.pellet && player.pos.distanceTo(new THREE.Vector3(MAP.pellet.x, 0, MAP.pellet.z)) < 1.8;
+  if (nearPellet && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample) {
+    MAP.pellet.on = !MAP.pellet.on;
+    keys.delete("KeyF");
+    feed(MAP.pellet.on ? "PELLET DISC RUN" : "PELLET DISC HOLD");
+    beep(MAP.pellet.on ? 74 : 138, 0.12, 0.04, 1, "sawtooth");
+  }
+  const nearClar = MAP.clar && player.pos.distanceTo(new THREE.Vector3(MAP.clar.x, 0, MAP.clar.z)) < 1.8;
+  if (nearClar && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample && !nearPellet) {
+    MAP.clar.on = !MAP.clar.on;
+    keys.delete("KeyF");
+    feed(MAP.clar.on ? "CLARIFIER RUN" : "CLARIFIER HOLD");
+    beep(MAP.clar.on ? 88 : 146, 0.12, 0.04, 1, "square");
+  }
+
+  const nearSilo = MAP.silo && player.pos.distanceTo(new THREE.Vector3(MAP.silo.x, 0, MAP.silo.z)) < 1.8;
+  if (nearSilo && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample && !nearPellet && !nearClar) {
+    MAP.silo.on = !MAP.silo.on;
+    keys.delete("KeyF");
+    feed(MAP.silo.on ? "SILO SCREW RUN" : "SILO SCREW HOLD");
+    beep(MAP.silo.on ? 82 : 142, 0.12, 0.04, 1, "square");
+  }
+  const nearJig = MAP.jig && player.pos.distanceTo(new THREE.Vector3(MAP.jig.x, 0, MAP.jig.z)) < 1.8;
+  if (nearJig && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample && !nearPellet && !nearClar && !nearSilo) {
+    MAP.jig.on = !MAP.jig.on;
+    keys.delete("KeyF");
+    feed(MAP.jig.on ? "JIG RUN" : "JIG HOLD");
+    beep(MAP.jig.on ? 88 : 146, 0.12, 0.04, 1, "square");
+  }
+  const nearCool = MAP.cool && player.pos.distanceTo(new THREE.Vector3(MAP.cool.x, 0, MAP.cool.z)) < 1.8;
+  if (nearCool && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample && !nearPellet && !nearClar && !nearSilo && !nearJig) {
+    MAP.cool.on = !MAP.cool.on;
+    keys.delete("KeyF");
+    feed(MAP.cool.on ? "COOLER RUN" : "COOLER HOLD");
+    beep(MAP.cool.on ? 70 : 136, 0.12, 0.04, 1, "sawtooth");
+  }
+
+  const nearBag = MAP.bag && player.pos.distanceTo(new THREE.Vector3(MAP.bag.x, 0, MAP.bag.z)) < 1.8;
+  if (nearBag && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample && !nearPellet && !nearClar && !nearSilo && !nearJig && !nearCool) {
+    MAP.bag.on = !MAP.bag.on;
+    feed(MAP.bag.on ? "BAGHOUSE RUN" : "BAGHOUSE HOLD");
+    beep(MAP.bag.on ? 140 : 90, 0.06, 0.04);
+    keys.delete("KeyF");
+  }
+  const nearDry = MAP.dry && player.pos.distanceTo(new THREE.Vector3(MAP.dry.x, 0, MAP.dry.z)) < 1.8;
+  if (nearDry && keys.has("KeyF") && !canEx && !nearBag && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick && !nearBall && !nearCyc && !nearPress && !nearFloat && !nearStack && !nearSlake && !nearRope && !nearSinter && !nearSample && !nearPellet && !nearClar && !nearSilo && !nearJig && !nearCool) {
+    MAP.dry.on = !MAP.dry.on;
+    feed(MAP.dry.on ? "DRYER RUN" : "DRYER HOLD");
+    beep(MAP.dry.on ? 120 : 80, 0.07, 0.04);
+    keys.delete("KeyF");
+  }
+  const nearFace = MAP.face && player.pos.distanceTo(new THREE.Vector3(MAP.face.x, 0, MAP.face.z)) < 1.8;
+  if (nearFace && keys.has("KeyF") && !MAP.face.armed && !(MAP.fall && MAP.fall.live) && !canEx && !nearJig && !nearCool && !nearBag && !nearDry) {
+    MAP.face.armed = true;
+    MAP.face.fuse = 4.2;
+    keys.delete("KeyF");
+    feed("FACE ARMED");
+    beep(180, 0.16, 0.05, 1, "square");
+  }
   player.extracting = canEx && (keys.has("KeyF") || (player.extracting && nearEx));
   if (!wasExtracting && player.extracting) {
     feed("NET · hostiles rushing pad");
@@ -5015,6 +5250,14 @@ function tick(now) {
     else if (MAP.rope && player.pos.distanceTo(new THREE.Vector3(MAP.rope.x, 0, MAP.rope.z)) < 1.8) prompt.textContent = MAP.rope.on ? "F · HOLD ROPEWAY" : "F · RUN ROPEWAY";
     else if (MAP.sinter && player.pos.distanceTo(new THREE.Vector3(MAP.sinter.x, 0, MAP.sinter.z)) < 1.8) prompt.textContent = MAP.sinter.on ? "F · HOLD STRAND" : "F · RUN STRAND";
     else if (MAP.sample && player.pos.distanceTo(new THREE.Vector3(MAP.sample.x, 0, MAP.sample.z)) < 1.8) prompt.textContent = MAP.sample.on ? "F · HOLD SAMPLER" : "F · CUT SAMPLE";
+    else if (MAP.pellet && player.pos.distanceTo(new THREE.Vector3(MAP.pellet.x, 0, MAP.pellet.z)) < 1.8) prompt.textContent = MAP.pellet.on ? "F · HOLD DISC" : "F · RUN DISC";
+    else if (MAP.clar && player.pos.distanceTo(new THREE.Vector3(MAP.clar.x, 0, MAP.clar.z)) < 1.8) prompt.textContent = MAP.clar.on ? "F · HOLD CLARIFIER" : "F · RUN CLARIFIER";
+    else if (MAP.silo && player.pos.distanceTo(new THREE.Vector3(MAP.silo.x, 0, MAP.silo.z)) < 1.8) prompt.textContent = MAP.silo.on ? "F · HOLD SCREW" : "F · RUN SCREW";
+    else if (MAP.jig && player.pos.distanceTo(new THREE.Vector3(MAP.jig.x, 0, MAP.jig.z)) < 1.8) prompt.textContent = MAP.jig.on ? "F · HOLD JIG" : "F · RUN JIG";
+    else if (MAP.cool && player.pos.distanceTo(new THREE.Vector3(MAP.cool.x, 0, MAP.cool.z)) < 1.8) prompt.textContent = MAP.cool.on ? "F · HOLD COOLER" : "F · RUN COOLER";
+    else if (MAP.bag && player.pos.distanceTo(new THREE.Vector3(MAP.bag.x, 0, MAP.bag.z)) < 1.8) prompt.textContent = MAP.bag.on ? "F · HOLD BAGHOUSE" : "F · RUN BAGHOUSE";
+    else if (MAP.dry && player.pos.distanceTo(new THREE.Vector3(MAP.dry.x, 0, MAP.dry.z)) < 1.8) prompt.textContent = MAP.dry.on ? "F · HOLD DRYER" : "F · RUN DRYER";
+    else if (MAP.face && player.pos.distanceTo(new THREE.Vector3(MAP.face.x, 0, MAP.face.z)) < 1.8) prompt.textContent = MAP.face.armed ? "FUSE LIVE" : (MAP.fall && MAP.fall.live) ? "FACE DOWN" : "F · ARM FACE";
     else prompt.textContent = "";
   }
   const rel = document.getElementById("relbar");
@@ -5277,7 +5520,7 @@ function tick(now) {
     const card = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(yawDeg / 45) % 8];
     const bip = player.ads && player.prone ? "  BIPOD" : "";
     const padM = player.pos.distanceTo(MAP.extract);
-    const locTag = inSlake(player.pos) ? "  SLAKE" : inMilk(player.pos) ? "  MILK" : inRope(player.pos) ? "  ROPE" : onBucket(player.pos) ? "  BUCKET" : inSinter(player.pos) ? "  SINT" : onStrand(player.pos) ? "  STRAND" : inSample(player.pos) ? "  SAMP" : onSampleBoom(player.pos) ? "  CUTTER" : inReject(player.pos) ? "  REJECT" : inFloat(player.pos) ? "  FLOAT" : inFroth(player.pos) ? "  FROTH" : inFloatLaunder(player.pos) ? "  LAUNDER" : inStack(player.pos) ? "  STACK" : onHaul(player.pos) ? "  HAUL" : inPress(player.pos) ? "  PRESS" : inCyc(player.pos) ? "  CYC" : inSpiral(player.pos) ? "  SPIRAL" : inOverflow(player.pos) ? "  OVER" : inReturn(player.pos) ? "  FLUME" : inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
+    const locTag = inSlake(player.pos) ? "  SLAKE" : inMilk(player.pos) ? "  MILK" : inRope(player.pos) ? "  ROPE" : onBucket(player.pos) ? "  BUCKET" : inSinter(player.pos) ? "  SINT" : onStrand(player.pos) ? "  STRAND" : inJig(player.pos) ? "  JIG" : onJigDeck(player.pos) ? "  DECK" : inHutch(player.pos) ? "  HUTCH" : inCool(player.pos) ? "  COOL" : onCoolCar(player.pos) ? "  DRUM" : inQuench(player.pos) ? "  QUENCH" : inFall(player.pos) ? "  FALL" : inBag(player.pos) ? "  BAG" : onBagRack(player.pos) ? "  RACK" : inFines(player.pos) ? "  FINES" : inDry(player.pos) ? "  DRY" : onDryShell(player.pos) ? "  SHELL" : inExhaust(player.pos) ? "  EXH" : inSilo(player.pos) ? "  SILO" : onScrew(player.pos) ? "  SCREW" : inPellet(player.pos) ? "  PEL" : onDisc(player.pos) ? "  DISC" : inChute(player.pos) ? "  CHUTE" : inClar(player.pos) ? "  CLAR" : onBridge(player.pos) ? "  BRIDGE" : inUnder(player.pos) ? "  UNDER" : inSample(player.pos) ? "  SAMP" : onSampleBoom(player.pos) ? "  CUTTER" : inReject(player.pos) ? "  REJECT" : inFloat(player.pos) ? "  FLOAT" : inFroth(player.pos) ? "  FROTH" : inFloatLaunder(player.pos) ? "  LAUNDER" : inStack(player.pos) ? "  STACK" : onHaul(player.pos) ? "  HAUL" : inPress(player.pos) ? "  PRESS" : inCyc(player.pos) ? "  CYC" : inSpiral(player.pos) ? "  SPIRAL" : inOverflow(player.pos) ? "  OVER" : inReturn(player.pos) ? "  FLUME" : inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
     headEl.textContent = (nearH < 90 ? `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}  ·  ${nearH.toFixed(0)}m` : `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}`) + `  PAD ${padM.toFixed(0)}m` + locTag + ztxt + bip;
   }
   const breathEl = document.getElementById("breath");
@@ -6403,6 +6646,40 @@ function drawMini() {
     mctx.fillStyle = MAP.sample && MAP.sample.on ? "#c8d080" : "#a0b070";
     mctx.fillRect(mx(MAP.sampleDoor.x, MAP.sampleDoor.z) - 3, mz(MAP.sampleDoor.x, MAP.sampleDoor.z) - 2, 6, 4);
   }
+  if (MAP.pelletDoor) {
+    mctx.fillStyle = MAP.pellet && MAP.pellet.on ? "#e0a050" : "#c8a060";
+    mctx.fillRect(mx(MAP.pelletDoor.x, MAP.pelletDoor.z) - 3, mz(MAP.pelletDoor.x, MAP.pelletDoor.z) - 2, 6, 4);
+  }
+  if (MAP.disc) mctx.fillRect(mx(MAP.disc.x, MAP.disc.z) - 3, mz(MAP.disc.x, MAP.disc.z) - 3, 6, 6);
+  if (MAP.clarDoor) {
+    mctx.fillStyle = MAP.clar && MAP.clar.on ? "#70b0c0" : "#90c0c8";
+    mctx.fillRect(mx(MAP.clarDoor.x, MAP.clarDoor.z) - 3, mz(MAP.clarDoor.x, MAP.clarDoor.z) - 2, 6, 4);
+  }
+  if (MAP.siloDoor) {
+    mctx.fillStyle = MAP.silo && MAP.silo.on ? "#d0c070" : "#b0a060";
+    mctx.fillRect(mx(MAP.siloDoor.x, MAP.siloDoor.z) - 3, mz(MAP.siloDoor.x, MAP.siloDoor.z) - 2, 6, 4);
+  }
+  if (MAP.jigDoor) {
+    mctx.fillStyle = MAP.jig && MAP.jig.on ? "#e0c070" : "#a89060";
+    mctx.fillRect(mx(MAP.jigDoor.x, MAP.jigDoor.z) - 3, mz(MAP.jigDoor.x, MAP.jigDoor.z) - 2, 6, 4);
+  }
+  if (MAP.coolDoor) {
+    mctx.fillStyle = MAP.cool && MAP.cool.on ? "#e08050" : "#a07050";
+    mctx.fillRect(mx(MAP.coolDoor.x, MAP.coolDoor.z) - 3, mz(MAP.coolDoor.x, MAP.coolDoor.z) - 2, 6, 4);
+  }
+  if (MAP.bagDoor) {
+    mctx.fillStyle = MAP.bag && MAP.bag.on ? "#d0d0a0" : "#a0a080";
+    mctx.fillRect(mx(MAP.bagDoor.x, MAP.bagDoor.z) - 3, mz(MAP.bagDoor.x, MAP.bagDoor.z) - 2, 6, 4);
+  }
+  if (MAP.dryDoor) {
+    mctx.fillStyle = MAP.dry && MAP.dry.on ? "#e07040" : "#a06040";
+    mctx.fillRect(mx(MAP.dryDoor.x, MAP.dryDoor.z) - 3, mz(MAP.dryDoor.x, MAP.dryDoor.z) - 2, 6, 4);
+  }
+  if (MAP.face) {
+    mctx.fillStyle = MAP.fall && MAP.fall.live ? "#e06030" : "#c09060";
+    mctx.fillRect(mx(MAP.face.x, MAP.face.z) - 2, mz(MAP.face.x, MAP.face.z) - 2, 4, 4);
+  }
+  if (MAP.screw) mctx.fillRect(mx(MAP.screw.x, MAP.screw.z) - 6, mz(MAP.screw.x, MAP.screw.z) - 1, 12, 2);
   if (MAP.buckets) {
     mctx.fillStyle = "#c8b080";
     for (const bk of MAP.buckets) mctx.fillRect(mx(bk.x, bk.z) - 2, mz(bk.x, bk.z) - 2, 4, 3);
@@ -6720,6 +6997,21 @@ function drawCompass() {
   if (MAP.ropeDoor) markLab(MAP.ropeDoor, "#b0c0d0", "ROPE");
   if (MAP.sinterDoor) markLab(MAP.sinterDoor, "#e07040", "SINT");
   if (MAP.sampleDoor) markLab(MAP.sampleDoor, "#c8d080", "SAMP");
+  if (MAP.pelletDoor) markLab(MAP.pelletDoor, "#e0a050", "PEL");
+  if (MAP.disc) markLab(new THREE.Vector3(MAP.disc.x, 0, MAP.disc.z), "#c89040", "DISC");
+  if (MAP.clarDoor) markLab(MAP.clarDoor, "#90c0c8", "CLAR");
+  if (MAP.siloDoor) markLab(MAP.siloDoor, "#d0c070", "SILO");
+  if (MAP.jigDoor) markLab(MAP.jigDoor, "#e0c070", "JIG");
+  if (MAP.hutch) markLab(new THREE.Vector3(MAP.hutch.x, 0, MAP.hutch.z), "#c0a060", "HUTCH");
+  if (MAP.coolDoor) markLab(MAP.coolDoor, "#e08050", "COOL");
+  if (MAP.bagDoor) markLab(MAP.bagDoor, "#d0d0a0", "BAG");
+  if (MAP.fines) markLab(new THREE.Vector3(MAP.fines.x, 0, MAP.fines.z), "#b0a880", "FINES");
+  if (MAP.dryDoor) markLab(MAP.dryDoor, "#e07040", "DRY");
+  if (MAP.exhaust) markLab(new THREE.Vector3(MAP.exhaust.x, 0, MAP.exhaust.z), "#c08060", "EXH");
+  if (MAP.coolCar) markLab(new THREE.Vector3(MAP.coolCar.x, 0, MAP.coolCar.z), "#c07040", "DRUM");
+  if (MAP.face) markLab(new THREE.Vector3(MAP.face.x, 0, MAP.face.z), "#e06030", "FACE");
+  if (MAP.screw) markLab(new THREE.Vector3(MAP.screw.x, 0, MAP.screw.z), "#c0b060", "SCREW");
+  if (MAP.under) markLab(new THREE.Vector3(MAP.under.x, 0, MAP.under.z), "#70a8b0", "UNDER");
   if (MAP.haulCrate) markLab(MAP.haulCrate.pos, "#c88848", "HAUL");
   if (MAP.overflow) markLab(new THREE.Vector3(MAP.overflow.x, 0, MAP.overflow.z), "#b09050", "OVER");
   if (MAP.cycReturn) markLab(new THREE.Vector3(MAP.cycReturn.x, 0, MAP.cycReturn.z), "#8a7848", "FLUME");
