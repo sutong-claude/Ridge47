@@ -10,16 +10,15 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-10-01 ~01:03 PDT
+## 2026-10-01 ~02:03 PDT
 
-- [x] East powder house (door gap + keg + spinning arm + collision + motes)
-- [x] Compass / minimap POW pip + indoor loc tag
-- [x] Bot BREACH through powder door when player camps POW
-- [x] Powder-door berms + cook-off drums
-- [x] Wrecked powder truck north of house
-- [x] West fuse shack (door gap + rack + spinning reel + collision + motes)
-- [x] Compass / minimap FUSE pip + indoor loc tag
-- [x] Bot BREACH through fuse door when player camps FUSE
-- [x] Fuse-door berms + cook-off drums
-- [x] Wrecked fuse truck south of shack
+- [x] Occluded distance audio (lowpass + muff when LOS blocked)
+- [x] Hostile nade wall bounce + inbound whistle
+- [x] Carbine charging handle racks on fire/reload
+- [x] North skip house (door gap + rails + rocking bucket + collision + motes)
+- [x] Compass / minimap SKIP pip + indoor loc tag
+- [x] Bot BREACH through skip door when player camps SKIP
+- [x] Skip-door berms + cook-off drums
+- [x] Wrecked skip truck south of house
+- [x] Ore chute platform east of skip
 - [ ] Next: owner topics or more juice
