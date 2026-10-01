@@ -10,11 +10,11 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~18:03 PDT
+## 2026-09-30 ~19:03 PDT
 
-- [x] NW lube bay (door gap + racks + spinning drum + collision + motes)
-- [x] Compass / minimap LUBE pip + indoor loc tag
-- [x] Bot BREACH through lube door when player camps LUBE
-- [x] Lube-door berms + cook-off drums
-- [x] Wrecked grease truck south of lube
+- [x] South wash rack (door gap + spray wand + collision + motes)
+- [x] Compass / minimap WASH pip + indoor loc tag
+- [x] Bot BREACH through wash door when player camps WASH
+- [x] Wash-door berms + cook-off drums
+- [x] Wrecked tanker south of wash
 - [ ] Next: owner topics or more juice
