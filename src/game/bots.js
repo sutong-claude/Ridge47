@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -293,8 +293,16 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                                       ? MAP.cycDoor
                                                                                       : inOverflow(playerPos) && MAP.cycDoor
                                                                                         ? MAP.cycDoor
-                                                                                        : inPress(playerPos) && MAP.pressDoor
-                                                                                          ? MAP.pressDoor
+                                                                                        : inFloat(playerPos) && MAP.floatDoor
+                                                                                          ? MAP.floatDoor
+                                                                                          : inFroth(playerPos) && MAP.floatDoor
+                                                                                            ? MAP.floatDoor
+                                                                                            : inFloatLaunder(playerPos) && MAP.floatDoor
+                                                                                              ? MAP.floatDoor
+                                                                                              : inStack(playerPos) && MAP.stackDoor
+                                                                                                ? MAP.stackDoor
+                                                                                                : inPress(playerPos) && MAP.pressDoor
+                                                                                                  ? MAP.pressDoor
                                                                   : MAP.hangarDoor;
       cover.copy(door);
       cover.y = 0;
@@ -411,6 +419,12 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       if (inOverflow(b.pos) && MAP.cyc && MAP.cyc.on) b.pos.z += (MAP.overflow ? MAP.overflow.vz : -1.4) * dt;
       if (inReturn(b.pos) && MAP.cyc && MAP.cyc.on) b.pos.x += (MAP.cycReturn ? MAP.cycReturn.vx : 2.1) * dt;
       if (inPress(b.pos) && MAP.press && MAP.press.on && MAP.press.gap < 0.55) b.pos.x -= 1.8 * dt;
+      if (inFloatLaunder(b.pos)) b.pos.z += (MAP.floatLaunder ? MAP.floatLaunder.vz : -2) * dt;
+      if (onStackBoom(b.pos) && MAP.stack && MAP.stack.on) {
+        b.pos.x += MAP.stackBoom.dx || 0;
+        b.pos.z += MAP.stackBoom.dz || 0;
+      }
+      if (onHaul(b.pos)) b.pos.x += MAP.haulDx || 0;
       if (b.state === "flank" && onCallout && Math.random() < dt * 3.2) {
         b._dust = true;
       }
@@ -440,6 +454,19 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
     }
     if (inPress(b.pos) && MAP.press && MAP.press.on && MAP.press.gap < 0.55) {
       b.pos.x -= 1.8 * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inFloatLaunder(b.pos)) {
+      b.pos.z += (MAP.floatLaunder ? MAP.floatLaunder.vz : -2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onStackBoom(b.pos) && MAP.stack && MAP.stack.on) {
+      b.pos.x += MAP.stackBoom.dx || 0;
+      b.pos.z += MAP.stackBoom.dz || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onHaul(b.pos)) {
+      b.pos.x += MAP.haulDx || 0;
       collideXZ(b.pos, 0.4);
     }
     if ((b.state === "flank" || b.state === "breach" || b.state === "overwatch") && b.lastState !== b.state && b.calloutCd <= 0 && onCallout) {

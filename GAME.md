@@ -647,4 +647,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Press-door berms + cook-off drums
 - [x] Wrecked filter truck north of the bay
 - [x] Close lever (F) clamps the plates, shoves bodies out, cake curtain blocks the door
+- [x] Northwest flotation bank (door gap + twin cells + impellers + collision + motes)
+- [x] Compass / minimap FLOAT pip + indoor loc tag
+- [x] Bot BREACH through float door when player camps FLOAT
+- [x] Float-door berms + cook-off drums
+- [x] Wrecked float truck south of the bank
+- [x] Air lever (F) froths the door curtain (hitscan block) and shoves the launder south
+- [x] Southeast radial stacker (door gap + mast + swinging boom + collision + motes)
+- [x] Compass / minimap STACK pip + indoor loc tag
+- [x] Bot BREACH through stacker door when player camps STACK
+- [x] Stacker-door berms + cook-off drums
+- [x] Wrecked stacker truck east of the house
+- [x] Clutch (F) swings the boom as moving cover; player and bots ride it; discharge dust blocks hitscan
+- [x] Haul truck shuttle on the south road: solid moving cover, bed ride, end bell
 - [ ] Next: owner topics or more juice
