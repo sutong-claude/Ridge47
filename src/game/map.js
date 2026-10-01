@@ -176,6 +176,24 @@ export function inBall(pos) {
   return pos.x > -9.7 && pos.x < -3.3 && pos.z > 41.75 && pos.z < 46.7;
 }
 
+export function inCyc(pos) {
+  return pos.x > -47.45 && pos.x < -41.35 && pos.z > -26.65 && pos.z < -21.75;
+}
+
+export function inSpiral(pos) {
+  return pos.x > -42.85 && pos.x < -40.35 && pos.z > -36.4 && pos.z < -21.7;
+}
+
+export function inOverflow(pos) {
+  const s = MAP.overflow;
+  if (!s) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+
+export function inPress(pos) {
+  return pos.x > 41.55 && pos.x < 47.45 && pos.z > 3.35 && pos.z < 9.05;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -189,7 +207,7 @@ export function onBelt(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos);
 }
 
 export function floorY(x, z) {
@@ -4423,6 +4441,193 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.ballTruck.clone(), mesh: blTruck, sx: 1.5, sy: 1.2, sz: 1.4 });
   MAP.crates.push({ pos: new THREE.Vector3(-2.3, 0, 44.9), mesh: blBed, sx: 1.35, sy: 0.65, sz: 1.5 });
 
+
+  // Southwest cyclone house — door gap east, spinning cone, spiral feed, overflow curtain
+  const cyX = -44.4;
+  const cyZ = -24.2;
+  const cyMat = new THREE.MeshLambertMaterial({ color: 0x3a4038 });
+  const cyWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, cyMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  cyWall(cyX, -26.55, 6.2, 0.4);
+  cyWall(-47.45, cyZ, 0.4, 4.6);
+  cyWall(-41.35, -25.55, 0.4, 1.6);
+  cyWall(-41.35, -22.85, 0.4, 1.6);
+  cyWall(cyX, -21.85, 6.2, 0.4);
+  box(scene, -41.35, 2.9, cyZ, 0.4, 0.36, 1.7, crateWood);
+  box(scene, cyX, 3.1, cyZ, 6.4, 0.16, 5.0, rock);
+  MAP.cycDoor = new THREE.Vector3(-41.05, 0, cyZ);
+  MAP.cyc = { on: false, x: -42.35, z: -22.35 };
+  const cyFloor = box(scene, cyX, 0.04, cyZ, 5.6, 0.08, 4.4, concrete);
+  cyFloor.receiveShadow = true;
+  const cyLamp = new THREE.PointLight(0xffc070, 0.7, 11);
+  cyLamp.position.set(cyX, 2.35, cyZ);
+  scene.add(cyLamp);
+  MAP.cycLamp = cyLamp;
+  const cyRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xc8a060, transparent: true, opacity: 0.44, side: THREE.DoubleSide })
+  );
+  cyRing.rotation.x = -Math.PI / 2;
+  cyRing.position.copy(MAP.cycDoor).setY(0.05);
+  scene.add(cyRing);
+  MAP.cycRing = cyRing;
+  const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 1.15, 2.2, 12), new THREE.MeshLambertMaterial({ color: 0x6a5840 }));
+  cone.position.set(cyX, 1.25, cyZ);
+  scene.add(cone);
+  MAP.cycCone = cone;
+  const cyBand = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.06, 6, 14), steel);
+  cyBand.rotation.x = Math.PI / 2;
+  cyBand.position.set(cyX, 1.55, cyZ);
+  scene.add(cyBand);
+  MAP.cycBand = cyBand;
+  const feedBox = box(scene, cyX + 0.2, 0.4, cyZ + 1.15, 1.3, 0.45, 0.6, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(cyX + 0.2, 0, cyZ + 1.15), mesh: feedBox, sx: 1.3, sy: 0.45, sz: 0.6, climb: true });
+  const cyLever = box(scene, MAP.cyc.x, 1.05, MAP.cyc.z, 0.12, 0.7, 0.12, steel);
+  MAP.cycLever = cyLever;
+  box(scene, MAP.cyc.x, 0.5, MAP.cyc.z, 0.32, 0.6, 0.32, rust);
+  // Spiral classifier trough outside the east door, running south to an overflow pocket
+  const spX = -41.6;
+  const trough = box(scene, spX, 0.16, -29.0, 1.7, 0.18, 14.2, new THREE.MeshLambertMaterial({ color: 0x5a5040 }));
+  trough.receiveShadow = true;
+  const screw = new THREE.Group();
+  for (let i = 0; i < 8; i++) {
+    const flight = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.08, 0.55), steel);
+    flight.position.set(0, 0.42, -6.2 + i * 1.7);
+    flight.rotation.y = i * 0.45;
+    screw.add(flight);
+  }
+  const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 13.4), rust);
+  shaft.position.set(0, 0.48, -29.0 + 24.2);
+  screw.add(shaft);
+  screw.position.set(spX, 0, 0);
+  scene.add(screw);
+  MAP.cycScrew = screw;
+  MAP.spiral = { x: spX, z: -29.0, hx: 0.85, hz: 7.1, vz: -2.2 };
+  const ovX = -41.7;
+  const ovZ = -36.15;
+  const ovMesh = box(scene, ovX, 0.7, ovZ, 2.2, 1.5, 1.6, new THREE.MeshLambertMaterial({ color: 0xc8b090, transparent: true, opacity: 0.06 }));
+  const ovCrate = { pos: new THREE.Vector3(ovX, 0, ovZ), mesh: ovMesh, sx: 2.2, sy: 1.6, sz: 1.6, walkOn: true, dead: true, cyc: true };
+  MAP.crates.push(ovCrate);
+  MAP.cycDust = ovMesh;
+  MAP.cycDustCrate = ovCrate;
+  MAP.overflow = { x: ovX, z: ovZ, hx: 1.35, hz: 1.15, vz: -1.4 };
+  const cyGeo = new THREE.BufferGeometry();
+  const cyN = 22;
+  const cyPos = new Float32Array(cyN * 3);
+  const cyPhase = [];
+  for (let i = 0; i < cyN; i++) {
+    cyPos[i * 3] = cyX + (Math.random() - 0.5) * 5.0;
+    cyPos[i * 3 + 1] = 0.3 + Math.random() * 2.0;
+    cyPos[i * 3 + 2] = cyZ + (Math.random() - 0.5) * 4.0;
+    cyPhase.push(Math.random() * 6);
+  }
+  cyGeo.setAttribute("position", new THREE.BufferAttribute(cyPos, 3));
+  const cyMotes = new THREE.Points(cyGeo, new THREE.PointsMaterial({ color: 0xd8c8a0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(cyMotes);
+  MAP.cycMotes = cyMotes;
+  MAP.cycMotePhase = cyPhase;
+  const cyBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  cyBerm(-42.5, -22.15, 1.5, 0.55);
+  cyBerm(-42.5, -26.25, 1.5, 0.55);
+  const cyDrum = box(scene, -42.85, 0.55, -21.55, 0.55, 1.1, 0.55, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-42.85, 0, -21.55), mesh: cyDrum, sx: 0.55, sy: 1.1, sz: 0.55, drum: true });
+  const cyDrum2 = box(scene, -42.8, 0.55, -26.7, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-42.8, 0, -26.7), mesh: cyDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const cyTruck = box(scene, -44.6, 0.65, -19.4, 1.5, 1.2, 1.4, rust);
+  const cyBed = box(scene, -44.6, 0.42, -17.9, 1.35, 0.65, 1.5, steel);
+  MAP.cycTruck = new THREE.Vector3(-44.6, 0, -19.4);
+  MAP.crates.push({ pos: MAP.cycTruck.clone(), mesh: cyTruck, sx: 1.5, sy: 1.2, sz: 1.4 });
+  MAP.crates.push({ pos: new THREE.Vector3(-44.6, 0, -17.9), mesh: cyBed, sx: 1.35, sy: 0.65, sz: 1.5 });
+  const cyWalk = box(scene, -43.15, 0.85, -29.0, 0.55, 0.16, 13.6, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(-43.15, 0, -29.0), mesh: cyWalk, sx: 0.55, sy: 0.16, sz: 13.6, climb: true, climbTo: 1.05 });
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push({ x: -43.15, z: -29.0, sx: 0.55, sz: 13.6, top: 1.05 });
+  const cyRail = box(scene, -43.4, 1.35, -29.0, 0.08, 0.7, 13.4, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(-43.4, 0, -29.0), mesh: cyRail, sx: 0.08, sy: 0.7, sz: 13.4 });
+
+  // East filter press — door gap west, clamping plates, cake curtain
+  const fpX = 44.5;
+  const fpZ = 6.2;
+  const fpMat = new THREE.MeshLambertMaterial({ color: 0x383c40 });
+  const fpWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, fpMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  fpWall(fpX, 8.65, 6.2, 0.4);
+  fpWall(47.45, fpZ, 0.4, 4.6);
+  fpWall(41.55, 7.55, 0.4, 1.6);
+  fpWall(41.55, 4.85, 0.4, 1.6);
+  fpWall(fpX, 3.75, 6.2, 0.4);
+  box(scene, 41.55, 2.9, fpZ, 0.4, 0.36, 1.7, crateWood);
+  box(scene, fpX, 3.1, fpZ, 6.4, 0.16, 5.0, rock);
+  MAP.pressDoor = new THREE.Vector3(41.85, 0, fpZ);
+  MAP.press = { on: false, x: 43.15, z: 4.35, gap: 1.15 };
+  const fpFloor = box(scene, fpX, 0.04, fpZ, 5.6, 0.08, 4.4, concrete);
+  fpFloor.receiveShadow = true;
+  const fpLamp = new THREE.PointLight(0xffb070, 0.7, 11);
+  fpLamp.position.set(fpX, 2.35, fpZ);
+  scene.add(fpLamp);
+  MAP.pressLamp = fpLamp;
+  const fpRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xd0a070, transparent: true, opacity: 0.44, side: THREE.DoubleSide })
+  );
+  fpRing.rotation.x = -Math.PI / 2;
+  fpRing.position.copy(MAP.pressDoor).setY(0.05);
+  scene.add(fpRing);
+  MAP.pressRing = fpRing;
+  const plateMat = new THREE.MeshLambertMaterial({ color: 0x6a6058 });
+  const plateA = box(scene, fpX - 0.55, 1.15, fpZ, 0.16, 1.7, 1.5, plateMat);
+  const plateB = box(scene, fpX + 0.55, 1.15, fpZ, 0.16, 1.7, 1.5, plateMat);
+  MAP.pressPlates = [plateA, plateB];
+  const ram = box(scene, fpX, 1.15, fpZ + 1.15, 0.35, 0.35, 0.8, rust);
+  MAP.pressRam = ram;
+  const fpLever = box(scene, MAP.press.x, 1.05, MAP.press.z, 0.12, 0.7, 0.12, steel);
+  MAP.pressLever = fpLever;
+  box(scene, MAP.press.x, 0.5, MAP.press.z, 0.32, 0.6, 0.32, rust);
+  const cake = box(scene, 41.7, 1.2, fpZ, 0.55, 2.0, 1.6, new THREE.MeshLambertMaterial({ color: 0xc8b090, transparent: true, opacity: 0.05 }));
+  const cakeCrate = { pos: new THREE.Vector3(41.7, 0, fpZ), mesh: cake, sx: 0.55, sy: 2.1, sz: 1.6, walkOn: true, dead: true, press: true };
+  MAP.crates.push(cakeCrate);
+  MAP.pressCake = cake;
+  MAP.pressCakeCrate = cakeCrate;
+  const fpGeo = new THREE.BufferGeometry();
+  const fpN = 20;
+  const fpPos = new Float32Array(fpN * 3);
+  const fpPhase = [];
+  for (let i = 0; i < fpN; i++) {
+    fpPos[i * 3] = fpX + (Math.random() - 0.5) * 5.0;
+    fpPos[i * 3 + 1] = 0.3 + Math.random() * 2.0;
+    fpPos[i * 3 + 2] = fpZ + (Math.random() - 0.5) * 4.0;
+    fpPhase.push(Math.random() * 6);
+  }
+  fpGeo.setAttribute("position", new THREE.BufferAttribute(fpPos, 3));
+  const fpMotes = new THREE.Points(fpGeo, new THREE.PointsMaterial({ color: 0xe0c8a8, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(fpMotes);
+  MAP.pressMotes = fpMotes;
+  MAP.pressMotePhase = fpPhase;
+  const fpBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  fpBerm(42.55, 4.55, 1.5, 0.55);
+  fpBerm(42.55, 7.85, 1.5, 0.55);
+  const fpDrum = box(scene, 42.9, 0.55, 4.15, 0.55, 1.1, 0.55, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(42.9, 0, 4.15), mesh: fpDrum, sx: 0.55, sy: 1.1, sz: 0.55, drum: true });
+  const fpDrum2 = box(scene, 42.85, 0.55, 8.25, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(42.85, 0, 8.25), mesh: fpDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const fpTruck = box(scene, 44.4, 0.65, 10.6, 1.5, 1.2, 1.4, rust);
+  const fpBed = box(scene, 44.4, 0.42, 12.1, 1.35, 0.65, 1.5, steel);
+  MAP.pressTruck = new THREE.Vector3(44.4, 0, 10.6);
+  MAP.crates.push({ pos: MAP.pressTruck.clone(), mesh: fpTruck, sx: 1.5, sy: 1.2, sz: 1.4 });
+  MAP.crates.push({ pos: new THREE.Vector3(44.4, 0, 12.1), mesh: fpBed, sx: 1.35, sy: 0.65, sz: 1.5 });
+
   return MAP;
 }
 
@@ -5811,6 +6016,47 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     MAP.ballMotes.geometry.attributes.position.needsUpdate = true;
   }
 
+
+
+  if (MAP.cyc && MAP.cycCone) {
+    const spd = MAP.cyc.on ? 1.8 : 0.08;
+    MAP.cycCone.rotation.y += dt * spd;
+    if (MAP.cycBand) MAP.cycBand.rotation.z += dt * spd;
+    if (MAP.cycScrew) MAP.cycScrew.rotation.y += dt * (MAP.cyc.on ? 2.4 : 0.05);
+    if (MAP.cycLever) MAP.cycLever.rotation.z = MAP.cyc.on ? -0.8 : 0.35;
+    if (MAP.cycLamp) MAP.cycLamp.intensity = MAP.cyc.on ? 1.1 : 0.65;
+    if (MAP.cycDust) MAP.cycDust.material.opacity = MAP.cyc.on ? 0.34 : 0.04;
+    if (MAP.cycDustCrate) MAP.cycDustCrate.dead = !MAP.cyc.on;
+  }
+  if (MAP.cycMotes && MAP.cycMotePhase) {
+    const arr = MAP.cycMotes.geometry.attributes.position.array;
+    const ph = MAP.cycMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.cyc && MAP.cyc.on ? 2.0 : 0.55);
+      arr[i * 3 + 1] = 0.3 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.0;
+    }
+    MAP.cycMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.press && MAP.pressPlates) {
+    const target = MAP.press.on ? 0.22 : 1.15;
+    MAP.press.gap += (target - MAP.press.gap) * Math.min(1, dt * 2.4);
+    MAP.pressPlates[0].position.x = 44.5 - MAP.press.gap * 0.5;
+    MAP.pressPlates[1].position.x = 44.5 + MAP.press.gap * 0.5;
+    if (MAP.pressLever) MAP.pressLever.rotation.z = MAP.press.on ? -0.75 : 0.35;
+    if (MAP.pressLamp) MAP.pressLamp.intensity = MAP.press.on ? 1.15 : 0.6;
+    if (MAP.pressCake) MAP.pressCake.material.opacity = MAP.press.on ? 0.36 : 0.04;
+    if (MAP.pressCakeCrate) MAP.pressCakeCrate.dead = !MAP.press.on;
+    if (MAP.pressRam) MAP.pressRam.position.z = 6.2 + 1.15 + (MAP.press.on ? 0.25 : 0);
+  }
+  if (MAP.pressMotes && MAP.pressMotePhase) {
+    const arr = MAP.pressMotes.geometry.attributes.position.array;
+    const ph = MAP.pressMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.press && MAP.press.on ? 2.2 : 0.5);
+      arr[i * 3 + 1] = 0.3 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.0;
+    }
+    MAP.pressMotes.geometry.attributes.position.needsUpdate = true;
+  }
 
 export function collideXZ(pos, radius = 0.45) {
   const h = MAP.half;

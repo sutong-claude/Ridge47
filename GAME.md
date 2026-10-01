@@ -633,4 +633,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Mill-door berms + cook-off drums
 - [x] Wrecked mill truck east of the house
 - [x] Clutch (F) rolls the drum, tumbles player and bots, dust curtain blocks the mouth
+- [x] Southwest cyclone house (door gap + cone + collision + motes)
+- [x] Compass / minimap CYC pip + indoor loc tag
+- [x] Bot BREACH through cyclone door when player camps CYC
+- [x] Cyclone-door berms + cook-off drums
+- [x] Wrecked cyclone truck north of the house
+- [x] Feed lever (F) spins the cone, spiral carries player and bots south, overflow dust blocks hitscan
+- [x] Spiral catwalk beside the classifier
+- [x] East filter press (door gap + clamping plates + collision + motes)
+- [x] Compass / minimap PRESS pip + indoor loc tag
+- [x] Bot BREACH through press door when player camps PRESS
+- [x] Press-door berms + cook-off drums
+- [x] Wrecked filter truck north of the bay
+- [x] Close lever (F) clamps the plates, shoves bodies out, cake curtain blocks the door
 - [ ] Next: owner topics or more juice
