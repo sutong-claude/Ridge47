@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -213,7 +213,11 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       }
     } else if (!pinned && inInterior(playerPos) && !inInterior(b.pos) && dist < 36) {
       const door =
-        inWarehouse(playerPos) && MAP.warehouseDoor
+        inJig(playerPos) || onJigDeck(playerPos) || inHutch(playerPos) ? MAP.jigDoor
+          : inCool(playerPos) || onCoolCar(playerPos) || inQuench(playerPos) ? MAP.coolDoor
+          : inBag(playerPos) || onBagRack(playerPos) || inFines(playerPos) ? MAP.bagDoor
+          : inDry(playerPos) || onDryShell(playerPos) || inExhaust(playerPos) ? MAP.dryDoor
+          : inWarehouse(playerPos) && MAP.warehouseDoor
           ? MAP.warehouseDoor
           : inShed(playerPos) && MAP.shedDoor
             ? MAP.shedDoor
@@ -311,7 +315,23 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                                                         ? MAP.sinterDoor
                                                                                                         : onStrand(playerPos) && MAP.sinterDoor
                                                                                                           ? MAP.sinterDoor
-                                                                                                          : inSample(playerPos) && MAP.sampleDoor
+                                                                                                          : inSilo(playerPos) && MAP.siloDoor
+                                                                                                            ? MAP.siloDoor
+                                                                                                            : onScrew(playerPos) && MAP.siloDoor
+                                                                                                            ? MAP.siloDoor
+                                                                                                            : inPellet(playerPos) && MAP.pelletDoor
+                                                                                                            ? MAP.pelletDoor
+                                                                                                            : onDisc(playerPos) && MAP.pelletDoor
+                                                                                                            ? MAP.pelletDoor
+                                                                                                            : inChute(playerPos) && MAP.pelletDoor
+                                                                                                            ? MAP.pelletDoor
+                                                                                                            : inClar(playerPos) && MAP.clarDoor
+                                                                                                            ? MAP.clarDoor
+                                                                                                            : onBridge(playerPos) && MAP.clarDoor
+                                                                                                            ? MAP.clarDoor
+                                                                                                            : inUnder(playerPos) && MAP.clarDoor
+                                                                                                            ? MAP.clarDoor
+                                                                                                            : inSample(playerPos) && MAP.sampleDoor
                                                                                                             ? MAP.sampleDoor
                                                                                                             : inReject(playerPos) && MAP.sampleDoor
                                                                                                               ? MAP.sampleDoor
@@ -492,6 +512,75 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       b.pos.x += MAP.strand.dx || 0;
       collideXZ(b.pos, 0.4);
     }
+
+    if (onJigDeck(b.pos) && MAP.jigDeck) {
+      b.pos.z += MAP.jigDeck.dz || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inHutch(b.pos)) {
+      b.pos.x += (MAP.hutch ? MAP.hutch.vx : -2.2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inJig(b.pos) && MAP.jig && MAP.jig.on) b.hp -= 2.4 * dt;
+    if (onCoolCar(b.pos) && MAP.coolCar) {
+      b.pos.x += MAP.coolCar.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inQuench(b.pos)) {
+      b.pos.z += (MAP.quench ? MAP.quench.vz : -2.1) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inCool(b.pos) && MAP.cool && MAP.cool.on) b.hp -= 3.4 * dt;
+    if (inFall(b.pos)) {
+      b.pos.z += (MAP.fall ? MAP.fall.vz : -2.6) * dt;
+      b.hp -= 8 * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onBagRack(b.pos) && MAP.bagRack) {
+      b.pos.x += MAP.bagRack.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inFines(b.pos)) {
+      b.pos.z += (MAP.fines ? MAP.fines.vz : 2.2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inBag(b.pos) && MAP.bag && MAP.bag.on) b.hp -= 1.8 * dt;
+    if (onDryShell(b.pos) && MAP.dryShell) {
+      b.pos.x += MAP.dryShell.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inExhaust(b.pos)) {
+      b.pos.z += (MAP.exhaust ? MAP.exhaust.vz : -2.3) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inDry(b.pos) && MAP.dry && MAP.dry.on) b.hp -= 3.1 * dt;
+    if (onScrew(b.pos)) {
+      b.pos.x += (MAP.screw ? MAP.screw.vx : 2.15) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onDisc(b.pos) && MAP.disc && MAP.pellet && MAP.pellet.on) {
+      const ang = (MAP.disc._omega || 0.85) * dt;
+      const dx = b.pos.x - MAP.disc.x;
+      const dz = b.pos.z - MAP.disc.z;
+      const c = Math.cos(ang);
+      const sn = Math.sin(ang);
+      b.pos.x = MAP.disc.x + dx * c - dz * sn;
+      b.pos.z = MAP.disc.z + dx * sn + dz * c;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inChute(b.pos)) {
+      b.pos.z += (MAP.chute ? MAP.chute.vz : -2.4) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onBridge(b.pos) && MAP.clar && MAP.clar.on && MAP.clarBridge) {
+      b.pos.x += MAP.clarBridge.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inUnder(b.pos)) {
+      b.pos.x += (MAP.under ? MAP.under.vx : 2.2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inPellet(b.pos) && MAP.pellet && MAP.pellet.on) b.hp -= 3.2 * dt;
     if (onSampleBoom(b.pos) && MAP.sample && MAP.sample.on && MAP.sampleBoom) {
       b.pos.x += MAP.sampleBoom.dx || 0;
       b.pos.z += MAP.sampleBoom.dz || 0;
