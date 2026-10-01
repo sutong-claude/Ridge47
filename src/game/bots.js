@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -320,6 +320,11 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       if (inSluice(b.pos) && MAP.sluice) {
         b.pos.x += MAP.sluice.vx * dt;
         b.pos.z += MAP.sluice.vz * dt;
+        collideXZ(b.pos, 0.4);
+      }
+      if (onBelt(b.pos) && MAP.belt) {
+        b.pos.x += MAP.belt.vx * dt;
+        b.pos.z += MAP.belt.vz * dt;
         collideXZ(b.pos, 0.4);
       }
       if (MAP.tramCrate) {

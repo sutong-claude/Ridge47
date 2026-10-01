@@ -593,4 +593,5 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Cage dump dust at the mouth blocks hitscan LOS for a few seconds
 - [x] Sluice flume east of the pad shoves the player and bots downstream
 - [x] Adit mud slows movement
+- [x] Crusher conveyor belt carries anyone standing on the trestle toward the pad
 - [ ] Next: owner topics or more juice

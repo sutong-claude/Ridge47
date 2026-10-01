@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -3069,6 +3069,15 @@ function tick(now) {
     collideXZ(player.pos, 0.4);
     if (Math.random() < dt * 3) beep(180 + Math.random() * 40, 0.05, 0.012, 1, "sine");
   }
+  if (onBelt(player.pos) && MAP.belt) {
+    player.pos.x += MAP.belt.vx * dt;
+    player.pos.z += MAP.belt.vz * dt;
+    collideXZ(player.pos, 0.4);
+    if (!player._beltOn) {
+      player._beltOn = true;
+      feed("BELT");
+    }
+  } else player._beltOn = false;
   if (MAP.cage && player.grounded) {
     const dx = player.pos.x - MAP.cage.x;
     const dz = player.pos.z - MAP.cage.z;

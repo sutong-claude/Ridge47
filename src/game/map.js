@@ -144,6 +144,12 @@ export function inSluice(pos) {
   return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
 }
 
+export function onBelt(pos) {
+  const b = MAP.belt;
+  if (!b) return false;
+  return Math.abs(pos.x - b.x) < b.hx && Math.abs(pos.z - b.z) < b.hz && pos.y > b.minY;
+}
+
 export function inInterior(pos) {
   return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos);
 }
@@ -988,6 +994,7 @@ export function buildMap(scene) {
   }
   box(scene, 27.2, 1.35, -5.4, 8.6, 0.08, 0.55, rust);
   MAP.conveyor = new THREE.Vector3(28.4, 0, -5.8);
+  MAP.belt = { x: 27.4, z: -5.9, hx: 4.3, hz: 0.7, minY: 0.85, vx: -2.6, vz: 0.55 };
 
   // Crusher-door berms
   const crBag = box(scene, 32.0, 0.28, -8.6, 1.6, 0.56, 0.8, bagMat);
