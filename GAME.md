@@ -673,4 +673,16 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Rope-door berms + cook-off drums
 - [x] Wrecked rope truck east of the house
 - [x] Clutch (F) runs the buckets as moving cover; player and bots ride; dump dust at the south tower blocks hitscan
+- [x] East sinter strand (door gap + grate + rideable car + collision + motes)
+- [x] Compass / minimap SINT pip + indoor loc tag
+- [x] Bot BREACH through sinter door when player camps SINT or the strand
+- [x] Sinter-door berms + cook-off drums
+- [x] Wrecked sinter truck south of the house
+- [x] East-wall notch; clutch (F) lifts the gate, strand carries player and bots into the quarry, quench dust blocks hitscan, grate heat scalds
+- [x] West sampler house (door gap + cutter boom + collision + motes)
+- [x] Compass / minimap SAMP pip + indoor loc tag
+- [x] Bot BREACH through sampler door when player camps SAMP or the reject flume
+- [x] Sampler-door berms + cook-off drums
+- [x] Wrecked sampler truck south of the house
+- [x] West-wall notch; clutch (F) swings the cutter as moving cover; reject flume shoves east; cut dust blocks the mouth
 - [ ] Next: owner topics or more juice

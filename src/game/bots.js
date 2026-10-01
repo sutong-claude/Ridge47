@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -307,7 +307,15 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                                                     ? MAP.slakeDoor
                                                                                                     : inRope(playerPos) && MAP.ropeDoor
                                                                                                       ? MAP.ropeDoor
-                                                                                                      : inPress(playerPos) && MAP.pressDoor
+                                                                                                      : inSinter(playerPos) && MAP.sinterDoor
+                                                                                                        ? MAP.sinterDoor
+                                                                                                        : onStrand(playerPos) && MAP.sinterDoor
+                                                                                                          ? MAP.sinterDoor
+                                                                                                          : inSample(playerPos) && MAP.sampleDoor
+                                                                                                            ? MAP.sampleDoor
+                                                                                                            : inReject(playerPos) && MAP.sampleDoor
+                                                                                                              ? MAP.sampleDoor
+                                                                                                              : inPress(playerPos) && MAP.pressDoor
                                                                                                   ? MAP.pressDoor
                                                                   : MAP.hangarDoor;
       cover.copy(door);
@@ -480,6 +488,20 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       collideXZ(b.pos, 0.4);
       if (MAP.slake && MAP.slake.on) b.hp -= 3.5 * dt;
     }
+    if (onStrand(b.pos) && MAP.strand && MAP.strand.on) {
+      b.pos.x += MAP.strand.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onSampleBoom(b.pos) && MAP.sample && MAP.sample.on && MAP.sampleBoom) {
+      b.pos.x += MAP.sampleBoom.dx || 0;
+      b.pos.z += MAP.sampleBoom.dz || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inReject(b.pos)) {
+      b.pos.x += (MAP.reject ? MAP.reject.vx : 2.3) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inSinter(b.pos) && MAP.sinter && MAP.sinter.on) b.hp -= 4 * dt;
     if (onBucket(b.pos) && MAP.buckets) {
       for (const bk of MAP.buckets) {
         if (Math.abs(b.pos.x - bk.x) < 0.85 && Math.abs(b.pos.z - bk.z) < 0.95) {

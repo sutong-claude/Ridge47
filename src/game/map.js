@@ -256,6 +256,32 @@ export function onBucket(pos) {
   return false;
 }
 
+export function inSinter(pos) {
+  return pos.x > 42.15 && pos.x < 47.55 && pos.z > -14.55 && pos.z < -9.75;
+}
+
+export function onStrand(pos) {
+  const c = MAP.strandCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.2 && Math.abs(pos.z - c.pos.z) < 0.85 && pos.y < 2.3;
+}
+
+export function inSample(pos) {
+  return pos.x > -47.7 && pos.x < -42.15 && pos.z > 13.55 && pos.z < 18.15;
+}
+
+export function onSampleBoom(pos) {
+  const b = MAP.sampleBoom;
+  if (!b) return false;
+  return Math.abs(pos.x - b.x) < 0.75 && Math.abs(pos.z - b.z) < 1.15 && pos.y < 2.5;
+}
+
+export function inReject(pos) {
+  const r = MAP.reject;
+  if (!r || !MAP.sample || !MAP.sample.on) return false;
+  return Math.abs(pos.x - r.x) < r.hx && Math.abs(pos.z - r.z) < r.hz;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -269,7 +295,7 @@ export function onBelt(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos);
 }
 
 export function floorY(x, z) {
@@ -347,11 +373,14 @@ export function buildMap(scene) {
 
   const wallH = 4.2;
   const placements = [
-    [-40, 0, 0, 2, wallH, 80],
-    [40, 0, 0, 2, wallH, 80],
+    [-40, 0, -13, 2, wallH, 54],
+    [-40, 0, 28.75, 2, wallH, 22.5],
+    [40, 0, -27, 2, wallH, 26],
+    [40, 0, 15, 2, wallH, 50],
     [0, 0, -40, 80, wallH, 2],
     [0, 0, 40, 80, wallH, 2],
   ];
+  // west notch z 14..17.5 sampler mouth; east notch z -14..-10 sinter strand
   for (const p of placements) {
     const m = box(scene, p[0], p[1] + p[4] / 2, p[2], p[3], p[4], p[5], rock);
     MAP.walls.push({ mesh: m, pos: new THREE.Vector3(p[0], 0, p[2]), sx: p[3], sy: p[4], sz: p[5] });
@@ -5064,6 +5093,181 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.ropeTruck.clone(), mesh: rpTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
   MAP.crates.push({ pos: new THREE.Vector3(-27.5, 0, 4.2), mesh: rpBed, sx: 1.4, sy: 0.62, sz: 1.25 });
 
+
+  // East sinter strand — door gap west through the east-wall notch, rideable grate car
+  const siX = 44.6;
+  const siZ = -12.15;
+  const siMat = new THREE.MeshLambertMaterial({ color: 0x4a3428 });
+  const siWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, siMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  siWall(siX, -14.45, 4.8, 0.4);
+  siWall(siX, -9.85, 4.8, 0.4);
+  siWall(46.85, siZ, 0.4, 4.2);
+  siWall(43.55, -13.55, 0.4, 1.4);
+  siWall(43.55, -10.75, 0.4, 1.4);
+  box(scene, 43.55, 2.9, siZ, 0.4, 0.36, 1.5, crateWood);
+  box(scene, siX, 3.05, siZ, 4.6, 0.16, 4.4, rock);
+  MAP.sinterDoor = new THREE.Vector3(43.35, 0, siZ);
+  MAP.sinter = { on: false, x: siX - 1.2, z: siZ + 0.85 };
+  const siFloor = box(scene, siX, 0.04, siZ, 4.2, 0.08, 3.8, concrete);
+  siFloor.receiveShadow = true;
+  const siLamp = new THREE.PointLight(0xff8040, 0.7, 11);
+  siLamp.position.set(siX, 2.3, siZ);
+  scene.add(siLamp);
+  MAP.sinterLamp = siLamp;
+  const siRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xe07040, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+  );
+  siRing.rotation.x = -Math.PI / 2;
+  siRing.position.copy(MAP.sinterDoor).setY(0.05);
+  scene.add(siRing);
+  const grate = box(scene, siX + 0.2, 0.35, siZ, 2.4, 0.16, 1.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(siX + 0.2, 0, siZ), mesh: grate, sx: 2.4, sy: 0.7, sz: 1.5, walkOn: true });
+  const siLever = box(scene, MAP.sinter.x, 1.05, MAP.sinter.z, 0.12, 0.55, 0.12, amber);
+  MAP.sinterLever = siLever;
+  const strand = new THREE.Group();
+  const bed = box(scene, 0, 0.42, 0, 2.1, 0.28, 1.35, steel);
+  const cakeMesh = box(scene, 0, 0.68, 0, 1.5, 0.28, 1.0, new THREE.MeshLambertMaterial({ color: 0xc06030 }));
+  strand.add(bed, cakeMesh);
+  strand.position.set(44.4, 0, siZ);
+  scene.add(strand);
+  MAP.strandMesh = strand;
+  const strandCrate = { pos: new THREE.Vector3(44.4, 0, siZ), mesh: strand, sx: 2.2, sy: 1.15, sz: 1.45, walkOn: true, strand: true };
+  MAP.crates.push(strandCrate);
+  MAP.strandCrate = strandCrate;
+  MAP.strand = { on: false, t: 0, dir: 1, x: 44.4, z: siZ, dx: 0 };
+  MAP.sinter.on = false;
+  const gate = box(scene, 40.0, 1.15, siZ, 0.42, 2.3, 3.7, steel);
+  const gateCrate = { pos: new THREE.Vector3(40.0, 0, siZ), mesh: gate, sx: 0.42, sy: 2.3, sz: 3.7, gate: true };
+  MAP.crates.push(gateCrate);
+  MAP.sinterGate = gate;
+  MAP.sinterGateCrate = gateCrate;
+  const quench = box(scene, 32.2, 1.25, siZ, 1.5, 2.2, 1.6, new THREE.MeshBasicMaterial({ color: 0xc8d8e0, transparent: true, opacity: 0.04 }));
+  const quenchCrate = { pos: new THREE.Vector3(32.2, 0, siZ), mesh: quench, sx: 1.6, sy: 2.2, sz: 1.7, walkOn: true, dead: true, quench: true };
+  MAP.crates.push(quenchCrate);
+  MAP.quench = quench;
+  MAP.quenchCrate = quenchCrate;
+  MAP.strandDustT = 0;
+  const rails = box(scene, 38.2, 0.08, siZ, 12.4, 0.08, 0.35, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(38.2, 0, siZ), mesh: rails, sx: 12.4, sy: 0.2, sz: 0.35, walkOn: true });
+  const siMotesGeo = new THREE.BufferGeometry();
+  const siN = 12;
+  const siPos = new Float32Array(siN * 3);
+  const siPhase = [];
+  for (let i = 0; i < siN; i++) {
+    siPos[i * 3] = siX + (Math.random() - 0.5) * 3.6;
+    siPos[i * 3 + 1] = 0.3 + Math.random() * 1.6;
+    siPos[i * 3 + 2] = siZ + (Math.random() - 0.5) * 3.2;
+    siPhase.push(Math.random() * 6);
+  }
+  siMotesGeo.setAttribute("position", new THREE.BufferAttribute(siPos, 3));
+  const siMotes = new THREE.Points(siMotesGeo, new THREE.PointsMaterial({ color: 0xffb070, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(siMotes);
+  MAP.sinterMotes = siMotes;
+  MAP.sinterMotePhase = siPhase;
+  const siBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  siBerm(42.7, -14.7, 1.2, 0.5);
+  siBerm(42.7, -9.6, 1.2, 0.5);
+  const siDrum = box(scene, 43.0, 0.55, -14.55, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(43.0, 0, -14.55), mesh: siDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const siDrum2 = box(scene, 43.05, 0.55, -9.7, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(43.05, 0, -9.7), mesh: siDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const siTruck = box(scene, 45.4, 0.65, -16.2, 1.45, 1.2, 1.35, rust);
+  const siBed = box(scene, 45.4, 0.42, -17.6, 1.4, 0.62, 1.2, steel);
+  MAP.sinterTruck = new THREE.Vector3(45.4, 0, -16.2);
+  MAP.crates.push({ pos: MAP.sinterTruck.clone(), mesh: siTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
+  MAP.crates.push({ pos: new THREE.Vector3(45.4, 0, -17.6), mesh: siBed, sx: 1.4, sy: 0.62, sz: 1.2 });
+
+  // West sampler house — door gap east through the west-wall notch, swinging cutter boom
+  const saX = -44.5;
+  const saZ = 15.75;
+  const saMat = new THREE.MeshLambertMaterial({ color: 0x3a4038 });
+  const saWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, saMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  saWall(saX, 13.65, 4.6, 0.4);
+  saWall(saX, 17.85, 4.6, 0.4);
+  saWall(-46.7, saZ, 0.4, 3.8);
+  saWall(-42.35, 14.45, 0.4, 1.2);
+  saWall(-42.35, 17.05, 0.4, 1.2);
+  box(scene, -42.35, 2.9, saZ, 0.4, 0.36, 1.5, crateWood);
+  box(scene, saX, 3.05, saZ, 4.4, 0.16, 4.0, rock);
+  MAP.sampleDoor = new THREE.Vector3(-42.15, 0, saZ);
+  MAP.sample = { on: false, x: saX + 1.15, z: saZ - 1.15, ang: 0.2 };
+  const saFloor = box(scene, saX, 0.04, saZ, 4.0, 0.08, 3.6, concrete);
+  saFloor.receiveShadow = true;
+  const saLamp = new THREE.PointLight(0xc8d0a0, 0.6, 11);
+  saLamp.position.set(saX, 2.3, saZ);
+  scene.add(saLamp);
+  MAP.sampleLamp = saLamp;
+  const saRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xc8d080, transparent: true, opacity: 0.42, side: THREE.DoubleSide })
+  );
+  saRing.rotation.x = -Math.PI / 2;
+  saRing.position.copy(MAP.sampleDoor).setY(0.05);
+  scene.add(saRing);
+  const saLever = box(scene, MAP.sample.x, 1.05, MAP.sample.z, 0.12, 0.55, 0.12, amber);
+  MAP.sampleLever = saLever;
+  const pivot = new THREE.Group();
+  pivot.position.set(-41.2, 1.15, saZ);
+  const arm = box(scene, 1.5, 0, 0, 3.0, 0.22, 0.36, rust);
+  const head = box(scene, 3.05, 0, 0, 0.55, 0.55, 0.7, steel);
+  pivot.add(arm, head);
+  scene.add(pivot);
+  MAP.samplePivot = pivot;
+  const tipCrate = { pos: new THREE.Vector3(-38.1, 0, saZ), mesh: head, sx: 0.7, sy: 1.5, sz: 0.8, walkOn: true, sample: true };
+  MAP.crates.push(tipCrate);
+  MAP.sampleTip = tipCrate;
+  MAP.sampleBoom = { x: -38.1, z: saZ, dx: 0, dz: 0 };
+  MAP.reject = { x: -36.4, z: saZ, hx: 2.4, hz: 0.7, vx: 2.3 };
+  const rejectMesh = box(scene, MAP.reject.x, 0.2, saZ, 4.6, 0.16, 1.15, new THREE.MeshLambertMaterial({ color: 0x6a6048 }));
+  MAP.rejectMesh = rejectMesh;
+  const cutDust = box(scene, -39.1, 1.2, saZ, 0.7, 2.1, 2.4, new THREE.MeshBasicMaterial({ color: 0xd0c8a8, transparent: true, opacity: 0.04 }));
+  const cutCrate = { pos: new THREE.Vector3(-39.1, 0, saZ), mesh: cutDust, sx: 0.7, sy: 2.1, sz: 2.4, walkOn: true, dead: true, sampleDust: true };
+  MAP.crates.push(cutCrate);
+  MAP.sampleDust = cutDust;
+  MAP.sampleDustCrate = cutCrate;
+  const saMotesGeo = new THREE.BufferGeometry();
+  const saN = 12;
+  const saPos = new Float32Array(saN * 3);
+  const saPhase = [];
+  for (let i = 0; i < saN; i++) {
+    saPos[i * 3] = saX + (Math.random() - 0.5) * 3.4;
+    saPos[i * 3 + 1] = 0.3 + Math.random() * 1.6;
+    saPos[i * 3 + 2] = saZ + (Math.random() - 0.5) * 3.0;
+    saPhase.push(Math.random() * 6);
+  }
+  saMotesGeo.setAttribute("position", new THREE.BufferAttribute(saPos, 3));
+  const saMotes = new THREE.Points(saMotesGeo, new THREE.PointsMaterial({ color: 0xe0d8b0, size: 0.045, transparent: true, opacity: 0.38 }));
+  scene.add(saMotes);
+  MAP.sampleMotes = saMotes;
+  MAP.sampleMotePhase = saPhase;
+  const saBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  saBerm(-42.6, 13.4, 0.5, 1.15);
+  saBerm(-42.6, 18.1, 0.5, 1.15);
+  const saDrum = box(scene, -42.9, 0.55, 13.55, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-42.9, 0, 13.55), mesh: saDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const saDrum2 = box(scene, -42.85, 0.55, 18.0, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-42.85, 0, 18.0), mesh: saDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const saTruck = box(scene, -45.2, 0.65, 11.4, 1.45, 1.2, 1.35, rust);
+  const saBed = box(scene, -45.2, 0.42, 9.9, 1.4, 0.62, 1.2, steel);
+  MAP.sampleTruck = new THREE.Vector3(-45.2, 0, 11.4);
+  MAP.crates.push({ pos: MAP.sampleTruck.clone(), mesh: saTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
+  MAP.crates.push({ pos: new THREE.Vector3(-45.2, 0, 9.9), mesh: saBed, sx: 1.4, sy: 0.62, sz: 1.2 });
+
   return MAP;
 }
 
@@ -6624,6 +6828,80 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     MAP.ropeMotes.geometry.attributes.position.needsUpdate = true;
   }
 
+
+
+  if (MAP.strand && MAP.strandCrate && MAP.strandMesh) {
+    const run = MAP.sinter && MAP.sinter.on;
+    MAP.strand.on = !!run;
+    if (run) {
+      MAP.strand.t += dt * 0.16 * MAP.strand.dir;
+      if (MAP.strand.t >= 1) {
+        MAP.strand.t = 1;
+        MAP.strand.dir = -1;
+        MAP.strandBell = true;
+        MAP.strandDustT = 1.5;
+      } else if (MAP.strand.t <= 0) {
+        MAP.strand.t = 0;
+        MAP.strand.dir = 1;
+        MAP.strandBell = true;
+      }
+    }
+    MAP.strandDustT = Math.max(0, (MAP.strandDustT || 0) - dt);
+    const x0 = 44.4;
+    const x1 = 32.4;
+    const nx = x0 + (x1 - x0) * MAP.strand.t;
+    MAP.strand.dx = nx - MAP.strand.x;
+    MAP.strand.x = nx;
+    MAP.strand.z = -12.15;
+    MAP.strandCrate.pos.set(nx, 0, MAP.strand.z);
+    MAP.strandMesh.position.set(nx, 0, MAP.strand.z);
+    if (MAP.sinterGate) {
+      const up = run ? 3.35 : 1.15;
+      MAP.sinterGate.position.y += (up - MAP.sinterGate.position.y) * Math.min(1, dt * 3);
+      if (MAP.sinterGateCrate) MAP.sinterGateCrate.dead = MAP.sinterGate.position.y > 2.4;
+    }
+    if (MAP.sinterLever) MAP.sinterLever.rotation.z = run ? -0.7 : 0.35;
+    if (MAP.sinterLamp) MAP.sinterLamp.intensity = run ? 1.25 : 0.4;
+    if (MAP.quench) MAP.quench.material.opacity = MAP.strandDustT > 0 ? 0.42 : 0.04;
+    if (MAP.quenchCrate) MAP.quenchCrate.dead = MAP.strandDustT <= 0;
+  }
+  if (MAP.sinterMotes && MAP.sinterMotePhase) {
+    const arr = MAP.sinterMotes.geometry.attributes.position.array;
+    const ph = MAP.sinterMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.sinter && MAP.sinter.on ? 1.8 : 0.3);
+      arr[i * 3 + 1] = 0.3 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.8;
+    }
+    MAP.sinterMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.sample && MAP.samplePivot && MAP.sampleBoom) {
+    const prevX = MAP.sampleBoom.x;
+    const prevZ = MAP.sampleBoom.z;
+    if (MAP.sample.on) MAP.sample.ang += dt * 0.55;
+    const ang = Math.sin(MAP.sample.ang) * 0.65;
+    MAP.samplePivot.rotation.y = ang;
+    const tipx = -41.2 + Math.cos(ang) * 3.05;
+    const tipz = 15.75 + Math.sin(ang) * 3.05;
+    MAP.sampleBoom.dx = tipx - prevX;
+    MAP.sampleBoom.dz = tipz - prevZ;
+    MAP.sampleBoom.x = tipx;
+    MAP.sampleBoom.z = tipz;
+    if (MAP.sampleTip) MAP.sampleTip.pos.set(tipx, 0, tipz);
+    if (MAP.sampleLever) MAP.sampleLever.rotation.z = MAP.sample.on ? -0.65 : 0.3;
+    if (MAP.sampleLamp) MAP.sampleLamp.intensity = MAP.sample.on ? 1.1 : 0.4;
+    if (MAP.sampleDust) MAP.sampleDust.material.opacity = MAP.sample.on ? 0.4 : 0.04;
+    if (MAP.sampleDustCrate) MAP.sampleDustCrate.dead = !MAP.sample.on;
+    if (MAP.rejectMesh) MAP.rejectMesh.material.opacity = MAP.sample.on ? 1 : 0.45;
+  }
+  if (MAP.sampleMotes && MAP.sampleMotePhase) {
+    const arr = MAP.sampleMotes.geometry.attributes.position.array;
+    const ph = MAP.sampleMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.sample && MAP.sample.on ? 1.4 : 0.28);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.7;
+    }
+    MAP.sampleMotes.geometry.attributes.position.needsUpdate = true;
+  }
 
 export function collideXZ(pos, radius = 0.45) {
   const h = MAP.half;
