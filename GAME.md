@@ -610,4 +610,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Fan lever (F) spins the raise fan, shoves player and bots north, dust curtain blocks hitscan
 - [x] Man-car on the drift rails: rideable solid cover, clack + end bell
 - [x] Drop gate (F) at the vent mouth seals shots and bodies when down
+- [x] South grizzly bin (door gap + bars + collision + motes)
+- [x] Compass / minimap BIN pip + indoor loc tag
+- [x] Bot BREACH through bin door when player camps BIN
+- [x] Bin-door berms + cook-off drums
+- [x] Wrecked bin truck east of the house
+- [x] Incline skip: rideable solid cover from bin throat to dump pocket, blocks hitscan, player and bots ride, clack + end bell
+- [x] Brake lever (F) stops the skip
+- [x] Dump dust at the head blocks hitscan and shoves anyone in the pocket
 - [ ] Next: owner topics or more juice
