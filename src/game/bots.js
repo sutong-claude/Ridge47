@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -279,6 +279,8 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                         ? MAP.raiseDoor
                                                                         : inVent(playerPos) && MAP.raiseDoor
                                                                           ? MAP.raiseDoor
+                                                                          : inBin(playerPos) && MAP.binDoor
+                                                                            ? MAP.binDoor
                                                                   : MAP.hangarDoor;
       cover.copy(door);
       cover.y = 0;
@@ -360,6 +362,18 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           b.pos.x += MAP.tramDx || 0;
           b.pos.z += MAP.tramDz || 0;
         }
+      }
+      if (MAP.binSkipCrate) {
+        const c = MAP.binSkipCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        if (Math.abs(dx) < c.sx * 0.42 && Math.abs(dz) < c.sz * 0.42) {
+          b.pos.x += MAP.binDx || 0;
+          b.pos.z += MAP.binDz || 0;
+        }
+      }
+      if (MAP.binDumpT > 0.2 && MAP.binPocket && Math.abs(b.pos.x - MAP.binPocket.x) < MAP.binPocket.hx && Math.abs(b.pos.z - MAP.binPocket.z) < MAP.binPocket.hz) {
+        b.pos.z += 1.1 * dt;
       }
       if (b.state === "flank" && onCallout && Math.random() < dt * 3.2) {
         b._dust = true;
