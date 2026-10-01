@@ -10,16 +10,16 @@ Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable sl
 
 See artifacts/ridge47 GAME.md for the full checked backlog.
 
-## 2026-09-30 ~21:03 PDT
+## 2026-09-30 ~23:03 PDT
 
-- [x] North parts crib (door gap + bins + spinning carousel + collision + motes)
-- [x] Compass / minimap PARTS pip + indoor loc tag
-- [x] Bot BREACH through parts door when player camps PARTS
-- [x] Parts-door berms + cook-off drums
-- [x] Wrecked parts truck south of crib
-- [x] South weld bay (door gap + benches + torch arm + collision + motes)
-- [x] Compass / minimap WELD pip + indoor loc tag
-- [x] Bot BREACH through weld door when player camps WELD
-- [x] Weld-door berms + cook-off drums
-- [x] Wrecked weld truck east of bay
+- [x] East mill house (door gap + wheel + collision + motes)
+- [x] Compass / minimap MILL pip + indoor loc tag
+- [x] Bot BREACH through mill door when player camps MILL
+- [x] Mill-door berms + cook-off drums
+- [x] Wrecked mill truck south of house
+- [x] North kiln house (door gap + bowl glow + collision + motes)
+- [x] Compass / minimap KILN pip + indoor loc tag
+- [x] Bot BREACH through kiln door when player camps KILN
+- [x] Kiln-door berms + cook-off drums
+- [x] Wrecked kiln truck south of house
 - [ ] Next: owner topics or more juice
