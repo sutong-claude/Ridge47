@@ -154,6 +154,10 @@ export function inVent(pos) {
   return pos.x > 31.05 && pos.x < 33.35 && pos.z > -29.2 && pos.z < -16.4;
 }
 
+export function inBin(pos) {
+  return pos.x > -2.9 && pos.x < 4.1 && pos.z > -46.6 && pos.z < -40.05;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -167,7 +171,7 @@ export function onBelt(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos);
 }
 
 export function floorY(x, z) {
@@ -3400,7 +3404,143 @@ export function buildMap(scene) {
 
 
 
-  // Extra berms + drums at the hut door
+  // South grizzly bin — door gap north, incline skip climbs toward the pad
+  const bnX = 0.6;
+  const bnZ = -43.4;
+  const binMat = new THREE.MeshLambertMaterial({ color: 0x3a342c });
+  const timber = new THREE.MeshLambertMaterial({ color: 0x5a4630 });
+  const bnWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.45, z, sx, 2.9, sz, binMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 2.9, sz });
+    return m;
+  };
+  bnWall(bnX, -46.55, 6.6, 0.42);
+  bnWall(-2.75, bnZ, 0.42, 6.2);
+  bnWall(3.95, bnZ, 0.42, 6.2);
+  bnWall(-1.35, -40.25, 2.2, 0.42);
+  bnWall(2.55, -40.25, 2.2, 0.42);
+  box(scene, bnX, 2.75, -40.25, 2.1, 0.38, 0.42, timber);
+  box(scene, bnX, 3.02, bnZ, 6.8, 0.16, 6.4, rock);
+  MAP.binDoor = new THREE.Vector3(bnX, 0, -40.05);
+  MAP.bin = new THREE.Vector3(bnX, 0, bnZ);
+  const bnFloor = box(scene, bnX, 0.04, bnZ, 5.8, 0.08, 5.8, concrete);
+  bnFloor.receiveShadow = true;
+  const bnLamp = new THREE.PointLight(0xffb060, 0.8, 11);
+  bnLamp.position.set(bnX, 2.35, bnZ);
+  scene.add(bnLamp);
+  MAP.binLamp = bnLamp;
+  const bnRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xe0a040, transparent: true, opacity: 0.46, side: THREE.DoubleSide })
+  );
+  bnRing.rotation.x = -Math.PI / 2;
+  bnRing.position.copy(MAP.binDoor).setY(0.05);
+  scene.add(bnRing);
+  MAP.binRing = bnRing;
+  // Grizzly bars over the bin throat
+  for (let i = 0; i < 5; i++) {
+    box(scene, bnX - 1.2 + i * 0.55, 0.42, bnZ + 0.4, 0.08, 0.08, 2.4, steel);
+  }
+  box(scene, bnX, 0.22, bnZ + 0.4, 2.6, 0.16, 2.2, rust);
+  const bnGeo = new THREE.BufferGeometry();
+  const bnN = 28;
+  const bnPos = new Float32Array(bnN * 3);
+  const bnPhase = [];
+  for (let i = 0; i < bnN; i++) {
+    bnPos[i * 3] = bnX + (Math.random() - 0.5) * 5.2;
+    bnPos[i * 3 + 1] = 0.3 + Math.random() * 2.1;
+    bnPos[i * 3 + 2] = bnZ + (Math.random() - 0.5) * 5.2;
+    bnPhase.push(Math.random() * 6);
+  }
+  bnGeo.setAttribute("position", new THREE.BufferAttribute(bnPos, 3));
+  const bnMotes = new THREE.Points(
+    bnGeo,
+    new THREE.PointsMaterial({ color: 0xe8c090, size: 0.05, transparent: true, opacity: 0.42 })
+  );
+  scene.add(bnMotes);
+  MAP.binMotes = bnMotes;
+  MAP.binMotePhase = bnPhase;
+  const bnBag = box(scene, -1.7, 0.28, -39.55, 1.45, 0.54, 0.72, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-1.7, 0, -39.55), mesh: bnBag, sx: 1.45, sy: 0.54, sz: 0.72, climb: true });
+  const bnBag2 = box(scene, 2.9, 0.26, -39.5, 1.35, 0.5, 0.7, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(2.9, 0, -39.5), mesh: bnBag2, sx: 1.35, sy: 0.5, sz: 0.7, climb: true });
+  const bnCook = box(scene, -2.15, 0.55, -39.15, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-2.15, 0, -39.15), mesh: bnCook, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const bnCook2 = box(scene, 3.25, 0.55, -39.2, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(3.25, 0, -39.2), mesh: bnCook2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const bvX = 5.4;
+  const bvZ = -43.6;
+  box(scene, bvX, 0.7, bvZ, 3.3, 0.5, 1.35, rust);
+  box(scene, bvX + 0.1, 1.15, bvZ, 2.1, 0.85, 1.15, binMat);
+  box(scene, bvX - 1.4, 0.32, bvZ + 0.5, 0.36, 0.62, 0.18, oil);
+  box(scene, bvX - 1.4, 0.32, bvZ - 0.5, 0.36, 0.62, 0.18, oil);
+  box(scene, bvX + 1.3, 0.32, bvZ + 0.5, 0.36, 0.62, 0.18, oil);
+  box(scene, bvX + 1.3, 0.32, bvZ - 0.5, 0.36, 0.62, 0.18, oil);
+  MAP.binTruck = new THREE.Vector3(bvX, 0, bvZ);
+  MAP.crates.push({ pos: MAP.binTruck.clone(), mesh: bnFloor, sx: 3.3, sy: 1.3, sz: 1.35 });
+
+  // Incline skip: solid cover that climbs from the bin throat toward the pad
+  const incA = new THREE.Vector3(bnX, 0.28, -37.4);
+  const incB = new THREE.Vector3(bnX, 3.35, -27.1);
+  MAP.binPath = [incA, incB];
+  MAP.binT = 0;
+  MAP.binDir = 1;
+  MAP.binLen = incA.distanceTo(incB);
+  const mid = incA.clone().add(incB).multiplyScalar(0.5);
+  const railLen = MAP.binLen;
+  const railA = box(scene, mid.x - 0.62, mid.y, mid.z, 0.1, 0.08, railLen, steel);
+  const railB = box(scene, mid.x + 0.62, mid.y, mid.z, 0.1, 0.08, railLen, steel);
+  railA.rotation.x = Math.atan2(incB.y - incA.y, incB.z - incA.z);
+  railB.rotation.x = railA.rotation.x;
+  for (let i = 0; i < 5; i++) {
+    const t = i / 4;
+    const px = incA.x;
+    const py = incA.y + (incB.y - incA.y) * t;
+    const pz = incA.z + (incB.z - incA.z) * t;
+    const post = box(scene, px - 1.15, py * 0.5, pz, 0.16, Math.max(0.4, py), 0.16, timber);
+    MAP.crates.push({ pos: new THREE.Vector3(px - 1.15, 0, pz), mesh: post, sx: 0.16, sy: Math.max(0.4, py), sz: 0.16 });
+    if (i > 0 && i < 4) {
+      const step = box(scene, px - 1.55, 0.28 + i * 0.55, pz, 0.7, 0.16, 0.7, timber);
+      MAP.crates.push({ pos: new THREE.Vector3(px - 1.55, 0, pz), mesh: step, sx: 0.7, sy: 0.16 + i * 0.55, sz: 0.7, climb: true, climbTo: 0.4 + i * 0.7 });
+    }
+  }
+  const skip = new THREE.Group();
+  const bed = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.4, 1.7), rust);
+  bed.position.y = 0.42;
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.48, 0.08), steel);
+  lip.position.set(0, 0.72, 0.8);
+  const lip2 = lip.clone();
+  lip2.position.z = -0.8;
+  const ore = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.32, 1.15), new THREE.MeshLambertMaterial({ color: 0x6a5434 }));
+  ore.position.y = 0.7;
+  skip.add(bed, lip, lip2, ore);
+  skip.position.copy(incA);
+  scene.add(skip);
+  MAP.binSkipMesh = skip;
+  MAP.binOre = ore;
+  const skipCrate = { pos: incA.clone(), mesh: skip, sx: 1.5, sy: 1.15, sz: 1.75, skip: true };
+  MAP.crates.push(skipCrate);
+  MAP.binSkipCrate = skipCrate;
+  MAP.binDx = 0;
+  MAP.binDz = 0;
+  MAP.binDy = 0;
+  MAP.binSkipPlat = { x: incA.x, z: incA.z, y: incA.y + 0.35, sx: 1.45, sz: 1.55, top: incA.y + 0.62 };
+  MAP.platforms.push(MAP.binSkipPlat);
+  const sheave = box(scene, incB.x, incB.y + 1.15, incB.z, 0.18, 0.7, 0.7, steel);
+  MAP.binSheave = sheave;
+  const dumpMesh = box(scene, incB.x, 1.6, incB.z + 1.15, 2.4, 2.2, 1.6, new THREE.MeshLambertMaterial({ color: 0x8a7048, transparent: true, opacity: 0.08 }));
+  const dumpCrate = { pos: new THREE.Vector3(incB.x, 0, incB.z + 1.15), mesh: dumpMesh, sx: 2.4, sy: 2.4, sz: 1.8, walkOn: true, dead: true, dump: true };
+  MAP.crates.push(dumpCrate);
+  MAP.binDumpCrate = dumpCrate;
+  MAP.binDumpMesh = dumpMesh;
+  MAP.binDumpT = 0;
+  MAP.binBrake = { on: false, x: bnX + 1.55, z: -40.35 };
+  const brakeLever = box(scene, MAP.binBrake.x, 1.05, MAP.binBrake.z, 0.12, 0.7, 0.12, steel);
+  MAP.binBrakeLever = brakeLever;
+  box(scene, MAP.binBrake.x, 0.5, MAP.binBrake.z, 0.32, 0.6, 0.32, rust);
+  MAP.binPocket = { x: incB.x, z: incB.z + 0.8, hx: 1.6, hz: 1.4 };
+
+    // Extra berms + drums at the hut door
   const hutBag = box(scene, 25.4, 0.28, 28.8, 1.7, 0.56, 0.85, bagMat);
   MAP.crates.push({ pos: new THREE.Vector3(25.4, 0, 28.8), mesh: hutBag, sx: 1.7, sy: 0.56, sz: 0.85, climb: true });
   const hutBag2 = box(scene, 29.2, 0.26, 28.6, 1.5, 0.52, 0.8, bagMat);
@@ -5098,7 +5238,56 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     if (MAP.fanCrate) MAP.fanCrate.dead = !MAP.fan.on;
     if (MAP.raiseLamp) MAP.raiseLamp.intensity = MAP.fan.on ? 1.15 : 0.7;
   }
-  if (MAP.gateMesh && MAP.gate) {
+  if (MAP.binMotes && MAP.binMotePhase) {
+    const arr = MAP.binMotes.geometry.attributes.position.array;
+    const ph = MAP.binMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * 1.1;
+      arr[i * 3 + 1] = 0.28 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.2;
+    }
+    MAP.binMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.binLamp) MAP.binLamp.intensity = 0.75 + Math.sin(performance.now() * 0.0033) * 0.18;
+  if (MAP.binRing) MAP.binRing.material.opacity = 0.4 + Math.sin(performance.now() * 0.0034) * 0.16;
+  if (MAP.binPath && MAP.binSkipMesh && MAP.binSkipCrate) {
+    const a = MAP.binPath[0];
+    const b = MAP.binPath[1];
+    const prev = MAP.binSkipCrate.pos.clone();
+    if (!MAP.binBrake || !MAP.binBrake.on) {
+      MAP.binT += dt * 1.55 * MAP.binDir;
+      if (MAP.binT >= 1) {
+        MAP.binT = 1;
+        MAP.binDir = -1;
+        MAP.binBell = true;
+        MAP.binDumpT = 2.7;
+      } else if (MAP.binT <= 0) {
+        MAP.binT = 0;
+        MAP.binDir = 1;
+        MAP.binBell = true;
+      }
+    }
+    const p = a.clone().lerp(b, MAP.binT);
+    MAP.binSkipMesh.position.copy(p);
+    const tip = MAP.binDumpT > 1.6 && MAP.binT > 0.92 ? -0.55 : 0;
+    MAP.binSkipMesh.rotation.x += (tip - MAP.binSkipMesh.rotation.x) * Math.min(1, dt * 3);
+    if (MAP.binOre) MAP.binOre.visible = MAP.binDumpT < 1.4 || MAP.binT < 0.85;
+    MAP.binSkipCrate.pos.copy(p);
+    MAP.binDx = p.x - prev.x;
+    MAP.binDz = p.z - prev.z;
+    MAP.binDy = p.y - prev.y;
+    if (MAP.binSkipPlat) {
+      MAP.binSkipPlat.x = p.x;
+      MAP.binSkipPlat.z = p.z;
+      MAP.binSkipPlat.y = p.y + 0.35;
+      MAP.binSkipPlat.top = p.y + 0.62;
+    }
+    if (MAP.binSheave) MAP.binSheave.rotation.x += dt * (MAP.binBrake && MAP.binBrake.on ? 0.2 : 2.2) * MAP.binDir;
+    if (MAP.binBrakeLever) MAP.binBrakeLever.rotation.z = MAP.binBrake && MAP.binBrake.on ? -0.8 : 0.4;
+    MAP.binDumpT = Math.max(0, (MAP.binDumpT || 0) - dt);
+    if (MAP.binDumpMesh) MAP.binDumpMesh.material.opacity = MAP.binDumpT > 0 ? 0.28 : 0.04;
+    if (MAP.binDumpCrate) MAP.binDumpCrate.dead = MAP.binDumpT <= 0.15;
+  }
+    if (MAP.gateMesh && MAP.gate) {
     const target = MAP.gate.on ? 1.15 : 2.7;
     MAP.gateMesh.position.y += (target - MAP.gateMesh.position.y) * Math.min(1, dt * 2.4);
     if (MAP.gateLever) MAP.gateLever.rotation.z = MAP.gate.on ? -0.8 : 0.35;
