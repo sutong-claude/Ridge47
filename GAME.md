@@ -584,4 +584,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Wrecked tipple truck east of the door
 - [x] Ore tram: moving solid cover between skip and tipple, blocks hitscan, player and bots ride it, clack + turn bell
 - [x] Reinforcement wave: two north-ridge hostiles when three are down
+- [x] South adit drift (door gap + timber caps + ore pile + collision + motes)
+- [x] Compass / minimap ADIT pip + indoor loc tag
+- [x] Bot BREACH through adit door when player camps ADIT
+- [x] Adit-door berms + cook-off drums
+- [x] Wrecked adit truck south of the drift
+- [x] Headframe cage: rideable deck outside the adit mouth, climbs and drops, bell on reverse
+- [x] Cage dump dust at the mouth blocks hitscan LOS for a few seconds
+- [x] Sluice flume east of the pad shoves the player and bots downstream
+- [x] Adit mud slows movement
 - [ ] Next: owner topics or more juice

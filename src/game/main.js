@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -2506,6 +2506,8 @@ function weatherCard() {
                                                           ? "FUSE"
                                                           : inTip(player.pos)
                                                             ? "TIP"
+                                                            : inAdit(player.pos)
+                                                              ? "ADIT"
                                                             : inSkip(player.pos)
                                                             ? "SKIP"
                                                           : inHangar(player.pos)
@@ -3041,7 +3043,8 @@ function tick(now) {
   }
   player.gaspT = Math.max(0, player.gaspT - dt);
   const limp = player.hp < 35 ? 0.72 : 1;
-  const speed = (player.slide > 0 ? 11.2 : (player.prone ? 1.7 : player.crouch ? 3.2 : player.sprint ? 8.4 : 5.6)) * limp;
+  const mud = inAdit(player.pos) ? 0.82 : 1;
+  const speed = (player.slide > 0 ? 11.2 : (player.prone ? 1.7 : player.crouch ? 3.2 : player.sprint ? 8.4 : 5.6)) * limp * mud;
   if (moving) wish.normalize().multiplyScalar(speed);
   player.pos.x += wish.x * dt;
   player.pos.z += wish.z * dt;
@@ -3059,6 +3062,29 @@ function tick(now) {
         feed("TRAM");
       }
     } else player._tramOn = false;
+  }
+  if (inSluice(player.pos) && MAP.sluice && player.grounded) {
+    player.pos.x += MAP.sluice.vx * dt;
+    player.pos.z += MAP.sluice.vz * dt;
+    collideXZ(player.pos, 0.4);
+    if (Math.random() < dt * 3) beep(180 + Math.random() * 40, 0.05, 0.012, 1, "sine");
+  }
+  if (MAP.cage && player.grounded) {
+    const dx = player.pos.x - MAP.cage.x;
+    const dz = player.pos.z - MAP.cage.z;
+    const onCage = Math.abs(dx) < MAP.cage.sx * 0.42 && Math.abs(dz) < MAP.cage.sz * 0.42 && player.pos.y > MAP.cage.top - 0.4;
+    if (onCage) {
+      player.pos.y += MAP.cageDy || 0;
+      if (!player._cageOn) {
+        player._cageOn = true;
+        feed("CAGE");
+      }
+    } else player._cageOn = false;
+  }
+  if (MAP.cageBell) {
+    MAP.cageBell = false;
+    beep(220, 0.12, 0.04, 1, "triangle");
+    feed(MAP.cageDir < 0 ? "CAGE DOWN" : "CAGE UP");
   }
 
   if ((keys.has("Space") || keys.has("KeyJ")) && player.grounded) {
@@ -3726,6 +3752,26 @@ function tick(now) {
   } else {
     player._tipIn = false;
   }
+  if (inAdit(player.pos)) {
+    player._aditT = (player._aditT || 0.8) - dt;
+    if (player._aditT <= 0) {
+      player._aditT = 0.7 + Math.random() * 0.5;
+      beep(60 + Math.random() * 25, 0.09, 0.018, 1, "triangle");
+    }
+    if (!player._aditIn) {
+      player._aditIn = true;
+      feed("ADIT");
+      thud();
+    }
+  } else {
+    player._aditIn = false;
+  }
+  if (inSluice(player.pos)) {
+    if (!player._sluiceIn) {
+      player._sluiceIn = true;
+      feed("SLUICE");
+    }
+  } else player._sluiceIn = false;
   if (MAP.cistern && player.pos.distanceTo(MAP.cistern) < 2.2 && floorY(player.pos.x, player.pos.z) > 3) {
     if (!player._tankIn) {
       player._tankIn = true;
@@ -4723,7 +4769,7 @@ function tick(now) {
     const card = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(yawDeg / 45) % 8];
     const bip = player.ads && player.prone ? "  BIPOD" : "";
     const padM = player.pos.distanceTo(MAP.extract);
-    const locTag = inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
+    const locTag = inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
     headEl.textContent = (nearH < 90 ? `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}  ·  ${nearH.toFixed(0)}m` : `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}`) + `  PAD ${padM.toFixed(0)}m` + locTag + ztxt + bip;
   }
   const breathEl = document.getElementById("breath");
@@ -5779,6 +5825,20 @@ function drawMini() {
     mctx.fillStyle = "#e8b040";
     mctx.fillRect(mx(MAP.tipDoor.x, MAP.tipDoor.z) - 3, mz(MAP.tipDoor.x, MAP.tipDoor.z) - 2, 6, 4);
   }
+  if (MAP.aditDoor) {
+    mctx.fillStyle = "#241808";
+    mctx.fillRect(mx(-14, -36.2) - 4, mz(-14, -36.2) - 5, 8, 10);
+    mctx.fillStyle = "#d8a040";
+    mctx.fillRect(mx(MAP.aditDoor.x, MAP.aditDoor.z) - 3, mz(MAP.aditDoor.x, MAP.aditDoor.z) - 2, 6, 4);
+  }
+  if (MAP.cage) {
+    mctx.fillStyle = "#c8b060";
+    mctx.fillRect(mx(MAP.cage.x, MAP.cage.z) - 2, mz(MAP.cage.x, MAP.cage.z) - 2, 4, 4);
+  }
+  if (MAP.sluice) {
+    mctx.fillStyle = "#5a8870";
+    mctx.fillRect(mx(MAP.sluice.x, MAP.sluice.z) - 2, mz(MAP.sluice.x, MAP.sluice.z) - 6, 3, 12);
+  }
   if (MAP.tramCrate) {
     mctx.fillStyle = "#c89040";
     mctx.fillRect(mx(MAP.tramCrate.pos.x, MAP.tramCrate.pos.z) - 2, mz(MAP.tramCrate.pos.x, MAP.tramCrate.pos.z) - 2, 4, 4);
@@ -6053,6 +6113,9 @@ function drawCompass() {
   if (MAP.fuseDoor) markLab(MAP.fuseDoor, "#d8a030", "FUSE");
   if (MAP.skipDoor) markLab(MAP.skipDoor, "#e0a040", "SKIP");
   if (MAP.tipDoor) markLab(MAP.tipDoor, "#e8b040", "TIP");
+  if (MAP.aditDoor) markLab(MAP.aditDoor, "#d8a040", "ADIT");
+  if (MAP.cage) markLab(new THREE.Vector3(MAP.cage.x, 0, MAP.cage.z), "#c8b060", "CAGE");
+  if (MAP.sluice) markLab(new THREE.Vector3(MAP.sluice.x, 0, MAP.sluice.z), "#6a9a80", "SLUICE");
   if (MAP.tramCrate) markLab(MAP.tramCrate.pos, "#c89040", "TRAM");
   if (player.navLock) {
     const target = player.pos.distanceTo(MAP.extract) <= player.pos.distanceTo(MAP.hangarDoor) ? MAP.extract : MAP.hangarDoor;

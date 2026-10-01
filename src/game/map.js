@@ -134,8 +134,18 @@ export function inTip(pos) {
   return pos.x > 5.45 && pos.x < 11.75 && pos.z > 39.25 && pos.z < 44.85;
 }
 
+export function inAdit(pos) {
+  return pos.x > -17.55 && pos.x < -10.45 && pos.z > -43.15 && pos.z < -29.35;
+}
+
+export function inSluice(pos) {
+  const s = MAP.sluice;
+  if (!s) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos);
 }
 
 export function floorY(x, z) {
@@ -2991,6 +3001,128 @@ export function buildMap(scene) {
   MAP.tramDx = 0;
   MAP.tramDz = 0;
 
+  // South adit — timbered drift, door gap on the north wall
+  const adX = -14;
+  const adZ = -36.2;
+  const timber = new THREE.MeshLambertMaterial({ color: 0x5a4630 });
+  const adWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.45, z, sx, 2.9, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 2.9, sz });
+    return m;
+  };
+  adWall(adX, -43.15, 7.2, 0.42);
+  adWall(-17.55, adZ, 0.42, 13.6);
+  adWall(-10.45, adZ, 0.42, 13.6);
+  adWall(-16.05, -29.35, 2.5, 0.42);
+  adWall(-11.95, -29.35, 2.5, 0.42);
+  box(scene, adX, 2.75, -29.35, 2.1, 0.38, 0.42, timber);
+  box(scene, adX, 3.0, adZ, 7.3, 0.18, 13.8, rock);
+  for (let i = 0; i < 5; i++) {
+    const z = -31.2 - i * 2.3;
+    box(scene, -16.7, 1.35, z, 0.28, 2.5, 0.28, timber);
+    box(scene, -11.3, 1.35, z, 0.28, 2.5, 0.28, timber);
+    const cap = box(scene, adX, 2.55, z, 5.6, 0.16, 0.22, timber);
+    cap.castShadow = false;
+  }
+  MAP.aditDoor = new THREE.Vector3(adX, 0, -29.15);
+  MAP.adit = new THREE.Vector3(adX, 0, adZ);
+  const adFloor = box(scene, adX, 0.04, adZ, 6.4, 0.08, 13.2, concrete);
+  adFloor.receiveShadow = true;
+  const adLamp = new THREE.PointLight(0xffc878, 0.85, 12);
+  adLamp.position.set(adX, 2.4, adZ + 1.2);
+  scene.add(adLamp);
+  MAP.aditLamp = adLamp;
+  const adRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.05, 1.28, 16),
+    new THREE.MeshBasicMaterial({ color: 0xd8a040, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+  );
+  adRing.rotation.x = -Math.PI / 2;
+  adRing.position.copy(MAP.aditDoor).setY(0.05);
+  scene.add(adRing);
+  MAP.aditRing = adRing;
+  const adPile = box(scene, adX + 1.4, 0.45, adZ - 2.4, 1.6, 0.9, 1.3, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(adX + 1.4, 0, adZ - 2.4), mesh: adPile, sx: 1.6, sy: 1.0, sz: 1.3 });
+  const adCart = box(scene, adX - 1.5, 0.42, adZ + 2.6, 1.1, 0.7, 1.6, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(adX - 1.5, 0, adZ + 2.6), mesh: adCart, sx: 1.1, sy: 0.85, sz: 1.6 });
+  const adMoteN = 32;
+  const adGeo = new THREE.BufferGeometry();
+  const adPos = new Float32Array(adMoteN * 3);
+  const adPhase = new Float32Array(adMoteN);
+  for (let i = 0; i < adMoteN; i++) {
+    adPos[i * 3] = adX + (Math.random() - 0.5) * 5.4;
+    adPos[i * 3 + 1] = 0.3 + Math.random() * 2.0;
+    adPos[i * 3 + 2] = adZ + (Math.random() - 0.5) * 11;
+    adPhase[i] = Math.random() * Math.PI * 2;
+  }
+  adGeo.setAttribute("position", new THREE.BufferAttribute(adPos, 3));
+  const adMotes = new THREE.Points(
+    adGeo,
+    new THREE.PointsMaterial({ color: 0xe0c090, size: 0.045, transparent: true, opacity: 0.4 })
+  );
+  scene.add(adMotes);
+  MAP.aditMotes = adMotes;
+  MAP.aditMotePhase = adPhase;
+
+  // Headframe cage — rideable deck that climbs outside the adit mouth
+  const cgX = -14;
+  const cgZ = -26.6;
+  for (const ox of [-1.35, 1.35]) {
+    for (const oz of [-1.15, 1.15]) {
+      box(scene, cgX + ox, 2.6, cgZ + oz, 0.16, 5.2, 0.16, steel);
+    }
+  }
+  box(scene, cgX, 5.15, cgZ, 3.0, 0.16, 2.6, steel);
+  const cage = new THREE.Group();
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.12, 1.85), steel);
+  deck.position.y = 0.12;
+  const railL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.05, 1.85), rust);
+  railL.position.set(-1.02, 0.62, 0);
+  const railR = railL.clone();
+  railR.position.x = 1.02;
+  cage.add(deck, railL, railR);
+  cage.position.set(cgX, 0.15, cgZ);
+  scene.add(cage);
+  MAP.cageMesh = cage;
+  MAP.cage = { x: cgX, z: cgZ, y: 0.15, sx: 2.15, sz: 1.85, top: 0.32 };
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.cage);
+  MAP.cageDir = 1;
+  const sheave = box(scene, cgX, 5.35, cgZ, 0.28, 0.7, 0.7, rust);
+  MAP.cageSheave = sheave;
+
+  // Sluice flume — east of the pad, shoves anyone standing in the wash
+  const slX = 20.4;
+  const slZ = 1.2;
+  const waterMat = new THREE.MeshLambertMaterial({ color: 0x6a8a78, transparent: true, opacity: 0.72 });
+  const flume = box(scene, slX, 0.08, slZ, 2.4, 0.1, 14.5, concrete);
+  flume.receiveShadow = true;
+  const wash = box(scene, slX, 0.16, slZ, 1.55, 0.08, 13.6, waterMat);
+  wash.castShadow = false;
+  MAP.sluiceWash = wash;
+  MAP.sluice = { x: slX, z: slZ, hx: 0.78, hz: 6.6, vx: 3.4, vz: 1.6 };
+  box(scene, slX - 1.15, 0.28, slZ, 0.18, 0.42, 14.2, concrete);
+  box(scene, slX + 1.15, 0.28, slZ, 0.18, 0.42, 14.2, concrete);
+
+  // Adit-door berms + cook-off drums
+  const adBag = box(scene, -16.6, 0.28, -27.6, 1.6, 0.56, 0.8, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-16.6, 0, -27.6), mesh: adBag, sx: 1.6, sy: 0.56, sz: 0.8, climb: true });
+  const adBag2 = box(scene, -11.4, 0.26, -27.5, 1.45, 0.52, 0.75, bagMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-11.4, 0, -27.5), mesh: adBag2, sx: 1.45, sy: 0.52, sz: 0.75, climb: true });
+  const adDrum = box(scene, -17.8, 0.55, -28.4, 0.7, 1.1, 0.7, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-17.8, 0, -28.4), mesh: adDrum, sx: 0.7, sy: 1.1, sz: 0.7 });
+  const adDrum2 = box(scene, -10.2, 0.55, -28.2, 0.7, 1.1, 0.7, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-10.2, 0, -28.2), mesh: adDrum2, sx: 0.7, sy: 1.1, sz: 0.7 });
+
+  // Wrecked adit truck south of the drift
+  const avX = -14.2;
+  const avZ = -46.4;
+  const adCab = box(scene, avX, 0.7, avZ, 1.5, 1.15, 1.7, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(avX, 0, avZ), mesh: adCab, sx: 1.5, sy: 1.3, sz: 1.7 });
+  const adBed = box(scene, avX, 0.55, avZ - 2.1, 1.7, 0.7, 2.2, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(avX, 0, avZ - 2.1), mesh: adBed, sx: 1.7, sy: 0.9, sz: 2.2 });
+  MAP.aditTruck = new THREE.Vector3(avX, 0, avZ);
+
+
 
 
   // Extra berms + drums at the hut door
@@ -3806,6 +3938,16 @@ function rayAabb(o, d, minX, minY, minZ, maxX, maxY, maxZ) {
 }
 
 /** True if a chest-height ray from a to b is not blocked by a crate. */
+function segNear(a, b, p, rad) {
+  const abx = b.x - a.x, abz = b.z - a.z;
+  const len2 = abx * abx + abz * abz;
+  if (len2 < 0.01) return Math.hypot(a.x - p.x, a.z - p.z) < rad;
+  let t = ((p.x - a.x) * abx + (p.z - a.z) * abz) / len2;
+  t = Math.max(0, Math.min(1, t));
+  const x = a.x + abx * t, z = a.z + abz * t;
+  return Math.hypot(x - p.x, z - p.z) < rad;
+}
+
 export function hasLOS(from, to, eyeY = 1.5) {
   const a = from.clone();
   a.y = eyeY;
@@ -3814,6 +3956,7 @@ export function hasLOS(from, to, eyeY = 1.5) {
   const delta = b.sub(a);
   const dist = delta.length();
   if (dist < 0.2) return true;
+  if (MAP.dust && MAP.dust.life > 0 && segNear(a, b, MAP.dust, MAP.dust.r)) return false;
   const hit = rayVsCrates(a, delta, dist - 0.35);
   return !hit;
 }
@@ -4605,6 +4748,42 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
       remain -= lens[i];
     }
     MAP.tramClack = (MAP.tramClack || 0) - dt;
+  }
+  if (MAP.aditLamp) MAP.aditLamp.intensity = 0.7 + Math.sin(performance.now() * 0.004) * 0.18;
+  if (MAP.aditRing) MAP.aditRing.material.opacity = 0.38 + Math.sin(performance.now() * 0.0035) * 0.16;
+  if (MAP.aditMotes) {
+    const arr = MAP.aditMotes.geometry.attributes.position.array;
+    const ph = MAP.aditMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      arr[i * 3 + 1] += Math.sin(performance.now() * 0.0012 + ph[i]) * 0.0035;
+      if (arr[i * 3 + 1] > 2.4) arr[i * 3 + 1] = 0.28;
+    }
+    MAP.aditMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.cage && MAP.cageMesh) {
+    const prev = MAP.cage.y;
+    MAP.cage.y += dt * 0.85 * MAP.cageDir;
+    if (MAP.cage.y >= 4.35) {
+      MAP.cage.y = 4.35;
+      MAP.cageDir = -1;
+      MAP.cageBell = true;
+      MAP.dust = { x: -14, z: -29.2, r: 2.4, life: 3.6 };
+    } else if (MAP.cage.y <= 0.15) {
+      MAP.cage.y = 0.15;
+      MAP.cageDir = 1;
+      MAP.cageBell = true;
+    }
+    MAP.cageDy = MAP.cage.y - prev;
+    MAP.cage.top = MAP.cage.y + 0.2;
+    MAP.cageMesh.position.y = MAP.cage.y;
+    if (MAP.cageSheave) MAP.cageSheave.rotation.x += dt * 1.6 * MAP.cageDir;
+  }
+  if (MAP.sluiceWash) {
+    MAP.sluiceWash.position.z = MAP.sluice.z + Math.sin(performance.now() * 0.0018) * 0.15;
+  }
+  if (MAP.dust) {
+    MAP.dust.life -= dt;
+    if (MAP.dust.life <= 0) MAP.dust = null;
   }
   if (MAP.conveyorRolls) {
     for (const r of MAP.conveyorRolls) r.rotation.x += dt * 1.8;

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inSluice, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -269,7 +269,9 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                               ? MAP.skipDoor
                                                               : inTip(playerPos) && MAP.tipDoor
                                                                 ? MAP.tipDoor
-                                                                : MAP.hangarDoor;
+                                                                : inAdit(playerPos) && MAP.aditDoor
+                                                                  ? MAP.aditDoor
+                                                                  : MAP.hangarDoor;
       cover.copy(door);
       cover.y = 0;
       if (b.pos.distanceTo(door) < 2.4) cover.copy(playerPos).setY(0);
@@ -315,6 +317,11 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       b.pos.x += wish.x * dt;
       b.pos.z += wish.z * dt;
       collideXZ(b.pos, 0.4);
+      if (inSluice(b.pos) && MAP.sluice) {
+        b.pos.x += MAP.sluice.vx * dt;
+        b.pos.z += MAP.sluice.vz * dt;
+        collideXZ(b.pos, 0.4);
+      }
       if (MAP.tramCrate) {
         const c = MAP.tramCrate;
         const dx = b.pos.x - c.pos.x;
