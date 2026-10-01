@@ -639,6 +639,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Cyclone-door berms + cook-off drums
 - [x] Wrecked cyclone truck north of the house
 - [x] Feed lever (F) spins the cone, spiral carries player and bots south, overflow dust blocks hitscan
+- [x] Return flume carries the overflow east back into the quarry
 - [x] Spiral catwalk beside the classifier
 - [x] East filter press (door gap + clamping plates + collision + motes)
 - [x] Compass / minimap PRESS pip + indoor loc tag

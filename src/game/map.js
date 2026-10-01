@@ -190,6 +190,12 @@ export function inOverflow(pos) {
   return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
 }
 
+export function inReturn(pos) {
+  const s = MAP.cycReturn;
+  if (!s) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+
 export function inPress(pos) {
   return pos.x > 41.55 && pos.x < 47.45 && pos.z > 3.35 && pos.z < 9.05;
 }
@@ -4514,6 +4520,11 @@ export function buildMap(scene) {
   MAP.cycDust = ovMesh;
   MAP.cycDustCrate = ovCrate;
   MAP.overflow = { x: ovX, z: ovZ, hx: 1.35, hz: 1.15, vz: -1.4 };
+  const retMesh = box(scene, -36.5, 0.08, -42.4, 12.4, 0.12, 1.5, new THREE.MeshLambertMaterial({ color: 0x6a5a38 }));
+  retMesh.receiveShadow = true;
+  MAP.cycReturn = { x: -36.5, z: -42.4, hx: 6.2, hz: 0.85, vx: 2.1, vz: 0 };
+  const retBerm = box(scene, -36.5, 0.4, -43.3, 12.2, 0.7, 0.4, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(-36.5, 0, -43.3), mesh: retBerm, sx: 12.2, sy: 0.7, sz: 0.4, climb: true });
   const cyGeo = new THREE.BufferGeometry();
   const cyN = 22;
   const cyPos = new Float32Array(cyN * 3);
