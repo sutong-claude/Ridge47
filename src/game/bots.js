@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -375,6 +375,7 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       if (MAP.binDumpT > 0.2 && MAP.binPocket && Math.abs(b.pos.x - MAP.binPocket.x) < MAP.binPocket.hx && Math.abs(b.pos.z - MAP.binPocket.z) < MAP.binPocket.hz) {
         b.pos.z += 1.1 * dt;
       }
+      if (inTail(b.pos)) b.pos.z += 0.35 * dt;
       if (b.state === "flank" && onCallout && Math.random() < dt * 3.2) {
         b._dust = true;
       }
