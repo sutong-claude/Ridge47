@@ -162,6 +162,20 @@ export function inTail(pos) {
   return pos.x > 9.4 && pos.x < 19.2 && pos.z > -46.4 && pos.z < -38.6;
 }
 
+export function inThick(pos) {
+  return pos.x > 24.15 && pos.x < 30.25 && pos.z > -46.55 && pos.z < -41.85;
+}
+
+export function inLaunder(pos) {
+  const s = MAP.launder;
+  if (!s) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+
+export function inBall(pos) {
+  return pos.x > -9.7 && pos.x < -3.3 && pos.z > 41.75 && pos.z < 46.7;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -175,7 +189,7 @@ export function onBelt(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos);
 }
 
 export function floorY(x, z) {
@@ -4203,6 +4217,212 @@ export function buildMap(scene) {
   }
   MAP.moths = moths;
 
+
+  // East thickener — door gap north, walkable rim, sweeping rake, underflow launder
+  const thX = 27.2;
+  const thZ = -44.2;
+  const thMat = new THREE.MeshLambertMaterial({ color: 0x3c4036 });
+  const slurry = new THREE.MeshLambertMaterial({ color: 0x6a5a32 });
+  const thWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.5, z, sx, 3.0, sz, thMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.0, sz });
+    return m;
+  };
+  thWall(thX, -46.7, 6.2, 0.4);
+  thWall(24.05, thZ, 0.4, 4.7);
+  thWall(30.35, thZ, 0.4, 4.7);
+  thWall(25.35, -41.85, 2.15, 0.4);
+  thWall(29.05, -41.85, 2.15, 0.4);
+  box(scene, thX, 2.85, -41.85, 1.7, 0.36, 0.4, crateWood);
+  box(scene, thX, 3.05, thZ, 6.5, 0.16, 5.1, rock);
+  MAP.thickDoor = new THREE.Vector3(thX, 0, -41.65);
+  MAP.thick = { on: false, x: thX - 1.7, z: -42.15, angle: 0, dAngle: 0 };
+  const thFloor = box(scene, thX, 0.04, thZ, 5.7, 0.08, 4.5, concrete);
+  thFloor.receiveShadow = true;
+  const thLamp = new THREE.PointLight(0xffc070, 0.75, 12);
+  thLamp.position.set(thX, 2.4, thZ);
+  scene.add(thLamp);
+  MAP.thickLamp = thLamp;
+  const thRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xe0b050, transparent: true, opacity: 0.46, side: THREE.DoubleSide })
+  );
+  thRing.rotation.x = -Math.PI / 2;
+  thRing.position.copy(MAP.thickDoor).setY(0.05);
+  scene.add(thRing);
+  MAP.thickRing = thRing;
+  const tank = box(scene, thX, 0.16, thZ, 3.6, 0.22, 3.6, slurry);
+  tank.receiveShadow = true;
+  // Walkable rim — high enough that the rake passes under
+  const rim = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.72, z, sx, 0.22, sz, steel);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 0.22, sz, climb: true, climbTo: 0.95 });
+    MAP.platforms = MAP.platforms || [];
+    MAP.platforms.push({ x, z, sx, sz, top: 0.95 });
+  };
+  rim(thX, thZ - 1.85, 3.8, 0.28);
+  rim(thX, thZ + 1.85, 3.8, 0.28);
+  rim(thX - 1.85, thZ, 0.28, 3.4);
+  rim(thX + 1.85, thZ, 0.28, 3.4);
+  const rake = new THREE.Group();
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.55, 8), steel);
+  hub.position.y = 0.55;
+  rake.add(hub);
+  const armMat = new THREE.MeshLambertMaterial({ color: 0x5a5044 });
+  for (let i = 0; i < 4; i++) {
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.1, 0.16), armMat);
+    arm.position.set(0.95, 0.42, 0);
+    arm.rotation.y = (i * Math.PI) / 2;
+    const holder = new THREE.Group();
+    holder.rotation.y = (i * Math.PI) / 2;
+    arm.rotation.y = 0;
+    arm.position.set(0.95, 0.42, 0);
+    holder.add(arm);
+    rake.add(holder);
+  }
+  rake.position.set(thX, 0, thZ);
+  scene.add(rake);
+  MAP.rakeMesh = rake;
+  MAP.rakeArms = [];
+  for (let i = 0; i < 4; i++) {
+    const crate = { pos: new THREE.Vector3(thX, 0, thZ), mesh: rake, sx: 0.7, sy: 0.55, sz: 0.7, rake: true };
+    MAP.crates.push(crate);
+    MAP.rakeArms.push(crate);
+  }
+  const thLever = box(scene, MAP.thick.x, 1.05, MAP.thick.z, 0.12, 0.7, 0.12, steel);
+  MAP.thickLever = thLever;
+  box(scene, MAP.thick.x, 0.5, MAP.thick.z, 0.32, 0.6, 0.32, rust);
+  const thGeo = new THREE.BufferGeometry();
+  const thN = 24;
+  const thPos = new Float32Array(thN * 3);
+  const thPhase = [];
+  for (let i = 0; i < thN; i++) {
+    thPos[i * 3] = thX + (Math.random() - 0.5) * 5.2;
+    thPos[i * 3 + 1] = 0.3 + Math.random() * 2.0;
+    thPos[i * 3 + 2] = thZ + (Math.random() - 0.5) * 4.2;
+    thPhase.push(Math.random() * 6);
+  }
+  thGeo.setAttribute("position", new THREE.BufferAttribute(thPos, 3));
+  const thMotes = new THREE.Points(thGeo, new THREE.PointsMaterial({ color: 0xe8c898, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(thMotes);
+  MAP.thickMotes = thMotes;
+  MAP.thickMotePhase = thPhase;
+  const thBag = box(scene, 24.7, 0.28, -42.2, 1.2, 0.5, 0.6, new THREE.MeshLambertMaterial({ color: 0x6a5a38 }));
+  MAP.crates.push({ pos: new THREE.Vector3(24.7, 0, -42.2), mesh: thBag, sx: 1.2, sy: 0.5, sz: 0.6, climb: true });
+  const thBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  thBerm(25.2, -40.85, 1.6, 0.55);
+  thBerm(29.2, -40.85, 1.6, 0.55);
+  const thDrum = box(scene, 24.55, 0.55, -40.7, 0.55, 1.1, 0.55, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(24.55, 0, -40.7), mesh: thDrum, sx: 0.55, sy: 1.1, sz: 0.55, drum: true });
+  const thDrum2 = box(scene, 29.7, 0.55, -40.65, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(29.7, 0, -40.65), mesh: thDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const thTruckX = 31.4;
+  const thTruckZ = -43.2;
+  const thCab = box(scene, thTruckX, 0.7, thTruckZ, 1.5, 1.3, 1.3, rust);
+  const thBed = box(scene, thTruckX, 0.45, thTruckZ - 1.5, 1.4, 0.7, 1.6, steel);
+  MAP.thickTruck = new THREE.Vector3(thTruckX, 0, thTruckZ);
+  MAP.crates.push({ pos: MAP.thickTruck.clone(), mesh: thCab, sx: 1.5, sy: 1.3, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(thTruckX, 0, thTruckZ - 1.5), mesh: thBed, sx: 1.4, sy: 0.7, sz: 1.6 });
+  // Underflow launder runs north toward the pad. Water rises when the valve is open.
+  const lnX = 26.4;
+  const lnZ = -38.4;
+  const lnMesh = box(scene, lnX, 0.18, lnZ, 1.35, 0.7, 6.2, new THREE.MeshLambertMaterial({ color: 0x8a7040, transparent: true, opacity: 0.12 }));
+  const lnCrate = { pos: new THREE.Vector3(lnX, 0, lnZ), mesh: lnMesh, sx: 1.35, sy: 1.3, sz: 6.2, walkOn: true, dead: true, launder: true };
+  MAP.crates.push(lnCrate);
+  MAP.launderMesh = lnMesh;
+  MAP.launderCrate = lnCrate;
+  MAP.launder = { x: lnX, z: lnZ, hx: 0.85, hz: 3.2, vx: 0, vz: 2.4 };
+  box(scene, lnX - 0.85, 0.22, lnZ, 0.16, 0.4, 6.3, steel);
+  box(scene, lnX + 0.85, 0.22, lnZ, 0.16, 0.4, 6.3, steel);
+
+  // North ball mill — door gap south, tumbling drum, clutch dust curtain
+  const blX = -6.5;
+  const blZ = 44.15;
+  const blMat = new THREE.MeshLambertMaterial({ color: 0x3a3834 });
+  const blWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, blMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  blWall(blX, 46.65, 6.2, 0.4);
+  blWall(-9.65, blZ, 0.4, 4.6);
+  blWall(-3.35, blZ, 0.4, 4.6);
+  blWall(-8.15, 41.75, 2.2, 0.4);
+  blWall(-4.85, 41.75, 2.2, 0.4);
+  box(scene, blX, 2.9, 41.75, 1.8, 0.36, 0.4, crateWood);
+  box(scene, blX, 3.1, blZ, 6.4, 0.16, 5.0, rock);
+  MAP.ballDoor = new THREE.Vector3(blX, 0, 41.95);
+  MAP.ball = { on: false, x: blX + 1.85, z: 42.15 };
+  const blFloor = box(scene, blX, 0.04, blZ, 5.6, 0.08, 4.4, concrete);
+  blFloor.receiveShadow = true;
+  const blLamp = new THREE.PointLight(0xffb060, 0.7, 11);
+  blLamp.position.set(blX, 2.35, blZ);
+  scene.add(blLamp);
+  MAP.ballLamp = blLamp;
+  const blRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xd0a060, transparent: true, opacity: 0.44, side: THREE.DoubleSide })
+  );
+  blRing.rotation.x = -Math.PI / 2;
+  blRing.position.copy(MAP.ballDoor).setY(0.05);
+  scene.add(blRing);
+  MAP.ballRing = blRing;
+  const drum = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.15, 2.6, 12), new THREE.MeshLambertMaterial({ color: 0x6a5840 }));
+  drum.rotation.z = Math.PI / 2;
+  drum.position.set(blX, 1.25, blZ);
+  scene.add(drum);
+  MAP.ballDrum = drum;
+  const tire = new THREE.Mesh(new THREE.TorusGeometry(1.18, 0.08, 6, 14), steel);
+  tire.rotation.y = Math.PI / 2;
+  tire.position.set(blX - 1.15, 1.25, blZ);
+  scene.add(tire);
+  const tire2 = tire.clone();
+  tire2.position.x = blX + 1.15;
+  scene.add(tire2);
+  const charge = box(scene, blX, 0.35, blZ + 1.35, 1.4, 0.4, 0.7, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(blX, 0, blZ + 1.35), mesh: charge, sx: 1.4, sy: 0.4, sz: 0.7, climb: true });
+  const blLever = box(scene, MAP.ball.x, 1.05, MAP.ball.z, 0.12, 0.7, 0.12, steel);
+  MAP.ballLever = blLever;
+  box(scene, MAP.ball.x, 0.5, MAP.ball.z, 0.32, 0.6, 0.32, rust);
+  const blDust = box(scene, blX, 1.35, 42.05, 1.6, 2.1, 0.55, new THREE.MeshLambertMaterial({ color: 0xc8b090, transparent: true, opacity: 0.05 }));
+  const blDustCrate = { pos: new THREE.Vector3(blX, 0, 42.05), mesh: blDust, sx: 1.6, sy: 2.2, sz: 0.55, walkOn: true, dead: true, ball: true };
+  MAP.crates.push(blDustCrate);
+  MAP.ballDust = blDust;
+  MAP.ballDustCrate = blDustCrate;
+  const blGeo = new THREE.BufferGeometry();
+  const blN = 22;
+  const blPos = new Float32Array(blN * 3);
+  const blPhase = [];
+  for (let i = 0; i < blN; i++) {
+    blPos[i * 3] = blX + (Math.random() - 0.5) * 5.0;
+    blPos[i * 3 + 1] = 0.3 + Math.random() * 2.0;
+    blPos[i * 3 + 2] = blZ + (Math.random() - 0.5) * 4.0;
+    blPhase.push(Math.random() * 6);
+  }
+  blGeo.setAttribute("position", new THREE.BufferAttribute(blPos, 3));
+  const blMotes = new THREE.Points(blGeo, new THREE.PointsMaterial({ color: 0xd8c0a0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(blMotes);
+  MAP.ballMotes = blMotes;
+  MAP.ballMotePhase = blPhase;
+  const blBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  blBerm(-8.4, 40.85, 1.5, 0.55);
+  blBerm(-4.6, 40.85, 1.5, 0.55);
+  const blDrum = box(scene, -8.7, 0.55, 40.55, 0.55, 1.1, 0.55, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-8.7, 0, 40.55), mesh: blDrum, sx: 0.55, sy: 1.1, sz: 0.55, drum: true });
+  const blDrum2 = box(scene, -4.3, 0.55, 40.5, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-4.3, 0, 40.5), mesh: blDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const blTruck = box(scene, -2.3, 0.65, 43.4, 1.5, 1.2, 1.4, rust);
+  const blBed = box(scene, -2.3, 0.42, 44.9, 1.35, 0.65, 1.5, steel);
+  MAP.ballTruck = new THREE.Vector3(-2.3, 0, 43.4);
+  MAP.crates.push({ pos: MAP.ballTruck.clone(), mesh: blTruck, sx: 1.5, sy: 1.2, sz: 1.4 });
+  MAP.crates.push({ pos: new THREE.Vector3(-2.3, 0, 44.9), mesh: blBed, sx: 1.35, sy: 0.65, sz: 1.5 });
+
   return MAP;
 }
 
@@ -5541,6 +5761,56 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     }
   }
 }
+
+
+  if (MAP.thick && MAP.rakeMesh) {
+    const spd = MAP.thick.on ? 1.35 : 0.28;
+    const prev = MAP.thick.angle;
+    MAP.thick.angle += dt * spd;
+    MAP.thick.dAngle = MAP.thick.angle - prev;
+    MAP.rakeMesh.rotation.y = MAP.thick.angle;
+    if (MAP.rakeArms) {
+      for (let i = 0; i < MAP.rakeArms.length; i++) {
+        const a = MAP.thick.angle + (i * Math.PI) / 2;
+        MAP.rakeArms[i].pos.set(MAP.thickDoor.x + Math.cos(a) * 1.05, 0, -44.2 + Math.sin(a) * 1.05);
+      }
+    }
+    if (MAP.thickLever) MAP.thickLever.rotation.z = MAP.thick.on ? -0.8 : 0.4;
+    if (MAP.thickLamp) MAP.thickLamp.intensity = MAP.thick.on ? 1.15 : 0.7;
+    if (MAP.launderMesh) {
+      const target = MAP.thick.on ? 0.42 : 0.08;
+      MAP.launderMesh.position.y += (target - MAP.launderMesh.position.y) * Math.min(1, dt * 1.8);
+      MAP.launderMesh.material.opacity = MAP.thick.on ? 0.42 : 0.1;
+    }
+    if (MAP.launderCrate) MAP.launderCrate.dead = !MAP.thick.on;
+  }
+  if (MAP.thickMotes && MAP.thickMotePhase) {
+    const arr = MAP.thickMotes.geometry.attributes.position.array;
+    const ph = MAP.thickMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.thick && MAP.thick.on ? 1.8 : 0.7);
+      arr[i * 3 + 1] = 0.28 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.0;
+    }
+    MAP.thickMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.ball && MAP.ballDrum) {
+    const spd = MAP.ball.on ? 1.6 : 0.05;
+    MAP.ballDrum.rotation.x += dt * spd;
+    if (MAP.ballLever) MAP.ballLever.rotation.z = MAP.ball.on ? -0.75 : 0.35;
+    if (MAP.ballLamp) MAP.ballLamp.intensity = MAP.ball.on ? 1.05 : 0.65;
+    if (MAP.ballDust) MAP.ballDust.material.opacity = MAP.ball.on ? 0.32 : 0.04;
+    if (MAP.ballDustCrate) MAP.ballDustCrate.dead = !MAP.ball.on;
+  }
+  if (MAP.ballMotes && MAP.ballMotePhase) {
+    const arr = MAP.ballMotes.geometry.attributes.position.array;
+    const ph = MAP.ballMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.ball && MAP.ball.on ? 2.1 : 0.6);
+      arr[i * 3 + 1] = 0.3 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.1;
+    }
+    MAP.ballMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
 
 export function collideXZ(pos, radius = 0.45) {
   const h = MAP.half;

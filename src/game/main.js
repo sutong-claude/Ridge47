@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -3051,7 +3051,7 @@ function tick(now) {
   }
   player.gaspT = Math.max(0, player.gaspT - dt);
   const limp = player.hp < 35 ? 0.72 : 1;
-  const mud = (inCross(player.pos) && MAP.sump && MAP.sump.on) ? 0.48 : inTail(player.pos) ? 0.52 : (inVent(player.pos) && MAP.fan && MAP.fan.on) ? 0.7 : inAdit(player.pos) || inWinze(player.pos) || inRaise(player.pos) ? 0.82 : 1;
+  const mud = (inCross(player.pos) && MAP.sump && MAP.sump.on) ? 0.48 : inTail(player.pos) ? 0.52 : (inLaunder(player.pos) && MAP.thick && MAP.thick.on) ? 0.5 : (inBall(player.pos) && MAP.ball && MAP.ball.on) ? 0.62 : (inVent(player.pos) && MAP.fan && MAP.fan.on) ? 0.7 : inAdit(player.pos) || inWinze(player.pos) || inRaise(player.pos) || inThick(player.pos) ? 0.82 : 1;
   const speed = (player.slide > 0 ? 11.2 : (player.prone ? 1.7 : player.crouch ? 3.2 : player.sprint ? 8.4 : 5.6)) * limp * mud;
   if (moving) wish.normalize().multiplyScalar(speed);
   player.pos.x += wish.x * dt;
@@ -3095,6 +3095,39 @@ function tick(now) {
     player.pos.z += 1.4 * dt;
     if (Math.random() < dt * 4) beep(90, 0.04, 0.02, 1, "sawtooth");
   }
+  if (MAP.thick && player.grounded && inThick(player.pos) && (MAP.thick.dAngle || 0) !== 0) {
+    const dx = player.pos.x - 27.2;
+    const dz = player.pos.z - -44.2;
+    const r = Math.hypot(dx, dz);
+    if (r > 0.35 && r < 2.05 && player.pos.y < 0.85) {
+      const a = MAP.thick.dAngle;
+      const c = Math.cos(a), s = Math.sin(a);
+      player.pos.x = 27.2 + dx * c - dz * s;
+      player.pos.z = -44.2 + dx * s + dz * c;
+      collideXZ(player.pos, 0.35);
+      if (!player._rakeOn) {
+        player._rakeOn = true;
+        feed(MAP.thick.on ? "RAKE · UNDERFLOW" : "RAKE");
+      }
+    } else player._rakeOn = false;
+  } else player._rakeOn = false;
+  if (inLaunder(player.pos) && MAP.thick && MAP.thick.on && player.grounded) {
+    player.pos.z += MAP.launder.vz * dt;
+    collideXZ(player.pos, 0.4);
+    if (Math.random() < dt * 3) beep(150 + Math.random() * 30, 0.04, 0.014, 1, "sine");
+  }
+  if (inBall(player.pos) && MAP.ball && MAP.ball.on && player.grounded) {
+    const dx = player.pos.x - -6.5;
+    const dz = player.pos.z - 44.15;
+    player.pos.x += -dz * 0.7 * dt;
+    player.pos.z += dx * 0.7 * dt;
+    collideXZ(player.pos, 0.35);
+    if (!player._ballOn) {
+      player._ballOn = true;
+      feed("MILL TUMBLE");
+    }
+    if (Math.random() < dt * 2.2) beep(70 + Math.random() * 20, 0.05, 0.02, 1, "sawtooth");
+  } else player._ballOn = false;
   if (inSluice(player.pos) && MAP.sluice && player.grounded) {
     player.pos.x += MAP.sluice.vx * dt;
     player.pos.z += MAP.sluice.vz * dt;
@@ -3864,6 +3897,18 @@ function tick(now) {
       feed("TAILINGS");
     }
   } else player._tailIn = false;
+  if (inThick(player.pos)) {
+    if (!player._thickIn) {
+      player._thickIn = true;
+      feed(MAP.thick && MAP.thick.on ? "THICKENER · OPEN" : "THICKENER");
+    }
+  } else player._thickIn = false;
+  if (inBall(player.pos)) {
+    if (!player._ballIn) {
+      player._ballIn = true;
+      feed(MAP.ball && MAP.ball.on ? "BALL MILL · RUN" : "BALL MILL");
+    }
+  } else player._ballIn = false;
   if (inVent(player.pos)) {
     if (!player._ventIn) {
       player._ventIn = true;
@@ -4286,6 +4331,20 @@ function tick(now) {
     feed(MAP.binBrake.on ? "BRAKE SET" : "BRAKE OFF");
     beep(MAP.binBrake.on ? 75 : 140, 0.12, 0.04, 1, "square");
   }
+  const nearThick = MAP.thick && player.pos.distanceTo(new THREE.Vector3(MAP.thick.x, 0, MAP.thick.z)) < 1.8;
+  if (nearThick && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake) {
+    MAP.thick.on = !MAP.thick.on;
+    keys.delete("KeyF");
+    feed(MAP.thick.on ? "UNDERFLOW OPEN" : "UNDERFLOW SHUT");
+    beep(MAP.thick.on ? 90 : 160, 0.12, 0.04, 1, "square");
+  }
+  const nearBall = MAP.ball && player.pos.distanceTo(new THREE.Vector3(MAP.ball.x, 0, MAP.ball.z)) < 1.8;
+  if (nearBall && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate && !nearBrake && !nearThick) {
+    MAP.ball.on = !MAP.ball.on;
+    keys.delete("KeyF");
+    feed(MAP.ball.on ? "MILL CLUTCH IN" : "MILL CLUTCH OUT");
+    beep(MAP.ball.on ? 80 : 150, 0.14, 0.045, 1, "sawtooth");
+  }
   player.extracting = canEx && (keys.has("KeyF") || (player.extracting && nearEx));
   if (!wasExtracting && player.extracting) {
     feed("NET · hostiles rushing pad");
@@ -4672,6 +4731,8 @@ function tick(now) {
     else if (MAP.fan && player.pos.distanceTo(new THREE.Vector3(MAP.fan.x, 0, MAP.fan.z)) < 1.8) prompt.textContent = MAP.fan.on ? "F · KILL FAN" : "F · START FAN";
     else if (MAP.gate && player.pos.distanceTo(new THREE.Vector3(MAP.gate.x, 0, MAP.gate.z)) < 1.8) prompt.textContent = MAP.gate.on ? "F · RAISE GATE" : "F · DROP GATE";
     else if (MAP.binBrake && player.pos.distanceTo(new THREE.Vector3(MAP.binBrake.x, 0, MAP.binBrake.z)) < 1.8) prompt.textContent = MAP.binBrake.on ? "F · RELEASE BRAKE" : "F · SET BRAKE";
+    else if (MAP.thick && player.pos.distanceTo(new THREE.Vector3(MAP.thick.x, 0, MAP.thick.z)) < 1.8) prompt.textContent = MAP.thick.on ? "F · SHUT UNDERFLOW" : "F · OPEN UNDERFLOW";
+    else if (MAP.ball && player.pos.distanceTo(new THREE.Vector3(MAP.ball.x, 0, MAP.ball.z)) < 1.8) prompt.textContent = MAP.ball.on ? "F · CLUTCH OUT" : "F · CLUTCH IN";
     else prompt.textContent = "";
   }
   const rel = document.getElementById("relbar");
@@ -4934,7 +4995,7 @@ function tick(now) {
     const card = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(yawDeg / 45) % 8];
     const bip = player.ads && player.prone ? "  BIPOD" : "";
     const padM = player.pos.distanceTo(MAP.extract);
-    const locTag = inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
+    const locTag = inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
     headEl.textContent = (nearH < 90 ? `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}  ·  ${nearH.toFixed(0)}m` : `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}`) + `  PAD ${padM.toFixed(0)}m` + locTag + ztxt + bip;
   }
   const breathEl = document.getElementById("breath");
@@ -6015,6 +6076,18 @@ function drawMini() {
     mctx.fillStyle = "#6a5840";
     mctx.fillRect(mx(MAP.tail.x, MAP.tail.z) - 4, mz(MAP.tail.x, MAP.tail.z) - 3, 8, 6);
   }
+  if (MAP.thickDoor) {
+    mctx.fillStyle = MAP.thick && MAP.thick.on ? "#c09040" : "#e0b060";
+    mctx.fillRect(mx(MAP.thickDoor.x, MAP.thickDoor.z) - 3, mz(MAP.thickDoor.x, MAP.thickDoor.z) - 2, 6, 4);
+  }
+  if (MAP.ballDoor) {
+    mctx.fillStyle = MAP.ball && MAP.ball.on ? "#a08050" : "#d0b070";
+    mctx.fillRect(mx(MAP.ballDoor.x, MAP.ballDoor.z) - 3, mz(MAP.ballDoor.x, MAP.ballDoor.z) - 2, 6, 4);
+  }
+  if (MAP.launder && MAP.thick && MAP.thick.on) {
+    mctx.fillStyle = "#8a7040";
+    mctx.fillRect(mx(MAP.launder.x, MAP.launder.z) - 1, mz(MAP.launder.x, MAP.launder.z) - 4, 2, 8);
+  }
   if (MAP.binDoor) {
     mctx.fillStyle = MAP.binBrake && MAP.binBrake.on ? "#a07040" : "#e0a050";
     mctx.fillRect(mx(MAP.binDoor.x, MAP.binDoor.z) - 3, mz(MAP.binDoor.x, MAP.binDoor.z) - 2, 6, 4);
@@ -6310,6 +6383,9 @@ function drawCompass() {
   if (MAP.winzeDoor) markLab(MAP.winzeDoor, "#e0a060", "WINZE");
   if (MAP.raiseDoor) markLab(MAP.raiseDoor, "#e09040", "RAISE");
   if (MAP.binDoor) markLab(MAP.binDoor, "#e0a050", "BIN");
+  if (MAP.thickDoor) markLab(MAP.thickDoor, "#e0b060", "THICK");
+  if (MAP.ballDoor) markLab(MAP.ballDoor, "#d0b070", "BALL");
+  if (MAP.launder) markLab(new THREE.Vector3(MAP.launder.x, 0, MAP.launder.z), "#8a7040", "LAUNDER");
   if (MAP.tail) markLab(new THREE.Vector3(MAP.tail.x, 0, MAP.tail.z), "#8a7050", "TAIL");
   if (MAP.binSkipCrate) markLab(MAP.binSkipCrate.pos, "#d0a050", "SKIP");
   if (MAP.cross) markLab(new THREE.Vector3(MAP.cross.x, 0, MAP.cross.z), "#6a9880", "XCUT");

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -281,6 +281,12 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                           ? MAP.raiseDoor
                                                                           : inBin(playerPos) && MAP.binDoor
                                                                             ? MAP.binDoor
+                                                                            : inThick(playerPos) && MAP.thickDoor
+                                                                              ? MAP.thickDoor
+                                                                              : inLaunder(playerPos) && MAP.thickDoor
+                                                                                ? MAP.thickDoor
+                                                                                : inBall(playerPos) && MAP.ballDoor
+                                                                                  ? MAP.ballDoor
                                                                   : MAP.hangarDoor;
       cover.copy(door);
       cover.y = 0;
@@ -376,9 +382,37 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
         b.pos.z += 1.1 * dt;
       }
       if (inTail(b.pos)) b.pos.z += 0.35 * dt;
+      if (inLaunder(b.pos) && MAP.thick && MAP.thick.on) b.pos.z += 1.6 * dt;
+      if (inThick(b.pos) && MAP.thick && MAP.thick.dAngle) {
+        const dx = b.pos.x - 27.2;
+        const dz = b.pos.z - -44.2;
+        const r = Math.hypot(dx, dz);
+        if (r > 0.4 && r < 2.1) {
+          const a = MAP.thick.dAngle;
+          b.pos.x = 27.2 + dx * Math.cos(a) - dz * Math.sin(a);
+          b.pos.z = -44.2 + dx * Math.sin(a) + dz * Math.cos(a);
+        }
+      }
+      if (inBall(b.pos) && MAP.ball && MAP.ball.on) {
+        const dx = b.pos.x - -6.5;
+        const dz = b.pos.z - 44.15;
+        b.pos.x += -dz * 0.55 * dt;
+        b.pos.z += dx * 0.55 * dt;
+      }
       if (b.state === "flank" && onCallout && Math.random() < dt * 3.2) {
         b._dust = true;
       }
+    }
+    if (inLaunder(b.pos) && MAP.thick && MAP.thick.on) {
+      b.pos.z += 1.6 * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inBall(b.pos) && MAP.ball && MAP.ball.on) {
+      const dx = b.pos.x + 6.5;
+      const dz = b.pos.z - 44.15;
+      b.pos.x += -dz * 0.55 * dt;
+      b.pos.z += dx * 0.55 * dt;
+      collideXZ(b.pos, 0.4);
     }
     if ((b.state === "flank" || b.state === "breach" || b.state === "overwatch") && b.lastState !== b.state && b.calloutCd <= 0 && onCallout) {
       b.calloutCd = 3.2 + Math.random() * 1.6;

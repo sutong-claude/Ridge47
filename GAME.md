@@ -620,4 +620,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Dump dust at the head blocks hitscan and shoves anyone in the pocket
 - [x] South tailings basin (berm walls + sludge slow + scraper wreck)
 - [x] Compass / minimap TAIL pip + loc tag
+- [x] East thickener (door gap + walkable rim + sweeping rake + collision + motes)
+- [x] Compass / minimap THICK pip + indoor loc tag
+- [x] Bot BREACH through thickener door when player camps THICK
+- [x] Thickener-door berms + cook-off drums
+- [x] Wrecked thickener truck east of the house
+- [x] Underflow valve (F) floods the launder: slows, shoves north, blocks hitscan
+- [x] Rake sweeps player and bots standing in the tank
+- [x] North ball mill (door gap + tumbling drum + collision + motes)
+- [x] Compass / minimap BALL pip + indoor loc tag
+- [x] Bot BREACH through mill door when player camps BALL
+- [x] Mill-door berms + cook-off drums
+- [x] Wrecked mill truck east of the house
+- [x] Clutch (F) rolls the drum, tumbles player and bots, dust curtain blocks the mouth
 - [ ] Next: owner topics or more juice
