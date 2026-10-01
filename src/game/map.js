@@ -282,6 +282,50 @@ export function inReject(pos) {
   return Math.abs(pos.x - r.x) < r.hx && Math.abs(pos.z - r.z) < r.hz;
 }
 
+export function inPellet(pos) {
+  return pos.x > 29.55 && pos.x < 34.85 && pos.z > 38.35 && pos.z < 42.55;
+}
+
+export function onDisc(pos) {
+  const d = MAP.disc;
+  if (!d || !MAP.pellet || !MAP.pellet.on) return false;
+  const dx = pos.x - d.x;
+  const dz = pos.z - d.z;
+  return dx * dx + dz * dz < 2.15 * 2.15 && pos.y < 2.3;
+}
+
+export function inChute(pos) {
+  const c = MAP.chute;
+  if (!c || !MAP.pellet || !MAP.pellet.on) return false;
+  return Math.abs(pos.x - c.x) < c.hx && Math.abs(pos.z - c.z) < c.hz;
+}
+
+export function inClar(pos) {
+  return pos.x > -39.15 && pos.x < -33.85 && pos.z > -42.35 && pos.z < -38.05;
+}
+
+export function onBridge(pos) {
+  const b = MAP.clarBridge;
+  if (!b || !MAP.clar || !MAP.clar.on) return false;
+  return Math.abs(pos.x - b.x) < 0.7 && Math.abs(pos.z - b.z) < 1.35 && pos.y < 2.5;
+}
+
+export function inUnder(pos) {
+  const u = MAP.under;
+  if (!u || !MAP.clar || !MAP.clar.on) return false;
+  return Math.abs(pos.x - u.x) < u.hx && Math.abs(pos.z - u.z) < u.hz;
+}
+
+export function inSilo(pos) {
+  return pos.x > 2.55 && pos.x < 7.85 && pos.z > 38.55 && pos.z < 42.65;
+}
+
+export function onScrew(pos) {
+  const sc = MAP.screw;
+  if (!sc || !MAP.silo || !MAP.silo.on) return false;
+  return Math.abs(pos.x - sc.x) < sc.hx && Math.abs(pos.z - sc.z) < sc.hz && pos.y < 1.8;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -294,8 +338,79 @@ export function onBelt(pos) {
   return Math.abs(pos.x - b.x) < b.hx && Math.abs(pos.z - b.z) < b.hz && pos.y > b.minY;
 }
 
+
+export function inJig(pos) {
+  return pos.x > -20.55 && pos.x < -15.15 && pos.z > -45.35 && pos.z < -40.55;
+}
+
+export function onJigDeck(pos) {
+  const d = MAP.jigDeck;
+  if (!d || !MAP.jig || !MAP.jig.on) return false;
+  return Math.abs(pos.x - d.x) < 1.15 && Math.abs(pos.z - d.z) < 0.85 && pos.y < 1.7;
+}
+
+export function inHutch(pos) {
+  const h = MAP.hutch;
+  if (!h || !MAP.jig || !MAP.jig.on) return false;
+  return Math.abs(pos.x - h.x) < h.hx && Math.abs(pos.z - h.z) < h.hz;
+}
+
+export function inCool(pos) {
+  return pos.x > 16.15 && pos.x < 21.55 && pos.z > 40.35 && pos.z < 44.85;
+}
+
+export function onCoolCar(pos) {
+  const c = MAP.coolCar;
+  if (!c || !MAP.cool || !MAP.cool.on) return false;
+  return Math.abs(pos.x - c.x) < 0.9 && Math.abs(pos.z - c.z) < 0.7 && pos.y < 1.8;
+}
+
+export function inQuench(pos) {
+  const q = MAP.quench;
+  if (!q || !MAP.cool || !MAP.cool.on) return false;
+  return Math.abs(pos.x - q.x) < q.hx && Math.abs(pos.z - q.z) < q.hz;
+}
+
+export function inFall(pos) {
+  const f = MAP.fall;
+  if (!f || !f.live) return false;
+  return Math.abs(pos.x - f.x) < f.hx && Math.abs(pos.z - f.z) < f.hz;
+}
+
+export function inBag(pos) {
+  return pos.x > -10.7 && pos.x < -6.5 && pos.z > -47.95 && pos.z < -44.45;
+}
+
+export function onBagRack(pos) {
+  const r = MAP.bagRack;
+  if (!r || !MAP.bag || !MAP.bag.on) return false;
+  return Math.abs(pos.x - r.x) < 0.95 && Math.abs(pos.z - r.z) < 0.75 && pos.y < 1.8;
+}
+
+export function inFines(pos) {
+  const f = MAP.fines;
+  if (!f || !MAP.bag || !MAP.bag.on) return false;
+  return Math.abs(pos.x - f.x) < f.hx && Math.abs(pos.z - f.z) < f.hz;
+}
+
+export function inDry(pos) {
+  return pos.x > -26.35 && pos.x < -22.05 && pos.z > 26.5 && pos.z < 30.3;
+}
+
+export function onDryShell(pos) {
+  const s = MAP.dryShell;
+  if (!s || !MAP.dry || !MAP.dry.on) return false;
+  return Math.abs(pos.x - s.x) < 1.05 && Math.abs(pos.z - s.z) < 0.7 && pos.y < 1.8;
+}
+
+export function inExhaust(pos) {
+  const e = MAP.exhaust;
+  if (!e || !MAP.dry || !MAP.dry.on) return false;
+  return Math.abs(pos.x - e.x) < e.hx && Math.abs(pos.z - e.z) < e.hz;
+}
+
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos);
 }
 
 export function floorY(x, z) {
@@ -5271,6 +5386,526 @@ export function buildMap(scene) {
   return MAP;
 }
 
+
+  // Northeast pellet disc — door gap south, spinning pan as moving cover, chute shove
+  const peX = 32.2;
+  const peZ = 40.45;
+  const peMat = new THREE.MeshLambertMaterial({ color: 0x4a4034 });
+  const peWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, peMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  peWall(peX, 42.45, 4.8, 0.4);
+  peWall(29.7, peZ, 0.4, 3.6);
+  peWall(34.7, peZ, 0.4, 3.6);
+  peWall(30.7, 38.45, 1.5, 0.4);
+  peWall(33.7, 38.45, 1.5, 0.4);
+  box(scene, peX, 2.9, 38.45, 1.6, 0.4, 0.4, peMat);
+  MAP.pelletDoor = new THREE.Vector3(peX, 0, 38.45);
+  MAP.pellet = { on: false, x: peX - 1.4, z: peZ - 0.4 };
+  const peLamp = new THREE.PointLight(0xffb060, 0.45, 9, 2);
+  peLamp.position.set(peX, 2.6, peZ);
+  scene.add(peLamp);
+  MAP.pelletLamp = peLamp;
+  const peRing = box(scene, peX, 0.05, 38.45, 1.5, 0.04, 0.35, amber);
+  MAP.pelletRing = peRing;
+  const peLever = box(scene, MAP.pellet.x, 1.05, MAP.pellet.z, 0.12, 0.55, 0.12, amber);
+  MAP.pelletLever = peLever;
+  const pePan = box(scene, peX, 0.42, 36.15, 3.6, 0.18, 3.6, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(peX, 0, 36.15), mesh: pePan, sx: 3.6, sy: 0.28, sz: 3.6, walkOn: true });
+  const peHub = box(scene, peX, 0.72, 36.15, 0.45, 0.55, 0.45, rust);
+  MAP.discMesh = peHub;
+  MAP.disc = { x: peX, z: 36.15, ang: 0, dx: 0, dz: 0 };
+  const peArm = box(scene, peX + 1.1, 0.78, 36.15, 1.8, 0.16, 0.28, rust);
+  MAP.discArm = peArm;
+  const peDust = box(scene, peX, 1.35, 38.45, 1.45, 2.2, 0.28, new THREE.MeshLambertMaterial({ color: 0xc8a070, transparent: true, opacity: 0.05 }));
+  MAP.pelletDust = peDust;
+  MAP.pelletDustCrate = { pos: new THREE.Vector3(peX, 0, 38.45), mesh: peDust, sx: 1.45, sy: 2.2, sz: 0.28, dead: true };
+  MAP.crates.push(MAP.pelletDustCrate);
+  MAP.chute = { x: peX, z: 33.4, hx: 0.7, hz: 2.4, vz: -2.4 };
+  const peChute = box(scene, peX, 0.12, 33.4, 1.15, 0.12, 4.6, new THREE.MeshLambertMaterial({ color: 0x8a6840, transparent: true, opacity: 0.45 }));
+  MAP.chuteMesh = peChute;
+  const peMotesGeo = new THREE.BufferGeometry();
+  const peN = 12;
+  const pePos = new Float32Array(peN * 3);
+  const pePhase = [];
+  for (let i = 0; i < peN; i++) {
+    pePos[i * 3] = peX + (Math.random() - 0.5) * 3.4;
+    pePos[i * 3 + 1] = 0.3 + Math.random() * 1.6;
+    pePos[i * 3 + 2] = peZ + (Math.random() - 0.5) * 3.0;
+    pePhase.push(Math.random() * 6);
+  }
+  peMotesGeo.setAttribute("position", new THREE.BufferAttribute(pePos, 3));
+  const peMotes = new THREE.Points(peMotesGeo, new THREE.PointsMaterial({ color: 0xe0b070, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(peMotes);
+  MAP.pelletMotes = peMotes;
+  MAP.pelletMotePhase = pePhase;
+  const peBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  peBerm(30.35, 38.15, 1.15, 0.5);
+  peBerm(34.05, 38.15, 1.15, 0.5);
+  const peDrum = box(scene, 30.2, 0.55, 38.05, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(30.2, 0, 38.05), mesh: peDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const peDrum2 = box(scene, 34.2, 0.55, 38.05, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(34.2, 0, 38.05), mesh: peDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const peTruck = box(scene, 35.6, 0.65, 41.6, 1.45, 1.2, 1.35, rust);
+  const peBed = box(scene, 37.1, 0.42, 41.6, 1.4, 0.62, 1.2, steel);
+  MAP.pelletTruck = new THREE.Vector3(35.6, 0, 41.6);
+  MAP.crates.push({ pos: MAP.pelletTruck.clone(), mesh: peTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
+  MAP.crates.push({ pos: new THREE.Vector3(37.1, 0, 41.6), mesh: peBed, sx: 1.4, sy: 0.62, sz: 1.2 });
+
+  // Southwest clarifier — door gap north, sweeping bridge cover, underflow shove + dust curtain
+  const clX = -36.5;
+  const clZ = -40.2;
+  const clMat = new THREE.MeshLambertMaterial({ color: 0x3a4448 });
+  const clWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, clMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  clWall(clX, -42.25, 4.8, 0.4);
+  clWall(-38.95, clZ, 0.4, 3.6);
+  clWall(-34.05, clZ, 0.4, 3.6);
+  clWall(-37.7, -38.15, 1.5, 0.4);
+  clWall(-35.3, -38.15, 1.5, 0.4);
+  box(scene, clX, 2.9, -38.15, 1.6, 0.4, 0.4, clMat);
+  MAP.clarDoor = new THREE.Vector3(clX, 0, -38.15);
+  MAP.clar = { on: false, x: clX + 1.35, z: clZ + 0.35 };
+  const clLamp = new THREE.PointLight(0x80c0d0, 0.4, 9, 2);
+  clLamp.position.set(clX, 2.6, clZ);
+  scene.add(clLamp);
+  MAP.clarLamp = clLamp;
+  const clRing = box(scene, clX, 0.05, -38.15, 1.5, 0.04, 0.35, amber);
+  MAP.clarRing = clRing;
+  const clLever = box(scene, MAP.clar.x, 1.05, MAP.clar.z, 0.12, 0.55, 0.12, amber);
+  MAP.clarLever = clLever;
+  const clTank = box(scene, clX, 0.22, clZ, 3.4, 0.28, 2.6, new THREE.MeshLambertMaterial({ color: 0x4a6870, transparent: true, opacity: 0.55 }));
+  MAP.clarTank = clTank;
+  const clBridge = box(scene, clX, 1.15, clZ, 0.55, 0.22, 2.4, steel);
+  MAP.clarBridgeMesh = clBridge;
+  MAP.clarBridge = { x: clX, z: clZ, dx: 0, dz: 0, phase: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(clX, 0, clZ), mesh: clBridge, sx: 0.55, sy: 1.4, sz: 2.4 });
+  const clDust = box(scene, clX, 1.35, -38.15, 1.45, 2.2, 0.28, new THREE.MeshLambertMaterial({ color: 0xa0c8d0, transparent: true, opacity: 0.05 }));
+  MAP.clarDust = clDust;
+  MAP.clarDustCrate = { pos: new THREE.Vector3(clX, 0, -38.15), mesh: clDust, sx: 1.45, sy: 2.2, sz: 0.28, dead: true };
+  MAP.crates.push(MAP.clarDustCrate);
+  MAP.under = { x: -30.4, z: -36.4, hx: 5.6, hz: 0.7, vx: 2.2 };
+  const clUnder = box(scene, -30.4, 0.1, -36.4, 11.2, 0.1, 1.15, new THREE.MeshLambertMaterial({ color: 0x6a9098, transparent: true, opacity: 0.4 }));
+  MAP.underMesh = clUnder;
+  const clMotesGeo = new THREE.BufferGeometry();
+  const clN = 12;
+  const clPos = new Float32Array(clN * 3);
+  const clPhase = [];
+  for (let i = 0; i < clN; i++) {
+    clPos[i * 3] = clX + (Math.random() - 0.5) * 3.2;
+    clPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    clPos[i * 3 + 2] = clZ + (Math.random() - 0.5) * 2.6;
+    clPhase.push(Math.random() * 6);
+  }
+  clMotesGeo.setAttribute("position", new THREE.BufferAttribute(clPos, 3));
+  const clMotes = new THREE.Points(clMotesGeo, new THREE.PointsMaterial({ color: 0x90d0d8, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(clMotes);
+  MAP.clarMotes = clMotes;
+  MAP.clarMotePhase = clPhase;
+  const clBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  clBerm(-38.2, -37.9, 1.15, 0.5);
+  clBerm(-34.8, -37.9, 1.15, 0.5);
+  const clDrum = box(scene, -38.35, 0.55, -37.7, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-38.35, 0, -37.7), mesh: clDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const clDrum2 = box(scene, -34.65, 0.55, -37.7, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-34.65, 0, -37.7), mesh: clDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const clTruck = box(scene, -40.4, 0.65, -41.2, 1.45, 1.2, 1.35, rust);
+  const clBed = box(scene, -40.4, 0.42, -42.6, 1.4, 0.62, 1.2, steel);
+  MAP.clarTruck = new THREE.Vector3(-40.4, 0, -41.2);
+  MAP.crates.push({ pos: MAP.clarTruck.clone(), mesh: clTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
+  MAP.crates.push({ pos: new THREE.Vector3(-40.4, 0, -42.6), mesh: clBed, sx: 1.4, sy: 0.62, sz: 1.2 });
+
+
+  // North reagent silo — door gap south, screw conveyor shove, dust curtain
+  const siX = 5.2;
+  const siZ = 40.6;
+  const siloMat = new THREE.MeshLambertMaterial({ color: 0x4a4638 });
+  const siloWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, siloMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  siloWall(siX, 42.55, 4.6, 0.4);
+  siloWall(2.7, siZ, 0.4, 3.5);
+  siloWall(7.7, siZ, 0.4, 3.5);
+  siloWall(3.7, 38.65, 1.4, 0.4);
+  siloWall(6.7, 38.65, 1.4, 0.4);
+  box(scene, siX, 2.9, 38.65, 1.5, 0.4, 0.4, siloMat);
+  const siloBin = box(scene, siX, 1.7, 41.15, 1.6, 2.4, 1.6, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(siX, 0, 41.15), mesh: siloBin, sx: 1.6, sy: 3.2, sz: 1.6 });
+  MAP.siloDoor = new THREE.Vector3(siX, 0, 38.65);
+  MAP.silo = { on: false, x: siX + 1.35, z: siZ - 0.2 };
+  const siloLamp = new THREE.PointLight(0xe0c070, 0.4, 8, 2);
+  siloLamp.position.set(siX, 2.55, siZ);
+  scene.add(siloLamp);
+  MAP.siloLamp = siloLamp;
+  const siloRing = box(scene, siX, 0.05, 38.65, 1.4, 0.04, 0.32, amber);
+  MAP.siloRing = siloRing;
+  const siloLever = box(scene, MAP.silo.x, 1.05, MAP.silo.z, 0.12, 0.55, 0.12, amber);
+  MAP.siloLever = siloLever;
+  MAP.screw = { x: 11.2, z: 37.35, hx: 3.6, hz: 0.55, vx: 2.15 };
+  const screwBed = box(scene, 11.2, 0.28, 37.35, 7.2, 0.16, 0.7, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(11.2, 0, 37.35), mesh: screwBed, sx: 7.2, sy: 0.2, sz: 0.7, walkOn: true });
+  const screwFlight = box(scene, 11.2, 0.52, 37.35, 6.4, 0.18, 0.28, rust);
+  MAP.screwMesh = screwFlight;
+  const siloDust = box(scene, siX, 1.35, 38.65, 1.35, 2.1, 0.26, new THREE.MeshLambertMaterial({ color: 0xd0c090, transparent: true, opacity: 0.05 }));
+  MAP.siloDust = siloDust;
+  MAP.siloDustCrate = { pos: new THREE.Vector3(siX, 0, 38.65), mesh: siloDust, sx: 1.35, sy: 2.1, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.siloDustCrate);
+  const siloMotesGeo = new THREE.BufferGeometry();
+  const siloN = 10;
+  const siloPos = new Float32Array(siloN * 3);
+  const siloPhase = [];
+  for (let i = 0; i < siloN; i++) {
+    siloPos[i * 3] = siX + (Math.random() - 0.5) * 3.2;
+    siloPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    siloPos[i * 3 + 2] = siZ + (Math.random() - 0.5) * 2.8;
+    siloPhase.push(Math.random() * 6);
+  }
+  siloMotesGeo.setAttribute("position", new THREE.BufferAttribute(siloPos, 3));
+  const siloMotes = new THREE.Points(siloMotesGeo, new THREE.PointsMaterial({ color: 0xe0d090, size: 0.05, transparent: true, opacity: 0.38 }));
+  scene.add(siloMotes);
+  MAP.siloMotes = siloMotes;
+  MAP.siloMotePhase = siloPhase;
+  const siloBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  siloBerm(3.35, 38.35, 1.1, 0.48);
+  siloBerm(7.05, 38.35, 1.1, 0.48);
+  const siloDrum = box(scene, 3.2, 0.55, 38.15, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(3.2, 0, 38.15), mesh: siloDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const siloDrum2 = box(scene, 7.15, 0.55, 38.15, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(7.15, 0, 38.15), mesh: siloDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const siloTruck = box(scene, 2.2, 0.65, 42.4, 1.4, 1.15, 1.3, rust);
+  const siloBed = box(scene, 2.2, 0.4, 43.7, 1.3, 0.55, 1.1, steel);
+  MAP.siloTruck = new THREE.Vector3(2.2, 0, 42.4);
+  MAP.crates.push({ pos: MAP.siloTruck.clone(), mesh: siloTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(2.2, 0, 43.7), mesh: siloBed, sx: 1.3, sy: 0.55, sz: 1.1 });
+
+
+  // South jig house — door gap north, oscillating deck cover, hutch shove west, dust curtain
+  const jgX = -17.85;
+  const jgZ = -42.95;
+  const jigMat = new THREE.MeshLambertMaterial({ color: 0x3e3a32 });
+  const jigWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.5, z, sx, 3.0, sz, jigMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.0, sz });
+    return m;
+  };
+  jigWall(jgX, -45.35, 4.7, 0.4);
+  jigWall(-20.25, jgZ, 0.4, 3.6);
+  jigWall(-15.45, jgZ, 0.4, 3.6);
+  jigWall(-19.05, -40.55, 1.45, 0.4);
+  jigWall(-16.65, -40.55, 1.45, 0.4);
+  box(scene, jgX, 2.85, -40.55, 1.5, 0.38, 0.4, jigMat);
+  const jigDeckMesh = box(scene, jgX, 0.42, jgZ + 0.15, 2.1, 0.28, 1.35, steel);
+  MAP.jigDeckMesh = jigDeckMesh;
+  MAP.jigDeck = { x: jgX, z: jgZ + 0.15, phase: 0, dx: 0, dz: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(jgX, 0, jgZ + 0.15), mesh: jigDeckMesh, sx: 2.1, sy: 0.85, sz: 1.35, walkOn: true });
+  MAP.jigDeckCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.jigDoor = new THREE.Vector3(jgX, 0, -40.55);
+  MAP.jig = { on: false, x: jgX + 1.35, z: jgZ + 0.2 };
+  const jigLamp = new THREE.PointLight(0xe0b060, 0.4, 8, 2);
+  jigLamp.position.set(jgX, 2.5, jgZ);
+  scene.add(jigLamp);
+  MAP.jigLamp = jigLamp;
+  const jigRing = box(scene, jgX, 0.05, -40.55, 1.4, 0.04, 0.32, amber);
+  MAP.jigRing = jigRing;
+  const jigLever = box(scene, MAP.jig.x, 1.05, MAP.jig.z, 0.12, 0.55, 0.12, amber);
+  MAP.jigLever = jigLever;
+  const jigDust = box(scene, jgX, 1.15, -40.55, 1.4, 2.1, 0.22, sand);
+  jigDust.material = new THREE.MeshLambertMaterial({ color: 0xc8b080, transparent: true, opacity: 0.04 });
+  MAP.jigDust = jigDust;
+  MAP.jigDustCrate = { pos: new THREE.Vector3(jgX, 0, -40.55), mesh: jigDust, sx: 1.4, sy: 2.1, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.jigDustCrate);
+  const hutchMesh = box(scene, -21.55, 0.18, jgZ, 1.6, 0.12, 1.3, oil);
+  hutchMesh.material = new THREE.MeshLambertMaterial({ color: 0x6a5830, transparent: true, opacity: 0.4 });
+  MAP.hutchMesh = hutchMesh;
+  MAP.hutch = { x: -21.55, z: jgZ, hx: 0.85, hz: 0.7, vx: -2.2 };
+  const jigMotesGeo = new THREE.BufferGeometry();
+  const jigN = 10;
+  const jigPos = new Float32Array(jigN * 3);
+  const jigPhase = [];
+  for (let i = 0; i < jigN; i++) {
+    jigPos[i * 3] = jgX + (Math.random() - 0.5) * 3.2;
+    jigPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    jigPos[i * 3 + 2] = jgZ + (Math.random() - 0.5) * 2.6;
+    jigPhase.push(Math.random() * 6);
+  }
+  jigMotesGeo.setAttribute("position", new THREE.BufferAttribute(jigPos, 3));
+  const jigMotes = new THREE.Points(jigMotesGeo, new THREE.PointsMaterial({ color: 0xe0c890, size: 0.05, transparent: true, opacity: 0.38 }));
+  scene.add(jigMotes);
+  MAP.jigMotes = jigMotes;
+  MAP.jigMotePhase = jigPhase;
+  const jigBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  jigBerm(-19.35, -40.15, 1.05, 0.46);
+  jigBerm(-16.35, -40.15, 1.05, 0.46);
+  const jigDrum = box(scene, -19.5, 0.55, -39.85, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-19.5, 0, -39.85), mesh: jigDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const jigDrum2 = box(scene, -16.2, 0.55, -39.85, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-16.2, 0, -39.85), mesh: jigDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const jigTruck = box(scene, -17.8, 0.65, -46.6, 1.4, 1.15, 1.3, rust);
+  const jigBed = box(scene, -17.8, 0.4, -45.4, 1.3, 0.55, 1.05, steel);
+  MAP.jigTruck = new THREE.Vector3(-17.8, 0, -46.6);
+  MAP.crates.push({ pos: MAP.jigTruck.clone(), mesh: jigTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(-17.8, 0, -45.4), mesh: jigBed, sx: 1.3, sy: 0.55, sz: 1.05 });
+
+  // North rotary cooler — door gap south, rideable kiln car, quench mist blocks hitscan
+  const coX = 18.85;
+  const coZ = 42.55;
+  const coolMat = new THREE.MeshLambertMaterial({ color: 0x4a3830 });
+  const coolWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, coolMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  coolWall(coX, 44.85, 4.7, 0.4);
+  coolWall(16.45, coZ, 0.4, 3.5);
+  coolWall(21.25, coZ, 0.4, 3.5);
+  coolWall(17.65, 40.35, 1.4, 0.4);
+  coolWall(20.05, 40.35, 1.4, 0.4);
+  box(scene, coX, 2.9, 40.35, 1.5, 0.4, 0.4, coolMat);
+  const coolShell = box(scene, coX, 1.15, coZ + 0.2, 2.4, 1.15, 1.15, rust);
+  MAP.coolShell = coolShell;
+  const coolCarMesh = box(scene, coX, 0.48, coZ + 0.15, 1.35, 0.32, 1.05, steel);
+  MAP.coolCarMesh = coolCarMesh;
+  MAP.coolCar = { x: coX, z: coZ + 0.15, t: 0, dir: 1, dx: 0, dz: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(coX, 0, coZ + 0.15), mesh: coolCarMesh, sx: 1.35, sy: 0.9, sz: 1.05, walkOn: true });
+  MAP.coolCarCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.coolDoor = new THREE.Vector3(coX, 0, 40.35);
+  MAP.cool = { on: false, x: coX - 1.35, z: coZ - 0.15 };
+  const coolLamp = new THREE.PointLight(0xff7040, 0.45, 8, 2);
+  coolLamp.position.set(coX, 2.55, coZ);
+  scene.add(coolLamp);
+  MAP.coolLamp = coolLamp;
+  const coolRing = box(scene, coX, 0.05, 40.35, 1.4, 0.04, 0.32, amber);
+  MAP.coolRing = coolRing;
+  const coolLever = box(scene, MAP.cool.x, 1.05, MAP.cool.z, 0.12, 0.55, 0.12, amber);
+  MAP.coolLever = coolLever;
+  const coolDust = box(scene, coX, 1.15, 40.35, 1.4, 2.1, 0.22, sand);
+  coolDust.material = new THREE.MeshLambertMaterial({ color: 0xd0c0a0, transparent: true, opacity: 0.04 });
+  MAP.coolDust = coolDust;
+  MAP.coolDustCrate = { pos: new THREE.Vector3(coX, 0, 40.35), mesh: coolDust, sx: 1.4, sy: 2.1, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.coolDustCrate);
+  const quenchMesh = box(scene, coX, 0.16, 39.35, 1.5, 0.1, 1.15, oil);
+  quenchMesh.material = new THREE.MeshLambertMaterial({ color: 0x88a0a8, transparent: true, opacity: 0.35 });
+  MAP.quenchMesh = quenchMesh;
+  MAP.quench = { x: coX, z: 39.35, hx: 0.8, hz: 0.6, vz: -2.15 };
+  const coolMotesGeo = new THREE.BufferGeometry();
+  const coolN = 10;
+  const coolPos = new Float32Array(coolN * 3);
+  const coolPhase = [];
+  for (let i = 0; i < coolN; i++) {
+    coolPos[i * 3] = coX + (Math.random() - 0.5) * 3.0;
+    coolPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    coolPos[i * 3 + 2] = coZ + (Math.random() - 0.5) * 2.6;
+    coolPhase.push(Math.random() * 6);
+  }
+  coolMotesGeo.setAttribute("position", new THREE.BufferAttribute(coolPos, 3));
+  const coolMotes = new THREE.Points(coolMotesGeo, new THREE.PointsMaterial({ color: 0xf0c0a0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(coolMotes);
+  MAP.coolMotes = coolMotes;
+  MAP.coolMotePhase = coolPhase;
+  const coolBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  coolBerm(17.35, 40.05, 1.05, 0.46);
+  coolBerm(20.35, 40.05, 1.05, 0.46);
+  const coolDrum = box(scene, 17.2, 0.55, 39.75, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(17.2, 0, 39.75), mesh: coolDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const coolDrum2 = box(scene, 20.5, 0.55, 39.75, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(20.5, 0, 39.75), mesh: coolDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const coolTruck = box(scene, 22.8, 0.65, 43.4, 1.4, 1.15, 1.3, rust);
+  const coolBed = box(scene, 24.1, 0.4, 43.4, 1.15, 0.55, 1.2, steel);
+  MAP.coolTruck = new THREE.Vector3(22.8, 0, 43.4);
+  MAP.crates.push({ pos: MAP.coolTruck.clone(), mesh: coolTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(24.1, 0, 43.4), mesh: coolBed, sx: 1.15, sy: 0.55, sz: 1.2 });
+
+
+  // Southwest baghouse — door gap north, shaking bag rack cover, fines flume shove, dust curtain
+  const bgX = -8.6;
+  const bgZ = -46.2;
+  const bagMat = new THREE.MeshLambertMaterial({ color: 0x3e4038 });
+  const bagWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, bagMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  bagWall(bgX, -47.95, 4.6, 0.35);
+  bagWall(-10.85, bgZ, 0.35, 3.5);
+  bagWall(-6.35, bgZ, 0.35, 3.5);
+  bagWall(-9.7, -44.45, 1.45, 0.35);
+  bagWall(-7.5, -44.45, 1.45, 0.35);
+  box(scene, bgX, 2.9, -44.45, 1.5, 0.38, 0.35, bagMat);
+  const bagRackMesh = box(scene, bgX, 1.15, bgZ, 1.7, 1.35, 1.15, steel);
+  MAP.bagRackMesh = bagRackMesh;
+  MAP.bagRack = { x: bgX, z: bgZ, t: 0, dir: 1, dx: 0, dz: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(bgX, 0, bgZ), mesh: bagRackMesh, sx: 1.7, sy: 1.9, sz: 1.15, walkOn: true });
+  MAP.bagRackCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.bagDoor = new THREE.Vector3(bgX, 0, -44.45);
+  MAP.bag = { on: false, x: bgX - 1.45, z: bgZ + 0.15 };
+  const bagLamp = new THREE.PointLight(0xd0d0a0, 0.4, 8, 2);
+  bagLamp.position.set(bgX, 2.5, bgZ);
+  scene.add(bagLamp);
+  MAP.bagLamp = bagLamp;
+  const bagRing = box(scene, bgX, 0.05, -44.45, 1.4, 0.04, 0.3, amber);
+  MAP.bagRing = bagRing;
+  const bagLever = box(scene, MAP.bag.x, 1.05, MAP.bag.z, 0.12, 0.55, 0.12, amber);
+  MAP.bagLever = bagLever;
+  const bagDust = box(scene, bgX, 1.2, -44.45, 1.4, 2.15, 0.22, sand);
+  bagDust.material = new THREE.MeshLambertMaterial({ color: 0xc8c0a8, transparent: true, opacity: 0.04 });
+  MAP.bagDust = bagDust;
+  MAP.bagDustCrate = { pos: new THREE.Vector3(bgX, 0, -44.45), mesh: bagDust, sx: 1.4, sy: 2.15, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.bagDustCrate);
+  const finesMesh = box(scene, bgX, 0.1, -42.9, 1.2, 0.1, 2.4, oil);
+  finesMesh.material = new THREE.MeshLambertMaterial({ color: 0x8a8070, transparent: true, opacity: 0.3 });
+  MAP.finesMesh = finesMesh;
+  MAP.fines = { x: bgX, z: -42.9, hx: 0.65, hz: 1.25, vz: 2.25 };
+  const bagMotesGeo = new THREE.BufferGeometry();
+  const bagN = 10;
+  const bagPos = new Float32Array(bagN * 3);
+  const bagPhase = [];
+  for (let i = 0; i < bagN; i++) {
+    bagPos[i * 3] = bgX + (Math.random() - 0.5) * 3.0;
+    bagPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    bagPos[i * 3 + 2] = bgZ + (Math.random() - 0.5) * 2.4;
+    bagPhase.push(Math.random() * 6);
+  }
+  bagMotesGeo.setAttribute("position", new THREE.BufferAttribute(bagPos, 3));
+  const bagMotes = new THREE.Points(bagMotesGeo, new THREE.PointsMaterial({ color: 0xe0d8c0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(bagMotes);
+  MAP.bagMotes = bagMotes;
+  MAP.bagMotePhase = bagPhase;
+  const bagBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  bagBerm(-10.1, -44.15, 1.0, 0.45);
+  bagBerm(-7.1, -44.15, 1.0, 0.45);
+  const bagDrum = box(scene, -10.2, 0.55, -43.7, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-10.2, 0, -43.7), mesh: bagDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const bagDrum2 = box(scene, -7.0, 0.55, -43.7, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-7.0, 0, -43.7), mesh: bagDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const bagTruck = box(scene, -5.4, 0.65, -46.4, 1.4, 1.15, 1.3, rust);
+  const bagBed = box(scene, -4.1, 0.4, -46.4, 1.15, 0.55, 1.15, steel);
+  MAP.bagTruck = new THREE.Vector3(-5.4, 0, -46.4);
+  MAP.crates.push({ pos: MAP.bagTruck.clone(), mesh: bagTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(-4.1, 0, -46.4), mesh: bagBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+  // Northwest dryer house — door gap south, rideable shell, exhaust shove, door dust
+  const dyX = -24.2;
+  const dyZ = 28.4;
+  const dryMat = new THREE.MeshLambertMaterial({ color: 0x4a342c });
+  const dryWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, dryMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  dryWall(dyX, 30.3, 4.5, 0.35);
+  dryWall(-26.35, dyZ, 0.35, 3.4);
+  dryWall(-22.05, dyZ, 0.35, 3.4);
+  dryWall(-25.35, 26.5, 1.4, 0.35);
+  dryWall(-23.05, 26.5, 1.4, 0.35);
+  box(scene, dyX, 2.9, 26.5, 1.5, 0.38, 0.35, dryMat);
+  const dryShellMesh = box(scene, dyX, 0.72, dyZ, 2.2, 0.85, 1.05, rust);
+  MAP.dryShellMesh = dryShellMesh;
+  MAP.dryShell = { x: dyX, z: dyZ, t: 0, dir: 1, dx: 0, dz: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(dyX, 0, dyZ), mesh: dryShellMesh, sx: 2.2, sy: 1.2, sz: 1.05, walkOn: true });
+  MAP.dryShellCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.dryDoor = new THREE.Vector3(dyX, 0, 26.5);
+  MAP.dry = { on: false, x: dyX + 1.4, z: dyZ - 0.2 };
+  const dryLamp = new THREE.PointLight(0xff7840, 0.42, 8, 2);
+  dryLamp.position.set(dyX, 2.5, dyZ);
+  scene.add(dryLamp);
+  MAP.dryLamp = dryLamp;
+  const dryRing = box(scene, dyX, 0.05, 26.5, 1.4, 0.04, 0.3, amber);
+  MAP.dryRing = dryRing;
+  const dryLever = box(scene, MAP.dry.x, 1.05, MAP.dry.z, 0.12, 0.55, 0.12, amber);
+  MAP.dryLever = dryLever;
+  const dryDust = box(scene, dyX, 1.2, 26.5, 1.4, 2.15, 0.22, sand);
+  dryDust.material = new THREE.MeshLambertMaterial({ color: 0xd0b090, transparent: true, opacity: 0.04 });
+  MAP.dryDust = dryDust;
+  MAP.dryDustCrate = { pos: new THREE.Vector3(dyX, 0, 26.5), mesh: dryDust, sx: 1.4, sy: 2.15, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.dryDustCrate);
+  const exhMesh = box(scene, dyX, 0.12, 24.95, 1.35, 0.1, 1.4, oil);
+  exhMesh.material = new THREE.MeshLambertMaterial({ color: 0xc09070, transparent: true, opacity: 0.28 });
+  MAP.exhaustMesh = exhMesh;
+  MAP.exhaust = { x: dyX, z: 24.95, hx: 0.7, hz: 0.75, vz: -2.3 };
+  const dryMotesGeo = new THREE.BufferGeometry();
+  const dryN = 10;
+  const dryPos = new Float32Array(dryN * 3);
+  const dryPhase = [];
+  for (let i = 0; i < dryN; i++) {
+    dryPos[i * 3] = dyX + (Math.random() - 0.5) * 2.8;
+    dryPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    dryPos[i * 3 + 2] = dyZ + (Math.random() - 0.5) * 2.2;
+    dryPhase.push(Math.random() * 6);
+  }
+  dryMotesGeo.setAttribute("position", new THREE.BufferAttribute(dryPos, 3));
+  const dryMotes = new THREE.Points(dryMotesGeo, new THREE.PointsMaterial({ color: 0xf0c0a0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(dryMotes);
+  MAP.dryMotes = dryMotes;
+  MAP.dryMotePhase = dryPhase;
+  const dryBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  dryBerm(-25.4, 26.15, 1.0, 0.45);
+  dryBerm(-23.0, 26.15, 1.0, 0.45);
+  const dryDrum = box(scene, -25.5, 0.55, 25.7, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-25.5, 0, 25.7), mesh: dryDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const dryDrum2 = box(scene, -22.9, 0.55, 25.7, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-22.9, 0, 25.7), mesh: dryDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const dryTruck = box(scene, -20.8, 0.65, 29.2, 1.4, 1.15, 1.3, rust);
+  const dryBed = box(scene, -19.5, 0.4, 29.2, 1.15, 0.55, 1.15, steel);
+  MAP.dryTruck = new THREE.Vector3(-20.8, 0, 29.2);
+  MAP.crates.push({ pos: MAP.dryTruck.clone(), mesh: dryTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(-19.5, 0, 29.2), mesh: dryBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+  // North blast face — plunger arms a fuse, then a rock curtain blocks the lane and shoves south
+  const faceX = -15.4;
+  const faceZ = 44.6;
+  const facePost = box(scene, faceX, 0.85, faceZ, 0.35, 1.7, 0.35, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(faceX, 0, faceZ), mesh: facePost, sx: 0.35, sy: 1.7, sz: 0.35 });
+  const faceLever = box(scene, faceX + 0.55, 1.05, faceZ, 0.12, 0.5, 0.12, amber);
+  MAP.faceLever = faceLever;
+  MAP.face = { x: faceX + 0.55, z: faceZ, armed: false, fuse: 0 };
+  MAP.fall = { x: faceX, z: 42.4, hx: 1.35, hz: 1.55, live: false, vz: -2.6 };
+  const fallDust = box(scene, faceX, 1.4, 42.4, 2.4, 2.6, 0.28, sand);
+  fallDust.material = new THREE.MeshLambertMaterial({ color: 0xb09870, transparent: true, opacity: 0.04 });
+  MAP.fallDust = fallDust;
+  MAP.fallDustCrate = { pos: new THREE.Vector3(faceX, 0, 42.4), mesh: fallDust, sx: 2.4, sy: 2.6, sz: 0.32, dead: true };
+  MAP.crates.push(MAP.fallDustCrate);
+  const rubA = box(scene, faceX - 0.7, 0.35, 41.7, 0.9, 0.7, 0.7, rock);
+  const rubB = box(scene, faceX + 0.75, 0.28, 42.9, 0.8, 0.55, 0.8, rock);
+  rubA.visible = false;
+  rubB.visible = false;
+  MAP.rubble = [
+    { mesh: rubA, crate: { pos: new THREE.Vector3(faceX - 0.7, 0, 41.7), mesh: rubA, sx: 0.9, sy: 0.7, sz: 0.7, climb: true, dead: true } },
+    { mesh: rubB, crate: { pos: new THREE.Vector3(faceX + 0.75, 0, 42.9), mesh: rubB, sx: 0.8, sy: 0.55, sz: 0.8, climb: true, dead: true } },
+  ];
+  for (const r of MAP.rubble) MAP.crates.push(r.crate);
+  const faceLamp = new THREE.PointLight(0xff6030, 0.15, 6, 2);
+  faceLamp.position.set(faceX, 2.2, faceZ);
+  scene.add(faceLamp);
+  MAP.faceLamp = faceLamp;
+
 export function updateBirds(dt, spookAt = null) {
   if (!MAP.birds) return;
   for (const b of MAP.birds) {
@@ -6901,6 +7536,220 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
       arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.7;
     }
     MAP.sampleMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+
+  if (MAP.disc && MAP.pellet) {
+    const omega = MAP.pellet.on ? 0.85 : 0.05;
+    const prev = MAP.disc.ang;
+    MAP.disc.ang += dt * omega;
+    MAP.disc.dx = 0;
+    MAP.disc.dz = 0;
+    if (MAP.discArm) {
+      MAP.discArm.position.set(MAP.disc.x + Math.cos(MAP.disc.ang) * 1.05, 0.78, MAP.disc.z + Math.sin(MAP.disc.ang) * 1.05);
+      MAP.discArm.rotation.y = -MAP.disc.ang;
+    }
+    if (MAP.discMesh) MAP.discMesh.rotation.y = MAP.disc.ang;
+    if (MAP.pelletLever) MAP.pelletLever.rotation.z = MAP.pellet.on ? -0.65 : 0.3;
+    if (MAP.pelletLamp) MAP.pelletLamp.intensity = MAP.pellet.on ? 1.15 : 0.35;
+    if (MAP.pelletDust) MAP.pelletDust.material.opacity = MAP.pellet.on ? 0.42 : 0.04;
+    if (MAP.pelletDustCrate) MAP.pelletDustCrate.dead = !MAP.pellet.on;
+    if (MAP.chuteMesh) MAP.chuteMesh.material.opacity = MAP.pellet.on ? 1 : 0.4;
+    MAP.disc._omega = omega;
+    MAP.disc._prev = prev;
+  }
+  if (MAP.pelletMotes && MAP.pelletMotePhase) {
+    const arr = MAP.pelletMotes.geometry.attributes.position.array;
+    const ph = MAP.pelletMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.pellet && MAP.pellet.on ? 1.6 : 0.25);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.6;
+    }
+    MAP.pelletMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.clarBridge && MAP.clar) {
+    const prevX = MAP.clarBridge.x;
+    MAP.clarBridge.phase += dt * (MAP.clar.on ? 0.7 : 0.04);
+    MAP.clarBridge.x = -36.5 + Math.sin(MAP.clarBridge.phase) * 1.55;
+    MAP.clarBridge.dx = MAP.clarBridge.x - prevX;
+    MAP.clarBridge.dz = 0;
+    if (MAP.clarBridgeMesh) MAP.clarBridgeMesh.position.x = MAP.clarBridge.x;
+    const bc = MAP.crates.find((c) => c.mesh === MAP.clarBridgeMesh);
+    if (bc) bc.pos.x = MAP.clarBridge.x;
+    if (MAP.clarLever) MAP.clarLever.rotation.z = MAP.clar.on ? -0.65 : 0.3;
+    if (MAP.clarLamp) MAP.clarLamp.intensity = MAP.clar.on ? 1.05 : 0.32;
+    if (MAP.clarDust) MAP.clarDust.material.opacity = MAP.clar.on ? 0.4 : 0.04;
+    if (MAP.clarDustCrate) MAP.clarDustCrate.dead = !MAP.clar.on;
+    if (MAP.underMesh) MAP.underMesh.material.opacity = MAP.clar.on ? 0.85 : 0.35;
+    if (MAP.clarTank) MAP.clarTank.material.opacity = MAP.clar.on ? 0.72 : 0.4;
+  }
+  if (MAP.clarMotes && MAP.clarMotePhase) {
+    const arr = MAP.clarMotes.geometry.attributes.position.array;
+    const ph = MAP.clarMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.clar && MAP.clar.on ? 1.3 : 0.22);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.5;
+    }
+    MAP.clarMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+
+  if (MAP.screwMesh && MAP.silo) {
+    MAP.screwMesh.rotation.x += dt * (MAP.silo.on ? 3.4 : 0.15);
+    if (MAP.siloLever) MAP.siloLever.rotation.z = MAP.silo.on ? -0.6 : 0.28;
+    if (MAP.siloLamp) MAP.siloLamp.intensity = MAP.silo.on ? 1.05 : 0.3;
+    if (MAP.siloDust) MAP.siloDust.material.opacity = MAP.silo.on ? 0.4 : 0.04;
+    if (MAP.siloDustCrate) MAP.siloDustCrate.dead = !MAP.silo.on;
+  }
+  if (MAP.siloMotes && MAP.siloMotePhase) {
+    const arr = MAP.siloMotes.geometry.attributes.position.array;
+    const ph = MAP.siloMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.silo && MAP.silo.on ? 1.2 : 0.2);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.5;
+    }
+    MAP.siloMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+
+  if (MAP.jigDeck && MAP.jig) {
+    const prevZ = MAP.jigDeck.z;
+    MAP.jigDeck.phase += dt * (MAP.jig.on ? 4.6 : 0.2);
+    MAP.jigDeck.z = -42.8 + Math.sin(MAP.jigDeck.phase) * (MAP.jig.on ? 0.55 : 0.04);
+    MAP.jigDeck.dz = MAP.jigDeck.z - prevZ;
+    MAP.jigDeck.dx = 0;
+    if (MAP.jigDeckMesh) MAP.jigDeckMesh.position.z = MAP.jigDeck.z;
+    if (MAP.jigDeckCrate) MAP.jigDeckCrate.pos.z = MAP.jigDeck.z;
+    if (MAP.jigLever) MAP.jigLever.rotation.z = MAP.jig.on ? -0.62 : 0.28;
+    if (MAP.jigLamp) MAP.jigLamp.intensity = MAP.jig.on ? 1.1 : 0.32;
+    if (MAP.jigDust) MAP.jigDust.material.opacity = MAP.jig.on ? 0.42 : 0.04;
+    if (MAP.jigDustCrate) MAP.jigDustCrate.dead = !MAP.jig.on;
+    if (MAP.hutchMesh) MAP.hutchMesh.material.opacity = MAP.jig.on ? 0.72 : 0.28;
+  }
+  if (MAP.jigMotes && MAP.jigMotePhase) {
+    const arr = MAP.jigMotes.geometry.attributes.position.array;
+    const ph = MAP.jigMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.jig && MAP.jig.on ? 1.8 : 0.22);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.5;
+    }
+    MAP.jigMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.coolCar && MAP.cool) {
+    const prevX = MAP.coolCar.x;
+    const spd = MAP.cool.on ? 1.7 : 0;
+    MAP.coolCar.t += dt * spd * MAP.coolCar.dir;
+    if (MAP.coolCar.t > 1.15) { MAP.coolCar.t = 1.15; MAP.coolCar.dir = -1; MAP.coolBell = true; }
+    else if (MAP.coolCar.t < -1.15) { MAP.coolCar.t = -1.15; MAP.coolCar.dir = 1; MAP.coolBell = true; }
+    MAP.coolCar.x = 18.85 + MAP.coolCar.t;
+    MAP.coolCar.dx = MAP.coolCar.x - prevX;
+    MAP.coolCar.dz = 0;
+    if (MAP.coolCarMesh) MAP.coolCarMesh.position.x = MAP.coolCar.x;
+    if (MAP.coolCarCrate) MAP.coolCarCrate.pos.x = MAP.coolCar.x;
+    if (MAP.coolShell) MAP.coolShell.rotation.x += dt * (MAP.cool.on ? 1.8 : 0.08);
+    if (MAP.coolLever) MAP.coolLever.rotation.z = MAP.cool.on ? -0.62 : 0.28;
+    if (MAP.coolLamp) MAP.coolLamp.intensity = MAP.cool.on ? 1.25 : 0.3;
+    if (MAP.coolDust) MAP.coolDust.material.opacity = MAP.cool.on ? 0.4 : 0.04;
+    if (MAP.coolDustCrate) MAP.coolDustCrate.dead = !MAP.cool.on;
+    if (MAP.quenchMesh) MAP.quenchMesh.material.opacity = MAP.cool.on ? 0.7 : 0.22;
+  }
+  if (MAP.coolMotes && MAP.coolMotePhase) {
+    const arr = MAP.coolMotes.geometry.attributes.position.array;
+    const ph = MAP.coolMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.cool && MAP.cool.on ? 1.4 : 0.2);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.6;
+    }
+    MAP.coolMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+  if (MAP.bagRack && MAP.bag) {
+    const prevX = MAP.bagRack.x;
+    const spd = MAP.bag.on ? 2.4 : 0;
+    MAP.bagRack.t += dt * spd * MAP.bagRack.dir;
+    if (MAP.bagRack.t > 0.62) { MAP.bagRack.t = 0.62; MAP.bagRack.dir = -1; MAP.bagBell = true; }
+    else if (MAP.bagRack.t < -0.62) { MAP.bagRack.t = -0.62; MAP.bagRack.dir = 1; MAP.bagBell = true; }
+    MAP.bagRack.x = -8.6 + MAP.bagRack.t;
+    MAP.bagRack.dx = MAP.bagRack.x - prevX;
+    MAP.bagRack.dz = 0;
+    if (MAP.bagRackMesh) MAP.bagRackMesh.position.x = MAP.bagRack.x;
+    if (MAP.bagRackCrate) MAP.bagRackCrate.pos.x = MAP.bagRack.x;
+    if (MAP.bagLever) MAP.bagLever.rotation.z = MAP.bag.on ? -0.6 : 0.28;
+    if (MAP.bagLamp) MAP.bagLamp.intensity = MAP.bag.on ? 1.15 : 0.28;
+    if (MAP.bagDust) MAP.bagDust.material.opacity = MAP.bag.on ? 0.42 : 0.04;
+    if (MAP.bagDustCrate) MAP.bagDustCrate.dead = !MAP.bag.on;
+    if (MAP.finesMesh) MAP.finesMesh.material.opacity = MAP.bag.on ? 0.62 : 0.22;
+  }
+  if (MAP.bagMotes && MAP.bagMotePhase) {
+    const arr = MAP.bagMotes.geometry.attributes.position.array;
+    const ph = MAP.bagMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.bag && MAP.bag.on ? 1.6 : 0.18);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.5;
+    }
+    MAP.bagMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.dryShell && MAP.dry) {
+    const prevX = MAP.dryShell.x;
+    const spd = MAP.dry.on ? 1.55 : 0;
+    MAP.dryShell.t += dt * spd * MAP.dryShell.dir;
+    if (MAP.dryShell.t > 0.85) { MAP.dryShell.t = 0.85; MAP.dryShell.dir = -1; MAP.dryBell = true; }
+    else if (MAP.dryShell.t < -0.85) { MAP.dryShell.t = -0.85; MAP.dryShell.dir = 1; MAP.dryBell = true; }
+    MAP.dryShell.x = -24.2 + MAP.dryShell.t;
+    MAP.dryShell.dx = MAP.dryShell.x - prevX;
+    MAP.dryShell.dz = 0;
+    if (MAP.dryShellMesh) {
+      MAP.dryShellMesh.position.x = MAP.dryShell.x;
+      MAP.dryShellMesh.rotation.z += dt * (MAP.dry.on ? 1.6 : 0.05);
+    }
+    if (MAP.dryShellCrate) MAP.dryShellCrate.pos.x = MAP.dryShell.x;
+    if (MAP.dryLever) MAP.dryLever.rotation.z = MAP.dry.on ? -0.62 : 0.28;
+    if (MAP.dryLamp) MAP.dryLamp.intensity = MAP.dry.on ? 1.3 : 0.26;
+    if (MAP.dryDust) MAP.dryDust.material.opacity = MAP.dry.on ? 0.44 : 0.04;
+    if (MAP.dryDustCrate) MAP.dryDustCrate.dead = !MAP.dry.on;
+    if (MAP.exhaustMesh) MAP.exhaustMesh.material.opacity = MAP.dry.on ? 0.68 : 0.2;
+  }
+  if (MAP.dryMotes && MAP.dryMotePhase) {
+    const arr = MAP.dryMotes.geometry.attributes.position.array;
+    const ph = MAP.dryMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.dry && MAP.dry.on ? 1.5 : 0.16);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.6;
+    }
+    MAP.dryMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.face) {
+    if (MAP.face.armed) {
+      MAP.face.fuse -= dt;
+      if (MAP.faceLamp) MAP.faceLamp.intensity = 0.4 + Math.sin(MAP.face.fuse * 18) * 0.35;
+      if (MAP.face.fuse <= 0) {
+        MAP.face.armed = false;
+        MAP.face.fuse = 0;
+        MAP.fall.live = true;
+        MAP.fall.left = 3.4;
+        MAP.fallBell = true;
+      }
+    }
+    if (MAP.fall && MAP.fall.live) {
+      MAP.fall.left -= dt;
+      if (MAP.fall.left <= 0) {
+        MAP.fall.live = false;
+        MAP.rubbleT = 9;
+      }
+    }
+    if (MAP.rubbleT > 0) MAP.rubbleT -= dt;
+    if (MAP.rubble) {
+      const up = (MAP.rubbleT || 0) > 0;
+      for (const r of MAP.rubble) {
+        r.mesh.visible = up;
+        r.crate.dead = !up;
+      }
+    }
+    const live = MAP.fall && MAP.fall.live;
+    if (MAP.fallDust) MAP.fallDust.material.opacity = live ? 0.5 : 0.04;
+    if (MAP.fallDustCrate) MAP.fallDustCrate.dead = !live;
+    if (MAP.faceLever) MAP.faceLever.rotation.z = MAP.face.armed ? -0.8 : 0.25;
+    if (!MAP.face.armed && MAP.faceLamp) MAP.faceLamp.intensity = live ? 0.9 : 0.12;
   }
 
 export function collideXZ(pos, radius = 0.45) {
