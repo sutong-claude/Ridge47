@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -301,7 +301,13 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
                                                                                               ? MAP.floatDoor
                                                                                               : inStack(playerPos) && MAP.stackDoor
                                                                                                 ? MAP.stackDoor
-                                                                                                : inPress(playerPos) && MAP.pressDoor
+                                                                                                : inSlake(playerPos) && MAP.slakeDoor
+                                                                                                  ? MAP.slakeDoor
+                                                                                                  : inMilk(playerPos) && MAP.slakeDoor
+                                                                                                    ? MAP.slakeDoor
+                                                                                                    : inRope(playerPos) && MAP.ropeDoor
+                                                                                                      ? MAP.ropeDoor
+                                                                                                      : inPress(playerPos) && MAP.pressDoor
                                                                                                   ? MAP.pressDoor
                                                                   : MAP.hangarDoor;
       cover.copy(door);
@@ -467,6 +473,20 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
     }
     if (onHaul(b.pos)) {
       b.pos.x += MAP.haulDx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inMilk(b.pos)) {
+      b.pos.z += (MAP.milk ? MAP.milk.vz : -2.2) * dt;
+      collideXZ(b.pos, 0.4);
+      if (MAP.slake && MAP.slake.on) b.hp -= 3.5 * dt;
+    }
+    if (onBucket(b.pos) && MAP.buckets) {
+      for (const bk of MAP.buckets) {
+        if (Math.abs(b.pos.x - bk.x) < 0.85 && Math.abs(b.pos.z - bk.z) < 0.95) {
+          b.pos.x += bk.dx || 0;
+          b.pos.z += bk.dz || 0;
+        }
+      }
       collideXZ(b.pos, 0.4);
     }
     if ((b.state === "flank" || b.state === "breach" || b.state === "overwatch") && b.lastState !== b.state && b.calloutCd <= 0 && onCallout) {

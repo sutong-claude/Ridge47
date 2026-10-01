@@ -232,6 +232,30 @@ export function onHaul(pos) {
   return Math.abs(pos.x - h.pos.x) < 1.15 && Math.abs(pos.z - h.pos.z) < 1.55 && pos.y < 1.7;
 }
 
+
+export function inSlake(pos) {
+  return pos.x > -0.95 && pos.x < 5.75 && pos.z > 27.15 && pos.z < 33.05;
+}
+
+export function inMilk(pos) {
+  const s = MAP.milk;
+  if (!s || !MAP.slake || !MAP.slake.on) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+
+export function inRope(pos) {
+  return pos.x > -36.35 && pos.x < -30.45 && pos.z > 1.45 && pos.z < 6.95;
+}
+
+export function onBucket(pos) {
+  const bs = MAP.buckets;
+  if (!bs) return false;
+  for (const b of bs) {
+    if (Math.abs(pos.x - b.x) < 0.85 && Math.abs(pos.z - b.z) < 0.85 && pos.y < 2.4) return true;
+  }
+  return false;
+}
+
 export function inSluice(pos) {
   const s = MAP.sluice;
   if (!s) return false;
@@ -245,7 +269,7 @@ export function onBelt(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos);
 }
 
 export function floorY(x, z) {
@@ -4861,6 +4885,185 @@ export function buildMap(scene) {
   MAP.haulDx = 0;
   MAP.haulDz = 0;
 
+
+  // North lime slaker — door gap south, paddle, milk launder shove + steam curtain
+  const slX = 2.4;
+  const slZ = 30.1;
+  const slMat = new THREE.MeshLambertMaterial({ color: 0x4a4638 });
+  const slWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, slMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  slWall(slX, 32.85, 6.3, 0.4);
+  slWall(-0.7, slZ, 0.4, 5.1);
+  slWall(5.5, slZ, 0.4, 5.1);
+  slWall(0.55, 27.35, 2.05, 0.4);
+  slWall(4.25, 27.35, 2.05, 0.4);
+  box(scene, slX, 2.9, 27.35, 1.7, 0.36, 0.4, crateWood);
+  box(scene, slX, 3.1, slZ, 6.2, 0.16, 5.4, rock);
+  MAP.slakeDoor = new THREE.Vector3(slX, 0, 27.5);
+  MAP.slake = { on: false, x: slX + 1.7, z: slZ - 0.35, spin: 0 };
+  const slFloor = box(scene, slX, 0.04, slZ, 5.6, 0.08, 4.8, concrete);
+  slFloor.receiveShadow = true;
+  const slLamp = new THREE.PointLight(0xe8d0a0, 0.7, 11);
+  slLamp.position.set(slX, 2.35, slZ);
+  scene.add(slLamp);
+  MAP.slakeLamp = slLamp;
+  const slRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xe0d090, transparent: true, opacity: 0.42, side: THREE.DoubleSide })
+  );
+  slRing.rotation.x = -Math.PI / 2;
+  slRing.position.copy(MAP.slakeDoor).setY(0.05);
+  scene.add(slRing);
+  const slTank = box(scene, slX - 0.4, 0.7, slZ + 0.3, 2.2, 1.25, 2.0, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(slX - 0.4, 0, slZ + 0.3), mesh: slTank, sx: 2.2, sy: 0.85, sz: 2.0, walkOn: true });
+  const slPaddle = box(scene, slX - 0.4, 1.4, slZ + 0.3, 1.6, 0.08, 0.16, rust);
+  MAP.slakePaddle = slPaddle;
+  const slLever = box(scene, MAP.slake.x, 1.05, MAP.slake.z, 0.12, 0.7, 0.12, steel);
+  MAP.slakeLever = slLever;
+  box(scene, MAP.slake.x, 0.5, MAP.slake.z, 0.32, 0.6, 0.32, rust);
+  const steam = box(scene, slX, 1.25, 27.15, 1.7, 2.1, 0.55, new THREE.MeshBasicMaterial({ color: 0xe8e4d8, transparent: true, opacity: 0.04 }));
+  const steamCrate = { pos: new THREE.Vector3(slX, 0, 27.15), mesh: steam, sx: 1.7, sy: 2.1, sz: 0.7, walkOn: true, dead: true, slake: true };
+  MAP.crates.push(steamCrate);
+  MAP.slakeSteam = steam;
+  MAP.slakeSteamCrate = steamCrate;
+  const milkX = slX;
+  const milkZ = 24.6;
+  MAP.milk = { x: milkX, z: milkZ, hx: 0.85, hz: 2.6, vz: -2.2 };
+  const milkMesh = box(scene, milkX, 0.16, milkZ, 1.4, 0.22, 5.0, new THREE.MeshLambertMaterial({ color: 0xd8d2c0, transparent: true, opacity: 0.16 }));
+  const milkCrate = { pos: new THREE.Vector3(milkX, 0, milkZ), mesh: milkMesh, sx: 1.4, sy: 1.2, sz: 5.0, walkOn: true, dead: true, milk: true };
+  MAP.crates.push(milkCrate);
+  MAP.milkMesh = milkMesh;
+  MAP.milkCrate = milkCrate;
+  const slGeo = new THREE.BufferGeometry();
+  const slN = 14;
+  const slPos = new Float32Array(slN * 3);
+  const slPhase = [];
+  for (let i = 0; i < slN; i++) {
+    slPos[i * 3] = slX + (Math.random() - 0.5) * 4.6;
+    slPos[i * 3 + 1] = 0.3 + Math.random() * 2.0;
+    slPos[i * 3 + 2] = slZ + (Math.random() - 0.5) * 4.2;
+    slPhase.push(Math.random() * 6);
+  }
+  slGeo.setAttribute("position", new THREE.BufferAttribute(slPos, 3));
+  const slMotes = new THREE.Points(slGeo, new THREE.PointsMaterial({ color: 0xf0e8d0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(slMotes);
+  MAP.slakeMotes = slMotes;
+  MAP.slakeMotePhase = slPhase;
+  const slBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  slBerm(0.2, 26.7, 1.2, 0.5);
+  slBerm(4.6, 26.7, 1.2, 0.5);
+  const slDrum = box(scene, -0.2, 0.55, 26.15, 0.55, 1.1, 0.55, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-0.2, 0, 26.15), mesh: slDrum, sx: 0.55, sy: 1.1, sz: 0.55, drum: true });
+  const slDrum2 = box(scene, 5.1, 0.55, 26.2, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(5.1, 0, 26.2), mesh: slDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const slTruck = box(scene, 6.6, 0.65, 25.2, 1.5, 1.2, 1.4, rust);
+  const slBed = box(scene, 8.2, 0.42, 25.2, 1.45, 0.65, 1.3, steel);
+  MAP.slakeTruck = new THREE.Vector3(6.6, 0, 25.2);
+  MAP.crates.push({ pos: MAP.slakeTruck.clone(), mesh: slTruck, sx: 1.5, sy: 1.2, sz: 1.4 });
+  MAP.crates.push({ pos: new THREE.Vector3(8.2, 0, 25.2), mesh: slBed, sx: 1.45, sy: 0.65, sz: 1.3 });
+
+  // West aerial ropeway — door gap east, twin buckets as moving cover
+  const rpX = -33.4;
+  const rpZ = 4.2;
+  const rpMat = new THREE.MeshLambertMaterial({ color: 0x3c4038 });
+  const rpWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, rpMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  rpWall(rpX, 6.75, 5.5, 0.4);
+  rpWall(rpX, 1.65, 5.5, 0.4);
+  rpWall(-36.1, rpZ, 0.4, 4.7);
+  rpWall(-31.85, 5.55, 0.4, 2.0);
+  rpWall(-31.85, 2.85, 0.4, 2.0);
+  box(scene, -31.85, 2.9, rpZ, 0.4, 0.36, 1.6, crateWood);
+  box(scene, rpX, 3.1, rpZ, 5.4, 0.16, 5.0, rock);
+  MAP.ropeDoor = new THREE.Vector3(-31.6, 0, rpZ);
+  MAP.rope = { on: false, x: rpX + 1.3, z: rpZ + 1.15, t: 0, dir: 1 };
+  const rpFloor = box(scene, rpX, 0.04, rpZ, 4.8, 0.08, 4.4, concrete);
+  rpFloor.receiveShadow = true;
+  const rpLamp = new THREE.PointLight(0xc8d0e0, 0.65, 10);
+  rpLamp.position.set(rpX, 2.35, rpZ);
+  scene.add(rpLamp);
+  MAP.ropeLamp = rpLamp;
+  const rpRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.26, 16),
+    new THREE.MeshBasicMaterial({ color: 0xb0c0d0, transparent: true, opacity: 0.42, side: THREE.DoubleSide })
+  );
+  rpRing.rotation.x = -Math.PI / 2;
+  rpRing.position.copy(MAP.ropeDoor).setY(0.05);
+  scene.add(rpRing);
+  const rpLever = box(scene, MAP.rope.x, 1.05, MAP.rope.z, 0.12, 0.7, 0.12, steel);
+  MAP.ropeLever = rpLever;
+  box(scene, MAP.rope.x, 0.5, MAP.rope.z, 0.32, 0.6, 0.32, rust);
+  const towerX = -37.6;
+  const zA = -5.4;
+  const zB = 13.8;
+  MAP.ropeSpan = { x: towerX, zA, zB };
+  const towerMat = new THREE.MeshLambertMaterial({ color: 0x5a5648 });
+  for (const tz of [zA, zB]) {
+    const tw = box(scene, towerX, 2.4, tz, 0.45, 4.8, 0.45, towerMat);
+    MAP.crates.push({ pos: new THREE.Vector3(towerX, 0, tz), mesh: tw, sx: 0.7, sy: 4.8, sz: 0.7 });
+    box(scene, towerX, 4.7, tz, 1.1, 0.18, 1.1, steel);
+  }
+  const cable = box(scene, towerX, 4.55, (zA + zB) * 0.5, 0.08, 0.08, zB - zA, steel);
+  MAP.ropeCable = cable;
+  MAP.buckets = [];
+  MAP.bucketMeshes = [];
+  for (let i = 0; i < 2; i++) {
+    const g = new THREE.Group();
+    const tub = box(scene, 0, 1.15, 0, 1.15, 0.7, 1.15, rust);
+    const bail = box(scene, 0, 2.3, 0, 0.08, 2.2, 0.08, steel);
+    g.add(tub, bail);
+    scene.add(g);
+    const crate = { pos: new THREE.Vector3(towerX, 0, i === 0 ? zA : zB), mesh: g, sx: 1.2, sy: 1.7, sz: 1.2, bucket: true };
+    MAP.crates.push(crate);
+    MAP.buckets.push({ x: towerX, z: crate.pos.z, dx: 0, dz: 0, crate });
+    MAP.bucketMeshes.push(g);
+  }
+  const dump = box(scene, towerX, 1.2, zA - 1.3, 1.4, 2.0, 0.7, new THREE.MeshBasicMaterial({ color: 0xc8b898, transparent: true, opacity: 0.04 }));
+  const dumpCrate = { pos: new THREE.Vector3(towerX, 0, zA - 1.3), mesh: dump, sx: 1.4, sy: 2.0, sz: 0.8, walkOn: true, dead: true, ropeDust: true };
+  MAP.crates.push(dumpCrate);
+  MAP.ropeDust = dump;
+  MAP.ropeDustCrate = dumpCrate;
+  MAP.ropeDustT = 0;
+  const rpGeo = new THREE.BufferGeometry();
+  const rpN = 12;
+  const rpPos = new Float32Array(rpN * 3);
+  const rpPhase = [];
+  for (let i = 0; i < rpN; i++) {
+    rpPos[i * 3] = rpX + (Math.random() - 0.5) * 4.2;
+    rpPos[i * 3 + 1] = 0.3 + Math.random() * 1.8;
+    rpPos[i * 3 + 2] = rpZ + (Math.random() - 0.5) * 3.6;
+    rpPhase.push(Math.random() * 6);
+  }
+  rpGeo.setAttribute("position", new THREE.BufferAttribute(rpPos, 3));
+  const rpMotes = new THREE.Points(rpGeo, new THREE.PointsMaterial({ color: 0xd0d4c8, size: 0.045, transparent: true, opacity: 0.38 }));
+  scene.add(rpMotes);
+  MAP.ropeMotes = rpMotes;
+  MAP.ropeMotePhase = rpPhase;
+  const rpBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz, climb: true });
+  };
+  rpBerm(-31.2, 5.7, 0.5, 1.15);
+  rpBerm(-31.2, 2.7, 0.5, 1.15);
+  const rpDrum = box(scene, -30.7, 0.55, 5.9, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-30.7, 0, 5.9), mesh: rpDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const rpDrum2 = box(scene, -30.75, 0.55, 2.5, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-30.75, 0, 2.5), mesh: rpDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const rpTruck = box(scene, -29.2, 0.65, 4.2, 1.45, 1.2, 1.35, rust);
+  const rpBed = box(scene, -27.5, 0.42, 4.2, 1.4, 0.62, 1.25, steel);
+  MAP.ropeTruck = new THREE.Vector3(-29.2, 0, 4.2);
+  MAP.crates.push({ pos: MAP.ropeTruck.clone(), mesh: rpTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
+  MAP.crates.push({ pos: new THREE.Vector3(-27.5, 0, 4.2), mesh: rpBed, sx: 1.4, sy: 0.62, sz: 1.25 });
+
   return MAP;
 }
 
@@ -6356,6 +6559,71 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     MAP.haulMesh.position.set(nx, 0, a.z);
     MAP.haulMesh.rotation.y = MAP.haulDir > 0 ? 0 : Math.PI;
   }
+
+  if (MAP.slake && MAP.slakePaddle) {
+    if (MAP.slake.on) MAP.slake.spin += dt * 2.4;
+    MAP.slakePaddle.rotation.y = MAP.slake.spin;
+    if (MAP.slakeLever) MAP.slakeLever.rotation.z = MAP.slake.on ? -0.7 : 0.35;
+    if (MAP.slakeLamp) MAP.slakeLamp.intensity = MAP.slake.on ? 1.15 : 0.45;
+    if (MAP.slakeSteam) MAP.slakeSteam.material.opacity = MAP.slake.on ? 0.38 : 0.04;
+    if (MAP.slakeSteamCrate) MAP.slakeSteamCrate.dead = !MAP.slake.on;
+    if (MAP.milkMesh) MAP.milkMesh.material.opacity = MAP.slake.on ? 0.42 : 0.08;
+    if (MAP.milkCrate) MAP.milkCrate.dead = !MAP.slake.on;
+  }
+  if (MAP.slakeMotes && MAP.slakeMotePhase) {
+    const arr = MAP.slakeMotes.geometry.attributes.position.array;
+    const ph = MAP.slakeMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.slake && MAP.slake.on ? 1.7 : 0.35);
+      arr[i * 3 + 1] = 0.3 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.0;
+    }
+    MAP.slakeMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.rope && MAP.buckets && MAP.ropeSpan) {
+    const span = MAP.ropeSpan.zB - MAP.ropeSpan.zA;
+    if (MAP.rope.on) {
+      MAP.rope.t += dt * 0.22 * MAP.rope.dir;
+      if (MAP.rope.t >= 1) {
+        MAP.rope.t = 1;
+        MAP.rope.dir = -1;
+        MAP.ropeBell = true;
+        MAP.ropeDustT = 1.3;
+      } else if (MAP.rope.t <= 0) {
+        MAP.rope.t = 0;
+        MAP.rope.dir = 1;
+        MAP.ropeBell = true;
+      }
+    }
+    MAP.ropeDustT = Math.max(0, (MAP.ropeDustT || 0) - dt);
+    const zs = [
+      MAP.ropeSpan.zA + span * MAP.rope.t,
+      MAP.ropeSpan.zB - span * MAP.rope.t,
+    ];
+    for (let i = 0; i < MAP.buckets.length; i++) {
+      const b = MAP.buckets[i];
+      const nz = zs[i];
+      b.dx = 0;
+      b.dz = nz - b.z;
+      b.z = nz;
+      b.x = MAP.ropeSpan.x;
+      b.crate.pos.set(b.x, 0, b.z);
+      if (MAP.bucketMeshes[i]) MAP.bucketMeshes[i].position.set(b.x, 0, b.z);
+    }
+    if (MAP.ropeLever) MAP.ropeLever.rotation.z = MAP.rope.on ? -0.65 : 0.3;
+    if (MAP.ropeLamp) MAP.ropeLamp.intensity = MAP.rope.on ? 1.05 : 0.4;
+    if (MAP.ropeDust) MAP.ropeDust.material.opacity = MAP.ropeDustT > 0 ? 0.4 : 0.04;
+    if (MAP.ropeDustCrate) MAP.ropeDustCrate.dead = MAP.ropeDustT <= 0;
+  }
+  if (MAP.ropeMotes && MAP.ropeMotePhase) {
+    const arr = MAP.ropeMotes.geometry.attributes.position.array;
+    const ph = MAP.ropeMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.rope && MAP.rope.on ? 1.5 : 0.3);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.8;
+    }
+    MAP.ropeMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
 
 export function collideXZ(pos, radius = 0.45) {
   const h = MAP.half;

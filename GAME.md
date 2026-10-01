@@ -660,4 +660,17 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Wrecked stacker truck east of the house
 - [x] Clutch (F) swings the boom as moving cover; player and bots ride it; discharge dust blocks hitscan
 - [x] Haul truck shuttle on the south road: solid moving cover, bed ride, end bell
+
+- [x] North lime slaker (door gap + tank + paddle + collision + motes)
+- [x] Compass / minimap SLAKE pip + indoor loc tag
+- [x] Bot BREACH through slaker door when player camps SLAKE or MILK
+- [x] Slaker-door berms + cook-off drums
+- [x] Wrecked slaker truck south of the house
+- [x] Valve (F) runs the paddle, steam curtain blocks the door, milk launder shoves south and scalds
+- [x] West aerial ropeway (door gap + twin towers + collision + motes)
+- [x] Compass / minimap ROPE pip + indoor loc tag + bucket pips
+- [x] Bot BREACH through rope door when player camps ROPE
+- [x] Rope-door berms + cook-off drums
+- [x] Wrecked rope truck east of the house
+- [x] Clutch (F) runs the buckets as moving cover; player and bots ride; dump dust at the south tower blocks hitscan
 - [ ] Next: owner topics or more juice
