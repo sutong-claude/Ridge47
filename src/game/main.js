@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -3071,6 +3071,30 @@ function tick(now) {
       }
     } else player._tramOn = false;
   }
+  if (MAP.binSkipPlat && player.grounded) {
+    const c = MAP.binSkipPlat;
+    const dx = player.pos.x - c.x;
+    const dz = player.pos.z - c.z;
+    const onSkip = Math.abs(dx) < c.sx * 0.46 && Math.abs(dz) < c.sz * 0.46 && player.pos.y > c.top - 0.55;
+    if (onSkip) {
+      player.pos.x += MAP.binDx || 0;
+      player.pos.y += MAP.binDy || 0;
+      player.pos.z += MAP.binDz || 0;
+      if (!player._binOn) {
+        player._binOn = true;
+        feed("INCLINE");
+      }
+    } else player._binOn = false;
+  }
+  if (MAP.binBell) {
+    MAP.binBell = false;
+    beep(200, 0.1, 0.035, 1, "triangle");
+    feed(MAP.binDir < 0 ? "SKIP DUMP" : "SKIP LOAD");
+  }
+  if (MAP.binDumpT > 0.2 && MAP.binPocket && Math.abs(player.pos.x - MAP.binPocket.x) < MAP.binPocket.hx && Math.abs(player.pos.z - MAP.binPocket.z) < MAP.binPocket.hz) {
+    player.pos.z += 1.4 * dt;
+    if (Math.random() < dt * 4) beep(90, 0.04, 0.02, 1, "sawtooth");
+  }
   if (inSluice(player.pos) && MAP.sluice && player.grounded) {
     player.pos.x += MAP.sluice.vx * dt;
     player.pos.z += MAP.sluice.vz * dt;
@@ -3828,6 +3852,12 @@ function tick(now) {
       feed("RAISE");
     }
   } else player._raiseIn = false;
+  if (inBin(player.pos)) {
+    if (!player._binIn) {
+      player._binIn = true;
+      feed(MAP.binBrake && MAP.binBrake.on ? "BIN · BRAKE" : "BIN");
+    }
+  } else player._binIn = false;
   if (inVent(player.pos)) {
     if (!player._ventIn) {
       player._ventIn = true;
@@ -3912,6 +3942,14 @@ function tick(now) {
     sfxAt(MAP.tramCrate.pos, 220, 0.16, 0.04, "triangle");
     feed("TRAM TURN");
   }
+  if (MAP.binSkipCrate && (MAP.binClack || 0) <= 0 && !(MAP.binBrake && MAP.binBrake.on)) {
+    const d = player.pos.distanceTo(MAP.binSkipCrate.pos);
+    if (d < 22) {
+      MAP.binClack = 0.48;
+      sfxAt(MAP.binSkipCrate.pos, 140, 0.04, 0.028, "square");
+    }
+  }
+  MAP.binClack = Math.max(0, (MAP.binClack || 0) - dt);
   if (MAP.tramCrate && (MAP.tramClack || 0) <= 0) {
     const d = player.pos.distanceTo(MAP.tramCrate.pos);
     if (d < 18) {
@@ -4234,6 +4272,13 @@ function tick(now) {
     keys.delete("KeyF");
     feed(MAP.gate.on ? "GATE DOWN" : "GATE UP");
     beep(MAP.gate.on ? 70 : 130, 0.1, 0.04, 1, "square");
+  }
+  const nearBrake = MAP.binBrake && player.pos.distanceTo(new THREE.Vector3(MAP.binBrake.x, 0, MAP.binBrake.z)) < 1.8;
+  if (nearBrake && keys.has("KeyF") && !canEx && !nearSump && !nearFan && !nearGate) {
+    MAP.binBrake.on = !MAP.binBrake.on;
+    keys.delete("KeyF");
+    feed(MAP.binBrake.on ? "BRAKE SET" : "BRAKE OFF");
+    beep(MAP.binBrake.on ? 75 : 140, 0.12, 0.04, 1, "square");
   }
   player.extracting = canEx && (keys.has("KeyF") || (player.extracting && nearEx));
   if (!wasExtracting && player.extracting) {
@@ -4620,6 +4665,7 @@ function tick(now) {
     else if (MAP.sump && player.pos.distanceTo(new THREE.Vector3(MAP.sump.x, 0, MAP.sump.z)) < 1.8) prompt.textContent = MAP.sump.on ? "F · DRAIN SUMP" : "F · FLOOD CROSSCUT";
     else if (MAP.fan && player.pos.distanceTo(new THREE.Vector3(MAP.fan.x, 0, MAP.fan.z)) < 1.8) prompt.textContent = MAP.fan.on ? "F · KILL FAN" : "F · START FAN";
     else if (MAP.gate && player.pos.distanceTo(new THREE.Vector3(MAP.gate.x, 0, MAP.gate.z)) < 1.8) prompt.textContent = MAP.gate.on ? "F · RAISE GATE" : "F · DROP GATE";
+    else if (MAP.binBrake && player.pos.distanceTo(new THREE.Vector3(MAP.binBrake.x, 0, MAP.binBrake.z)) < 1.8) prompt.textContent = MAP.binBrake.on ? "F · RELEASE BRAKE" : "F · SET BRAKE";
     else prompt.textContent = "";
   }
   const rel = document.getElementById("relbar");
@@ -4882,7 +4928,7 @@ function tick(now) {
     const card = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(yawDeg / 45) % 8];
     const bip = player.ads && player.prone ? "  BIPOD" : "";
     const padM = player.pos.distanceTo(MAP.extract);
-    const locTag = inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
+    const locTag = inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
     headEl.textContent = (nearH < 90 ? `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}  ·  ${nearH.toFixed(0)}m` : `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}`) + `  PAD ${padM.toFixed(0)}m` + locTag + ztxt + bip;
   }
   const breathEl = document.getElementById("breath");
@@ -5959,6 +6005,14 @@ function drawMini() {
     mctx.fillStyle = "#5a8870";
     mctx.fillRect(mx(MAP.sluice.x, MAP.sluice.z) - 2, mz(MAP.sluice.x, MAP.sluice.z) - 6, 3, 12);
   }
+  if (MAP.binDoor) {
+    mctx.fillStyle = MAP.binBrake && MAP.binBrake.on ? "#a07040" : "#e0a050";
+    mctx.fillRect(mx(MAP.binDoor.x, MAP.binDoor.z) - 3, mz(MAP.binDoor.x, MAP.binDoor.z) - 2, 6, 4);
+  }
+  if (MAP.binSkipCrate) {
+    mctx.fillStyle = "#d0a050";
+    mctx.fillRect(mx(MAP.binSkipCrate.pos.x, MAP.binSkipCrate.pos.z) - 2, mz(MAP.binSkipCrate.pos.x, MAP.binSkipCrate.pos.z) - 2, 4, 3);
+  }
   if (MAP.raiseDoor) {
     mctx.fillStyle = MAP.fan && MAP.fan.on ? "#c8a060" : "#e09040";
     mctx.fillRect(mx(MAP.raiseDoor.x, MAP.raiseDoor.z) - 3, mz(MAP.raiseDoor.x, MAP.raiseDoor.z) - 2, 6, 4);
@@ -6245,6 +6299,8 @@ function drawCompass() {
   if (MAP.aditDoor) markLab(MAP.aditDoor, "#d8a040", "ADIT");
   if (MAP.winzeDoor) markLab(MAP.winzeDoor, "#e0a060", "WINZE");
   if (MAP.raiseDoor) markLab(MAP.raiseDoor, "#e09040", "RAISE");
+  if (MAP.binDoor) markLab(MAP.binDoor, "#e0a050", "BIN");
+  if (MAP.binSkipCrate) markLab(MAP.binSkipCrate.pos, "#d0a050", "SKIP");
   if (MAP.cross) markLab(new THREE.Vector3(MAP.cross.x, 0, MAP.cross.z), "#6a9880", "XCUT");
   if (MAP.cage) markLab(new THREE.Vector3(MAP.cage.x, 0, MAP.cage.z), "#c8b060", "CAGE");
   if (MAP.sluice) markLab(new THREE.Vector3(MAP.sluice.x, 0, MAP.sluice.z), "#6a9a80", "SLUICE");
