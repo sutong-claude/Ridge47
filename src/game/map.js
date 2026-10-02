@@ -1435,6 +1435,9 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.shipTruck.clone(), mesh: shipHull, sx: 3.1, sy: 1.25, sz: 1.35 });
   const scale = box(scene, -16.15, 1.15, 18.7, 0.22, 1.7, 0.22, steel);
   MAP.crates.push({ pos: new THREE.Vector3(-16.15, 0, 18.7), mesh: scale, sx: 0.22, sy: 1.7, sz: 0.22 });
+  const ramp = box(scene, -17.55, 0.38, 14.15, 2.4, 0.55, 1.15, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-17.55, 0, 14.15), mesh: ramp, sx: 2.4, sy: 0.7, sz: 1.15 });
+  MAP.shipRamp = new THREE.Vector3(-17.55, 0, 14.15);
 
 
 

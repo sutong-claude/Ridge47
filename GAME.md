@@ -890,4 +890,5 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Ship-door berms + cook-off drum + wrecked truck
 - [x] F dock cart shuttles player and bots through the cut; running cart curtains the cut (hitscan block)
 - [x] Shipping ammo tin
+- [x] Dock ramp cover on the south approach
 - [ ] Next: owner topics or more juice

@@ -6030,6 +6030,7 @@ function tick(now) {
     else if (MAP.hatch && onMezz(player.pos) && Math.abs(player.pos.x + 22) < 1.1) prompt.textContent = MAP.hatch.open ? "F · SHUT HATCH" : "F · OPEN HATCH";
     else if (MAP.cable && (onCable(player.pos) || (player.pos.y > 2.2 && (player.pos.distanceTo(MAP.cableHook) < 1.6 || player.pos.distanceTo(MAP.yardHook) < 1.6)))) prompt.textContent = MAP.cable.on ? "F · STOP CABLE" : "F · RUN CABLE";
     else if (MAP.mezzAmmo && onMezz(player.pos) && player.pos.distanceTo(MAP.mezzAmmo) < 1.4) prompt.textContent = "WALK · MEZZ TIN";
+    else if (MAP.shipAmmo && inShip(player.pos) && player.pos.distanceTo(MAP.shipAmmo) < 1.4) prompt.textContent = "WALK · SHIP TIN";
     else if (MAP.dispatchAmmo && inDispatch(player.pos) && player.pos.distanceTo(MAP.dispatchAmmo) < 1.4) prompt.textContent = "WALK · DISP TIN";
     else if (MAP.annexAmmo && inAnnex(player.pos) && player.pos.distanceTo(MAP.annexAmmo) < 1.4) prompt.textContent = "WALK · RECV TIN";
     else if (MAP.shipCart && player.pos.y < 2 && ((MAP.shipHook && player.pos.distanceTo(MAP.shipHook) < 1.7) || (MAP.shipHookIn && player.pos.distanceTo(MAP.shipHookIn) < 1.7) || onShipCart(player.pos))) prompt.textContent = MAP.shipCart.on ? "F · STOP CART" : "F · RUN CART";
