@@ -675,6 +675,36 @@ export function inStampFines(pos) {
   return Math.abs(pos.x - f.x) < f.hx && Math.abs(pos.z - f.z) < f.hz;
 }
 
+
+
+export function inHeap(pos) {
+  return pos.x > -37.85 && pos.x < -34.15 && pos.z > 36.25 && pos.z < 39.95;
+}
+export function onHeapBoom(pos) {
+  const s = MAP.heapBoom;
+  if (!s || !MAP.heap || !MAP.heap.on) return false;
+  return Math.abs(pos.x - s.x) < 1.15 && Math.abs(pos.z - s.z) < 1.15 && pos.y < 1.55;
+}
+export function inPreg(pos) {
+  const d = MAP.preg;
+  if (!d || !MAP.heap || !MAP.heap.on) return false;
+  return Math.abs(pos.x - d.x) < d.hx && Math.abs(pos.z - d.z) < d.hz;
+}
+
+export function inSag(pos) {
+  return pos.x > -1.6 && pos.x < 2.4 && pos.z > -45.1 && pos.z < -41.35;
+}
+export function onSagShell(pos) {
+  const s = MAP.sagShell;
+  if (!s || !MAP.sag || !MAP.sag.on) return false;
+  return Math.abs(pos.x - s.x) < 0.85 && Math.abs(pos.z - s.z) < 0.7 && pos.y < 1.5;
+}
+export function inSagDisch(pos) {
+  const d = MAP.sagDisch;
+  if (!d || !MAP.sag || !MAP.sag.on) return false;
+  return Math.abs(pos.x - d.x) < d.hx && Math.abs(pos.z - d.z) < d.hz;
+}
+
 export function inJaw(pos) {
   return pos.x > 34.4 && pos.x < 38.2 && pos.z > -40.6 && pos.z < -36.8;
 }
@@ -690,7 +720,7 @@ export function inJawRock(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos) || inSag(pos) || inHeap(pos);
 }
 
 export function floorY(x, z) {
@@ -7512,6 +7542,137 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.jawTruck.clone(), mesh: jwTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
   MAP.crates.push({ pos: new THREE.Vector3(jwX, 0, -34.2), mesh: jwBed, sx: 1.15, sy: 0.55, sz: 1.15 });
 
+
+  // South SAG mill — door gap north, spinning shell rides, discharge shoves east, door dust blocks hitscan
+  const sgX = 0.4;
+  const sgZ = -43.2;
+  const sgMat = new THREE.MeshLambertMaterial({ color: 0x6a5a48 });
+  const sgWall = (x, z, w, d) => {
+    const m = box(scene, x, 1.45, z, w, 2.7, d, sgMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx: w, sy: 2.7, sz: d });
+  };
+  sgWall(sgX - 1.85, sgZ, 0.35, 3.4);
+  sgWall(sgX + 1.85, sgZ, 0.35, 3.4);
+  sgWall(sgX, -45.05, 3.4, 0.35);
+  sgWall(sgX - 1.35, -41.35, 1.15, 0.35);
+  sgWall(sgX + 1.35, -41.35, 1.15, 0.35);
+  box(scene, sgX, 2.9, -41.35, 1.5, 0.38, 0.35, sgMat);
+  box(scene, sgX, 3.05, sgZ, 3.5, 0.14, 3.5, rock);
+  box(scene, sgX, 0.04, sgZ, 3.2, 0.08, 3.2, concrete);
+  const shell = box(scene, sgX, 1.15, sgZ + 0.15, 1.35, 1.15, 1.15, steel);
+  MAP.sagShellMesh = shell;
+  MAP.sagShell = { x: sgX, z: sgZ + 0.15, phase: 0, vx: 1.6 };
+  MAP.crates.push({ pos: new THREE.Vector3(sgX, 0, sgZ + 0.15), mesh: shell, sx: 1.35, sy: 1.15, sz: 1.15, walkOn: true });
+  MAP.sagDoor = new THREE.Vector3(sgX, 0, -41.35);
+  MAP.sag = { on: false, x: sgX + 1.2, z: sgZ - 0.4 };
+  const sgLamp = new THREE.PointLight(0xe0c090, 0.7, 8);
+  sgLamp.position.set(sgX, 2.55, sgZ);
+  scene.add(sgLamp);
+  MAP.sagLamp = sgLamp;
+  MAP.sagRing = box(scene, sgX, 0.05, -41.35, 1.4, 0.04, 0.28, amber);
+  const sgDust = box(scene, sgX, 1.2, -41.35, 1.4, 2.1, 0.22, sand);
+  sgDust.material = new THREE.MeshLambertMaterial({ color: 0xc8b090, transparent: true, opacity: 0.04 });
+  MAP.sagDust = sgDust;
+  MAP.sagDustCrate = { pos: new THREE.Vector3(sgX, 0, -41.35), mesh: sgDust, sx: 1.4, sy: 2.1, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.sagDustCrate);
+  const dischMesh = box(scene, 2.7, 0.1, sgZ, 1.5, 0.1, 0.7, oil);
+  dischMesh.material = new THREE.MeshLambertMaterial({ color: 0xa09070, transparent: true, opacity: 0.16 });
+  MAP.sagDischMesh = dischMesh;
+  MAP.sagDisch = { x: 2.7, z: sgZ, hx: 0.8, hz: 0.42, vx: 2.3 };
+  const sgMotesGeo = new THREE.BufferGeometry();
+  const sgN = 10;
+  const sgPos = new Float32Array(sgN * 3);
+  const sgPhase = [];
+  for (let i = 0; i < sgN; i++) {
+    sgPos[i * 3] = sgX + (Math.random() - 0.5) * 2.2;
+    sgPos[i * 3 + 1] = 0.3 + Math.random() * 1.4;
+    sgPos[i * 3 + 2] = sgZ + (Math.random() - 0.5) * 2.2;
+    sgPhase.push(Math.random() * 6.2);
+  }
+  sgMotesGeo.setAttribute("position", new THREE.BufferAttribute(sgPos, 3));
+  MAP.sagMotes = new THREE.Points(sgMotesGeo, new THREE.PointsMaterial({ color: 0xd8c090, size: 0.05 }));
+  scene.add(MAP.sagMotes);
+  MAP.sagMotePhase = sgPhase;
+  const sgBerm = box(scene, sgX - 1.55, 0.45, -40.55, 1.05, 0.85, 0.45, rock);
+  const sgBerm2 = box(scene, sgX + 1.55, 0.45, -40.55, 1.05, 0.85, 0.45, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(sgX - 1.55, 0, -40.55), mesh: sgBerm, sx: 1.05, sy: 0.85, sz: 0.45 });
+  MAP.crates.push({ pos: new THREE.Vector3(sgX + 1.55, 0, -40.55), mesh: sgBerm2, sx: 1.05, sy: 0.85, sz: 0.45 });
+  const sgDrum = box(scene, sgX - 1.9, 0.55, -40.9, 0.5, 1.05, 0.5, rust);
+  const sgDrum2 = box(scene, sgX + 1.9, 0.55, -40.9, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(sgX - 1.9, 0, -40.9), mesh: sgDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(sgX + 1.9, 0, -40.9), mesh: sgDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const sgTruck = box(scene, sgX, 0.65, -39.2, 1.4, 1.15, 1.3, rust);
+  const sgBed = box(scene, sgX, 0.4, -38.0, 1.15, 0.55, 1.15, steel);
+  MAP.sagTruck = new THREE.Vector3(sgX, 0, -39.2);
+  MAP.crates.push({ pos: MAP.sagTruck.clone(), mesh: sgTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(sgX, 0, -38.0), mesh: sgBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+
+  // Northwest heap leach — corrugated pump house, rideable boom, pregnant ditch shoves south
+  const hpX = -36;
+  const hpZ = 38.1;
+  const hpMat = new THREE.MeshLambertMaterial({ color: 0x6e6248 });
+  const hpWall = (x, z, w, d) => {
+    const m = box(scene, x, 1.45, z, w, 2.7, d, hpMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx: w, sy: 2.7, sz: d, sheet: true });
+  };
+  hpWall(hpX - 1.85, hpZ, 0.28, 3.5);
+  hpWall(hpX + 1.85, hpZ, 0.28, 3.5);
+  hpWall(hpX, 39.9, 3.5, 0.28);
+  hpWall(hpX - 1.35, 36.25, 1.15, 0.28);
+  hpWall(hpX + 1.35, 36.25, 1.15, 0.28);
+  box(scene, hpX, 2.9, 36.25, 1.5, 0.38, 0.28, hpMat);
+  box(scene, hpX, 3.05, hpZ, 3.6, 0.14, 3.6, rock);
+  box(scene, hpX, 0.04, hpZ, 3.2, 0.08, 3.2, concrete);
+  const boom = box(scene, hpX, 1.05, hpZ, 2.2, 0.12, 0.28, steel);
+  const boom2 = box(scene, hpX, 1.05, hpZ, 0.28, 0.12, 2.2, steel);
+  MAP.heapBoomMesh = boom;
+  MAP.heapBoomMesh2 = boom2;
+  MAP.heapBoom = { x: hpX, z: hpZ, phase: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(hpX, 0, hpZ), mesh: boom, sx: 2.2, sy: 0.2, sz: 0.28, walkOn: true });
+  MAP.heapDoor = new THREE.Vector3(hpX, 0, 36.25);
+  MAP.heap = { on: false, x: hpX + 1.15, z: hpZ - 0.55 };
+  const hpLamp = new THREE.PointLight(0xc8e0a0, 0.65, 8);
+  hpLamp.position.set(hpX, 2.5, hpZ);
+  scene.add(hpLamp);
+  MAP.heapLamp = hpLamp;
+  MAP.heapRing = box(scene, hpX, 0.05, 36.25, 1.4, 0.04, 0.28, amber);
+  const hpMist = box(scene, hpX, 1.2, 36.25, 1.35, 2.05, 0.2, sand);
+  hpMist.material = new THREE.MeshLambertMaterial({ color: 0xb8d0a0, transparent: true, opacity: 0.04 });
+  MAP.heapMist = hpMist;
+  MAP.heapMistCrate = { pos: new THREE.Vector3(hpX, 0, 36.25), mesh: hpMist, sx: 1.35, sy: 2.05, sz: 0.22, dead: true };
+  MAP.crates.push(MAP.heapMistCrate);
+  const pregMesh = box(scene, hpX, 0.08, 34.85, 1.6, 0.1, 1.15, sand);
+  pregMesh.material = new THREE.MeshLambertMaterial({ color: 0x8aaa58, transparent: true, opacity: 0.35 });
+  MAP.pregMesh = pregMesh;
+  MAP.preg = { x: hpX, z: 34.85, hx: 0.8, hz: 0.55, vz: -2.15 };
+  const hpMotesGeo = new THREE.BufferGeometry();
+  const hpPos = new Float32Array(36);
+  const hpPhase = [];
+  for (let i = 0; i < 12; i++) {
+    hpPos[i * 3] = hpX + (Math.random() - 0.5) * 2.4;
+    hpPos[i * 3 + 1] = 0.3 + Math.random() * 1.4;
+    hpPos[i * 3 + 2] = hpZ + (Math.random() - 0.5) * 2.2;
+    hpPhase.push(Math.random() * 6.2);
+  }
+  hpMotesGeo.setAttribute("position", new THREE.BufferAttribute(hpPos, 3));
+  MAP.heapMotes = new THREE.Points(hpMotesGeo, new THREE.PointsMaterial({ color: 0xc8e090, size: 0.05 }));
+  scene.add(MAP.heapMotes);
+  MAP.heapMotePhase = hpPhase;
+  const hpBerm = box(scene, hpX - 1.55, 0.45, 35.45, 1.05, 0.85, 0.45, rock);
+  const hpBerm2 = box(scene, hpX + 1.55, 0.45, 35.45, 1.05, 0.85, 0.45, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(hpX - 1.55, 0, 35.45), mesh: hpBerm, sx: 1.05, sy: 0.85, sz: 0.45 });
+  MAP.crates.push({ pos: new THREE.Vector3(hpX + 1.55, 0, 35.45), mesh: hpBerm2, sx: 1.05, sy: 0.85, sz: 0.45 });
+  const hpDrum = box(scene, hpX - 1.9, 0.55, 35.1, 0.5, 1.05, 0.5, rust);
+  const hpDrum2 = box(scene, hpX + 1.9, 0.55, 35.1, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(hpX - 1.9, 0, 35.1), mesh: hpDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(hpX + 1.9, 0, 35.1), mesh: hpDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const hpTruck = box(scene, hpX + 3.4, 0.65, 36.4, 1.4, 1.15, 1.3, rust);
+  const hpBed = box(scene, hpX + 3.4, 0.4, 37.6, 1.15, 0.55, 1.15, steel);
+  MAP.heapTruck = new THREE.Vector3(hpX + 3.4, 0, 36.4);
+  MAP.crates.push({ pos: MAP.heapTruck.clone(), mesh: hpTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(hpX + 3.4, 0, 37.6), mesh: hpBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
 export function updateBirds(dt, spookAt = null) {
   if (!MAP.birds) return;
   for (const b of MAP.birds) {
@@ -7703,6 +7864,22 @@ function segNear(a, b, p, rad) {
   return Math.hypot(x - p.x, z - p.z) < rad;
 }
 
+
+export function rayVsCover(origin, dir, maxDist = 80) {
+  const hit = rayVsCrates(origin, dir, maxDist);
+  if (hit && hit.crate && hit.crate.sheet) {
+    const d = dir.clone();
+    if (d.lengthSq() < 1e-8) return { block: hit, pen: 1, punched: null };
+    d.normalize();
+    const past = origin.clone().add(d.multiplyScalar(hit.dist + 0.2));
+    const remain = Math.max(0.2, maxDist - hit.dist - 0.2);
+    const rest = rayVsCrates(past, dir, remain);
+    if (rest) rest.dist += hit.dist + 0.2;
+    return { block: rest, pen: 0.55, punched: hit };
+  }
+  return { block: hit, pen: 1, punched: null };
+}
+
 export function hasLOS(from, to, eyeY = 1.5) {
   const a = from.clone();
   a.y = eyeY;
@@ -7712,8 +7889,8 @@ export function hasLOS(from, to, eyeY = 1.5) {
   const dist = delta.length();
   if (dist < 0.2) return true;
   if (MAP.dust && MAP.dust.life > 0 && segNear(a, b, MAP.dust, MAP.dust.r)) return false;
-  const hit = rayVsCrates(a, delta, dist - 0.35);
-  return !hit;
+  const cover = rayVsCover(a, delta, dist - 0.35);
+  return !cover.block;
 }
 
 export function peekCorners(crate, playerPos) {
@@ -9798,6 +9975,29 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
   }
 
 
+  
+  if (MAP.sagShell) {
+    const on = MAP.sag && MAP.sag.on;
+    MAP.sagShell.phase += dt * (on ? 1.7 : 0.08);
+    const roll = on ? Math.sin(MAP.sagShell.phase) : 0;
+    if (MAP.sagShellMesh) {
+      MAP.sagShellMesh.rotation.z = roll * 0.45;
+      MAP.sagShellMesh.position.y = 1.15 + Math.abs(roll) * 0.06;
+    }
+    if (MAP.sagDust && MAP.sagDust.material) MAP.sagDust.material.opacity = on ? 0.42 : 0.04;
+    if (MAP.sagDustCrate) MAP.sagDustCrate.dead = !on;
+    if (MAP.sagLamp) MAP.sagLamp.intensity = on ? 1.15 : 0.45;
+    if (MAP.sagMotes && MAP.sagMotePhase) {
+      const sp = MAP.sagMotes.geometry.attributes.position;
+      const arr = sp.array;
+      for (let i = 0; i < MAP.sagMotePhase.length; i++) {
+        MAP.sagMotePhase[i] += dt * (on ? 1.4 : 0.3);
+        arr[i * 3 + 1] = 0.4 + (Math.sin(MAP.sagMotePhase[i]) * 0.5 + 0.5) * 1.3;
+      }
+      sp.needsUpdate = true;
+    }
+  }
+
   if (MAP.jawHead) {
     const on = MAP.jaw && MAP.jaw.on;
     MAP.jawHead.phase += dt * (on ? 2.1 : 0.12);
@@ -9824,6 +10024,27 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
       arr[i * 3 + 1] = 0.2 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.3;
     }
     MAP.jawMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+  if (MAP.heapBoom) {
+    const on = MAP.heap && MAP.heap.on;
+    MAP.heapBoom.phase += dt * (on ? 0.85 : 0.04);
+    const a = MAP.heapBoom.phase;
+    if (MAP.heapBoomMesh) MAP.heapBoomMesh.rotation.y = a;
+    if (MAP.heapBoomMesh2) MAP.heapBoomMesh2.rotation.y = a;
+    if (MAP.heapMist && MAP.heapMist.material) MAP.heapMist.material.opacity = on ? 0.4 : 0.04;
+    if (MAP.heapMistCrate) MAP.heapMistCrate.dead = !on;
+    if (MAP.heapLamp) MAP.heapLamp.intensity = on ? 1.15 : 0.14;
+    if (MAP.pregMesh && MAP.pregMesh.material) MAP.pregMesh.material.opacity = on ? 0.55 : 0.16;
+  }
+  if (MAP.heapMotes && MAP.heapMotePhase) {
+    const arr = MAP.heapMotes.geometry.attributes.position.array;
+    const ph = MAP.heapMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.heap && MAP.heap.on ? 1.5 : 0.08);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.25;
+    }
+    MAP.heapMotes.geometry.attributes.position.needsUpdate = true;
   }
 
   if (MAP.face) {

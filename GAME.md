@@ -838,4 +838,20 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Jaw-door berms + cook-off drums
 - [x] Wrecked jaw truck north of the house
 - [x] Clutch (F) swings the jaws; closed jaws block hitscan and crush; apron carries north; rock chute shoves south; door dust blocks hitscan; jaw crush scalds
+- [x] Per-gun viewmodels restored (carbine handle / dual-tube scatter pump / sidearm slide) so the match loads
+- [x] Far sfx delay by distance (speed-of-sound rolloff on top of 1/d^2 + occlusion lowpass)
+- [x] Jaw clutch actually toggles (dead !nearJaw guard removed)
+- [x] South SAG mill (door gap + spinning shell + collision + motes)
+- [x] Compass / minimap SAG pip + indoor loc tag + discharge pip
+- [x] Bot BREACH through SAG door when player camps SAG, the shell, or the discharge
+- [x] SAG-door berms + cook-off drums
+- [x] Wrecked SAG truck north of the house
+- [x] Clutch (F) spins the shell; player and bots ride; discharge shoves east; door dust blocks hitscan; mill scalds
+- [x] Northwest heap leach (corrugated door gap + rideable boom + motes)
+- [x] Compass / minimap HEAP pip + indoor loc tag + PREG pip
+- [x] Bot BREACH through heap door when player camps HEAP, the boom, or the preg ditch
+- [x] Heap-door berms + cook-off drums
+- [x] Wrecked heap truck east of the house
+- [x] Clutch (F) spins the boom; player and bots ride; preg ditch shoves south; door mist blocks hitscan; liquor scalds
+- [x] Corrugated sheet punch: one thin wall does not stop a rifle round (55% damage, spark, bots can shoot through)
 - [ ] Next: owner topics or more juice

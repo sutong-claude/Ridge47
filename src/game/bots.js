@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -233,6 +233,8 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           : inRet(playerPos) || onRetDrum(playerPos) || inFlue(playerPos) ? MAP.retDoor
           : inRev(playerPos) || onHearth(playerPos) || inSlag(playerPos) ? MAP.revDoor
           : inStamp(playerPos) || onMortar(playerPos) || inStampFines(playerPos) ? MAP.stampDoor
+          : inHeap(playerPos) || onHeapBoom(playerPos) || inPreg(playerPos) ? MAP.heapDoor
+          : inSag(playerPos) || onSagShell(playerPos) || inSagDisch(playerPos) ? MAP.sagDoor
           : inJaw(playerPos) || onApron(playerPos) || inJawRock(playerPos) ? MAP.jawDoor
           : inElu(playerPos) || onEluCage(playerPos) || inStrip(playerPos) ? MAP.eluDoor
           : inWarehouse(playerPos) && MAP.warehouseDoor
@@ -761,6 +763,31 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       b.pos.z += (MAP.apron ? MAP.apron.vz : 1.85) * dt;
       collideXZ(b.pos, 0.4);
     }
+    
+
+    if (inPreg(b.pos)) {
+      b.pos.z += (MAP.preg ? MAP.preg.vz : -2.15) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (onHeapBoom(b.pos) && MAP.heapBoom) {
+      const dx = b.pos.x - MAP.heapBoom.x;
+      const dz = b.pos.z - MAP.heapBoom.z;
+      const c = Math.cos(0.85 * dt);
+      const sn = Math.sin(0.85 * dt);
+      b.pos.x = MAP.heapBoom.x + dx * c - dz * sn;
+      b.pos.z = MAP.heapBoom.z + dx * sn + dz * c;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inHeap(b.pos) && MAP.heap && MAP.heap.on) b.hp -= 1.5 * dt;
+
+    if (inSagDisch(b.pos)) {
+      b.pos.x += (MAP.sagDisch ? MAP.sagDisch.vx : 2.3) * dt;
+    }
+    if (onSagShell(b.pos)) {
+      b.pos.x += Math.sin((MAP.sagShell && MAP.sagShell.phase) || 0) * 1.4 * dt;
+    }
+    if (inSag(b.pos) && MAP.sag && MAP.sag.on) b.hp -= 1.6 * dt;
+
     if (inJawRock(b.pos)) {
       b.pos.z += (MAP.jawRock ? MAP.jawRock.vz : -2.2) * dt;
       collideXZ(b.pos, 0.4);
