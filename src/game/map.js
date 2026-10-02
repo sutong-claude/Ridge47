@@ -297,7 +297,7 @@ export function onTech(pos) {
 }
 
 export function inBunker(pos) {
-  return pos.x > 16.55 && pos.x < 19.85 && pos.z > -10.55 && pos.z < -8.55;
+  return pos.x > 16.55 && pos.x < 19.85 && pos.z > -9.35 && pos.z < -7.35;
 }
 
 
@@ -1802,7 +1802,7 @@ export function buildMap(scene) {
 
   // Pad slit bunker — low walls, firing port (minY lintel), ammo tin. North of extract.
   const bkX = 18.2;
-  const bkZ = -9.55;
+  const bkZ = -8.35;
   const bkMat = new THREE.MeshLambertMaterial({ color: 0x6a6254 });
   const bkWall = (x, z, sx, sz, sy = 1.15, minY = 0) => {
     const m = box(scene, x, minY + sy * 0.5, z, sx, sy, sz, bkMat);
@@ -1810,10 +1810,10 @@ export function buildMap(scene) {
   };
   bkWall(bkX - 1.35, bkZ, 0.35, 1.7);
   bkWall(bkX + 1.35, bkZ, 0.35, 1.7);
-  bkWall(bkX, -8.65, 2.4, 0.32);
-  bkWall(bkX - 0.85, -10.4, 0.85, 0.32, 0.72);
-  bkWall(bkX + 0.85, -10.4, 0.85, 0.32, 0.72);
-  bkWall(bkX, -10.4, 1.15, 0.28, 0.42, 1.35);
+  bkWall(bkX, bkZ + 0.9, 2.4, 0.32);
+  bkWall(bkX - 0.85, bkZ - 0.85, 0.85, 0.32, 0.72);
+  bkWall(bkX + 0.85, bkZ - 0.85, 0.85, 0.32, 0.72);
+  bkWall(bkX, bkZ - 0.85, 1.15, 0.28, 0.42, 1.35);
   box(scene, bkX, 0.04, bkZ, 2.2, 0.08, 1.4, concrete);
   const bkLamp = new THREE.PointLight(0xc8b080, 0.4, 6);
   bkLamp.position.set(bkX, 1.4, bkZ);
