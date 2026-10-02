@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, onMezz, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, onTech, inBunker, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS, rayVsCover, updateBayDoor, updateCable, updateAnnex, updateDispatch, updateShip, onCable, onYard, inAnnex, onAnnexBelt, onCrane, inDispatch, onCage, onDispatchLoft, inShip, onShipCart, inPack, onPackSled, inPackPress, updatePack, updateTech, updateBowser, techCab, onBowser, updateGun, onGun, gunCab, gunMuzzle, updateFuel, onFuel, fuelCab } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, onMezz, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, onTech, inBunker, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS, rayVsCover, updateBayDoor, updateCable, updateAnnex, updateDispatch, updateShip, onCable, onYard, inAnnex, onAnnexBelt, onCrane, inDispatch, onCage, onDispatchLoft, inShip, onShipCart, inPack, onPackSled, inPackPress, updatePack, updateTech, updateBowser, techCab, onBowser, updateGun, onGun, gunCab, gunMuzzle, updateFuel, onFuel, fuelCab, updateDozer, onDozer, dozerCab, updateMed, onMed, medCab } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -903,6 +903,50 @@ function fire() {
           else if (!player._fuelNote || player._fuelNote <= 0) {
             player._fuelNote = 1.2;
             feed("TANK · cooking");
+          }
+        }
+      }
+      if (block.crate && block.crate.dozer && MAP.dozer && !MAP.dozer.stalled) {
+        const yaw = MAP.dozer.yaw || 0;
+        const hx = origin.x + dir.x * block.dist - block.crate.pos.x;
+        const hz = origin.z + dir.z * block.dist - block.crate.pos.z;
+        const fwd = Math.cos(yaw) * hx - Math.sin(yaw) * hz;
+        if (fwd < -0.15) {
+          MAP.dozer.hp -= w.dmg;
+          beep(86, 0.05, 0.03, 1, "square");
+          if (MAP.dozer.hp <= 0) {
+            MAP.dozer.stalled = true;
+            MAP.dozer.hp = 0;
+            MAP.dozer.driven = false;
+            MAP.dozer.throttle = 0;
+            feed("DOZER STALLED · cab");
+            sfxAt(block.crate.pos, 68, 0.2, 0.05, "sawtooth");
+          }
+        }
+      }
+      if (block.crate && block.crate.med && MAP.med && !MAP.med.stalled) {
+        const hitY = origin.y + dir.y * block.dist;
+        const yaw = MAP.med.yaw || 0;
+        const hx = origin.x + dir.x * block.dist - block.crate.pos.x;
+        const hz = origin.z + dir.z * block.dist - block.crate.pos.z;
+        const fwd = Math.cos(yaw) * hx - Math.sin(yaw) * hz;
+        if (hitY > 1.25 && MAP.med.medic > 0 && fwd > 0.1) {
+          MAP.med.medic -= w.dmg;
+          beep(150, 0.04, 0.03, 1, "square");
+          if (MAP.med.medic <= 0) {
+            MAP.med.medic = 0;
+            MAP.med.hold = 0;
+            feed("MEDIC DOWN");
+            sfxAt(block.crate.pos, 180, 0.12, 0.04, "square");
+          }
+        } else if (fwd < -0.35) {
+          MAP.med.hp -= w.dmg;
+          beep(78, 0.05, 0.03, 1, "square");
+          if (MAP.med.hp <= 0) {
+            MAP.med.stalled = true;
+            MAP.med.hp = 0;
+            feed("MEDEVAC STALLED · cab");
+            sfxAt(block.crate.pos, 64, 0.18, 0.05, "sawtooth");
           }
         }
       }
@@ -3108,6 +3152,8 @@ function tick(now) {
     updateBowser(dt);
     updateGun(dt);
     updateFuel(dt);
+    updateDozer(dt);
+    updateMed(dt);
     tickGun(dt);
     updateHangarFx(dt, 0);
     updateGrit(dt);
@@ -3232,6 +3278,8 @@ function tick(now) {
     updateBowser(dt);
     updateGun(dt);
     updateFuel(dt);
+    updateDozer(dt);
+    updateMed(dt);
     tickGun(dt);
     updateHangarFx(dt, 0);
     updateGrit(dt);
@@ -3279,8 +3327,19 @@ function tick(now) {
   const right = new THREE.Vector3(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   const wish = new THREE.Vector3();
   const driving = !!(MAP.tech && MAP.tech.driven && !MAP.tech.stalled);
+  const dozing = !!(MAP.dozer && MAP.dozer.driven && !MAP.dozer.stalled);
   if (player.gunMount) {
     MAP.gun.aim = player.yaw;
+  } else if (dozing) {
+    MAP.dozer.throttle = (keys.has("KeyW") ? 1 : 0) - (keys.has("KeyS") ? 0.55 : 0);
+    MAP.dozer.steer = (keys.has("KeyA") ? 1 : 0) - (keys.has("KeyD") ? 1 : 0);
+    if (keys.has("ControlLeft") || keys.has("ControlRight")) {
+      if (!player._bladeLatch) {
+        player._bladeLatch = true;
+        MAP.dozer.blade = MAP.dozer.blade > 0.5 ? 0 : 1;
+        feed(MAP.dozer.blade ? "BLADE DOWN" : "BLADE UP");
+      }
+    } else player._bladeLatch = false;
   } else if (driving) {
     MAP.tech.throttle = (keys.has("KeyW") ? 1 : 0) - (keys.has("KeyS") ? 0.62 : 0);
     MAP.tech.steer = (keys.has("KeyA") ? 1 : 0) - (keys.has("KeyD") ? 1 : 0);
@@ -3397,6 +3456,47 @@ function tick(now) {
     }
   }
   if (player._fuelRam > 0) player._fuelRam -= dt;
+  if (MAP.dozer && MAP.dozer.driven && MAP.dozerCrate) {
+    const yaw = MAP.dozer.yaw || 0;
+    player.pos.x = MAP.dozerCrate.pos.x - Math.cos(yaw) * 0.45;
+    player.pos.z = MAP.dozerCrate.pos.z + Math.sin(yaw) * 0.45;
+    player.pos.y = player.eye || 1.62;
+    player.vel.y = 0;
+    player.grounded = true;
+  } else if (onDozer(player.pos) && MAP.dozerCrate) {
+    player.pos.x += MAP.dozerDx || 0;
+    player.pos.z += MAP.dozerDz || 0;
+    if (!player._dozerOn) {
+      player._dozerOn = true;
+      feed("DOZER DECK");
+    }
+  } else player._dozerOn = false;
+  if (MAP.dozer && MAP.dozer.ram && player.dead <= 0 && !MAP.dozer.driven) {
+    const yaw = MAP.dozer.yaw || 0;
+    const dx = player.pos.x - MAP.dozerCrate.pos.x;
+    const dz = player.pos.z - MAP.dozerCrate.pos.z;
+    const fwd = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+    if (fwd > 0.6 && Math.hypot(dx, dz) < 2.4 && player.pos.y < 1.6) {
+      player.hp -= 10 * dt;
+      player.shake = Math.min(1, (player.shake || 0) + 0.25);
+      player.pos.x += Math.cos(yaw) * 3.2 * dt;
+      player.pos.z -= Math.sin(yaw) * 3.2 * dt;
+      if ((player._dozerRam || 0) <= 0) {
+        player._dozerRam = 0.9;
+        feed("BLADE · shoved");
+        sfxAt(player.pos, 64, 0.1, 0.04, "sawtooth");
+      }
+    }
+  }
+  player._dozerRam = Math.max(0, (player._dozerRam || 0) - dt);
+  if (onMed(player.pos) && MAP.medCrate) {
+    player.pos.x += MAP.medDx || 0;
+    player.pos.z += MAP.medDz || 0;
+    if (!player._medOn) {
+      player._medOn = true;
+      feed("MEDEVAC BED");
+    }
+  } else player._medOn = false;
   if (player.gunMount && MAP.gunCrate && MAP.gun && !MAP.gun.stalled) {
     const yaw = MAP.gun.yaw || 0;
     player.pos.x = MAP.gunCrate.pos.x + Math.cos(yaw) * 0.55;
@@ -5260,6 +5360,20 @@ function tick(now) {
       sfxAt(MAP.techCrate.pos, (MAP.tech.driven ? 72 : 58) + Math.random() * 10, 0.05, 0.04, "sawtooth");
     }
   }
+  if (MAP.dozerCrate && MAP.dozer && !MAP.dozer.stalled) {
+    MAP.dozerTick = (MAP.dozerTick || 0) - dt;
+    if (MAP.dozerTick <= 0) {
+      MAP.dozerTick = MAP.dozer.driven ? 0.18 : 0.32;
+      sfxAt(MAP.dozerCrate.pos, (MAP.dozer.driven ? 54 : 46) + Math.random() * 8, 0.045, 0.04, "sawtooth");
+    }
+  }
+  if (MAP.medCrate && MAP.med && !MAP.med.stalled) {
+    MAP.medTick = (MAP.medTick || 0) - dt;
+    if (MAP.medTick <= 0) {
+      MAP.medTick = MAP.med.hold > 0 ? 0.22 : 0.36;
+      sfxAt(MAP.medCrate.pos, 62 + Math.random() * 6, 0.035, 0.03, "triangle");
+    }
+  }
   if (MAP.bowserCrate && MAP.bowser && !MAP.bowser.stalled) {
     MAP.bowserTick = (MAP.bowserTick || 0) - dt;
     if (MAP.bowserTick <= 0) {
@@ -5628,6 +5742,34 @@ function tick(now) {
     (MAP.packHookIn && player.pos.distanceTo(MAP.packHookIn) < 1.7) ||
     onPackSled(player.pos)
   );
+  if (MAP.dozer && MAP.dozer.driven && keys.has("KeyF") && !canEx) {
+    MAP.dozer.driven = false;
+    MAP.dozer.throttle = 0;
+    MAP.dozer.steer = 0;
+    const yaw = MAP.dozer.yaw || 0;
+    player.pos.x += Math.cos(yaw + Math.PI / 2) * 1.7;
+    player.pos.z -= Math.sin(yaw + Math.PI / 2) * 1.7;
+    feed("DISMOUNT");
+  }
+  const nearDozerCab = MAP.dozerCrate && dozerCab(player.pos) && !(MAP.dozer && MAP.dozer.driven);
+  if (nearDozerCab && MAP.dozer && !MAP.dozer.stalled && keys.has("KeyF") && !canEx && !(MAP.tech && MAP.tech.driven)) {
+    MAP.dozer.driven = true;
+    MAP.dozer.throttle = 0;
+    MAP.dozer.steer = 0;
+    feed("DOZER · WASD  Ctrl blade");
+  }
+  if (MAP.dozerCrate && MAP.dozer && MAP.dozer.stalled && !MAP.dozer.driven && keys.has("KeyF") && !canEx && player.pos.distanceTo(MAP.dozerCrate.pos) < 2.6 && player.pos.y < 2.2) {
+    MAP.dozer.stalled = false;
+    MAP.dozer.hp = 78;
+    feed("DOZER CRANK");
+    sfxAt(MAP.dozerCrate.pos, 72, 0.16, 0.04, "sawtooth");
+  }
+  if (MAP.med && MAP.med.stalled && MAP.medCrate && keys.has("KeyF") && !canEx && player.pos.distanceTo(MAP.medCrate.pos) < 2.6 && player.pos.y < 2.2) {
+    MAP.med.stalled = false;
+    MAP.med.hp = 56;
+    feed("MEDEVAC CRANK");
+    sfxAt(MAP.medCrate.pos, 70, 0.14, 0.04, "sawtooth");
+  }
   if (MAP.tech && MAP.tech.driven && keys.has("KeyF") && !canEx) {
     MAP.tech.driven = false;
     MAP.tech.throttle = 0;
@@ -6536,6 +6678,12 @@ function tick(now) {
     else if (nearCab) prompt.textContent = "F · DRIVE TECH";
     else if (MAP.bowser && MAP.bowser.stalled && MAP.bowserCrate && player.pos.distanceTo(MAP.bowserCrate.pos) < 2.5) prompt.textContent = "F · CRANK BOWSER";
     else if (MAP.fuel && MAP.fuel.stalled && !MAP.fuel.cooked && MAP.fuelCrate && player.pos.distanceTo(MAP.fuelCrate.pos) < 2.7) prompt.textContent = "F · CRANK FUEL TANKER";
+    else if (MAP.dozer && MAP.dozer.stalled && MAP.dozerCrate && player.pos.distanceTo(MAP.dozerCrate.pos) < 2.6) prompt.textContent = "F · CRANK DOZER";
+    else if (dozerCab(player.pos) && MAP.dozer && !MAP.dozer.driven) prompt.textContent = "F · DRIVE DOZER";
+    else if (MAP.dozer && MAP.dozer.driven) prompt.textContent = "WASD · Ctrl blade · F dismount";
+    else if (MAP.med && MAP.med.stalled && MAP.medCrate && player.pos.distanceTo(MAP.medCrate.pos) < 2.6) prompt.textContent = "F · CRANK MEDEVAC";
+    else if (onMed(player.pos)) prompt.textContent = "MEDEVAC BED · moving cover";
+    else if (onDozer(player.pos)) prompt.textContent = "DOZER DECK · moving cover";
     else if (MAP.fuelGatePost && player.pos.distanceTo(MAP.fuelGatePost) < 1.7) prompt.textContent = MAP.fuelGate && MAP.fuelGate.open < 0.5 ? "F · RAISE FUEL ARM" : "F · DROP FUEL ARM";
     else if (onFuel(player.pos)) prompt.textContent = "FUEL CATWALK · moving cover";
     else if (player.gunMount) prompt.textContent = "PINTLE · LMB fire · F off";
@@ -6719,6 +6867,8 @@ function tick(now) {
     updateBowser(dt);
     updateGun(dt);
     updateFuel(dt);
+    updateDozer(dt);
+    updateMed(dt);
     tickGun(dt);
   if (MAP.bayDoor && MAP.bayDoor.moving) beep(55 + MAP.bayDoor.open * 40, 0.05, 0.012, 1, "sawtooth");
   if (MAP.bayDoor && MAP.bayDoor.kicked && !MAP.bayDoor.kickHeard) {
@@ -6865,7 +7015,7 @@ function tick(now) {
     const card = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(yawDeg / 45) % 8];
     const bip = player.ads && player.prone ? "  BIPOD" : "";
     const padM = player.pos.distanceTo(MAP.extract);
-    const locTag = onFuel(player.pos) ? "  FUEL" : inSlake(player.pos) ? "  SLAKE" : inMilk(player.pos) ? "  MILK" : inRope(player.pos) ? "  ROPE" : onBucket(player.pos) ? "  BUCKET" : inSinter(player.pos) ? "  SINT" : onStrand(player.pos) ? "  STRAND" : inJig(player.pos) ? "  JIG" : onJigDeck(player.pos) ? "  DECK" : inHutch(player.pos) ? "  HUTCH" : inCool(player.pos) ? "  COOL" : onCoolCar(player.pos) ? "  DRUM" : inQuench(player.pos) ? "  QUENCH" : inFall(player.pos) ? "  FALL" : inBag(player.pos) ? "  BAG" : onBagRack(player.pos) ? "  RACK" : inFines(player.pos) ? "  FINES" : inDry(player.pos) ? "  DRY" : onDryShell(player.pos) ? "  SHELL" : inExhaust(player.pos) ? "  EXH" : inLoco(player.pos) ? "  LOCO" : onLoco(player.pos) ? "  ENGINE" : inSteam(player.pos) ? "  STEAM" : inAgit(player.pos) ? "  AGIT" : onRake(player.pos) ? "  RAKE" : inSlurry(player.pos) ? "  SLURRY" : inEw(player.pos) ? "  EW" : onCathode(player.pos) ? "  BAR" : inAcid(player.pos) ? "  ACID" : inCone(player.pos) ? "  CONE" : onMantle(player.pos) ? "  MANTLE" : inDischarge(player.pos) ? "  CHUTE" : inClas(player.pos) ? "  CLAS" : onClasRake(player.pos) ? "  RAKE" : inSands(player.pos) ? "  SANDS" : inMags(player.pos) ? "  MAGS" : onMagDrum(player.pos) ? "  DRUM" : inConc(player.pos) ? "  CONC" : inRod(player.pos) ? "  ROD" : onRodCharge(player.pos) ? "  CHARGE" : inRodDisch(player.pos) ? "  DISCH" : inSx(player.pos) ? "  SX" : onSxMixer(player.pos) ? "  MIXER" : inWeir(player.pos) ? "  WEIR" : inCil(player.pos) ? "  CIL" : onCilBasket(player.pos) ? "  BASKET" : inPulp(player.pos) ? "  PULP" : onCarbonScrew(player.pos) ? "  SCREW" : inMc(player.pos) ? "  MC" : onMcLeaf(player.pos) ? "  LEAF" : inBarren(player.pos) ? "  BARREN" : inCcd(player.pos) ? "  CCD" : onCcdRake(player.pos) ? "  RAKE" : inCcdUnder(player.pos) ? "  UNDER" : inPox(player.pos) ? "  POX" : onPoxShell(player.pos) ? "  SHELL" : inPoxVent(player.pos) ? "  VENT" : inRet(player.pos) ? "  RET" : onRetDrum(player.pos) ? "  DRUM" : inFlue(player.pos) ? "  FLUE" : inRev(player.pos) ? "  REV" : onHearth(player.pos) ? "  HEARTH" : inSlag(player.pos) ? "  SLAG" : inStamp(player.pos) ? "  STAMP" : onMortar(player.pos) ? "  MORTAR" : inStampFines(player.pos) ? "  FINES" : inGall(player.pos) ? "  GALL" : onOreCar(player.pos) ? "  CAR" : inDump(player.pos) ? "  DUMP" : inHeap(player.pos) ? "  HEAP" : onHeapBoom(player.pos) ? "  BOOM" : inPreg(player.pos) ? "  PREG" : inSag(player.pos) ? "  SAG" : onSagShell(player.pos) ? "  SHELL" : inSagDisch(player.pos) ? "  DISCH" : inJaw(player.pos) ? "  JAW" : onApron(player.pos) ? "  APRON" : inJawRock(player.pos) ? "  ROCK" : inElu(player.pos) ? "  ELU" : onEluCage(player.pos) ? "  CAGE" : inStrip(player.pos) ? "  STRIP" : inScrub(player.pos) ? "  SCRUB" : onScrubTray(player.pos) ? "  TRAY" : inLiquor(player.pos) ? "  LIQUOR" : inSilo(player.pos) ? "  SILO" : onScrew(player.pos) ? "  SCREW" : inPellet(player.pos) ? "  PEL" : onDisc(player.pos) ? "  DISC" : inChute(player.pos) ? "  CHUTE" : inClar(player.pos) ? "  CLAR" : onBridge(player.pos) ? "  BRIDGE" : inUnder(player.pos) ? "  UNDER" : inSample(player.pos) ? "  SAMP" : onSampleBoom(player.pos) ? "  CUTTER" : inReject(player.pos) ? "  REJECT" : inFloat(player.pos) ? "  FLOAT" : inFroth(player.pos) ? "  FROTH" : inFloatLaunder(player.pos) ? "  LAUNDER" : inStack(player.pos) ? "  STACK" : MAP.tech && MAP.tech.driven ? "  CAB" : onTech(player.pos) ? "  TECH" : onBowser(player.pos) ? "  BOWSER" : inBunker(player.pos) ? "  BUNK" : onHaul(player.pos) ? "  HAUL" : inPress(player.pos) ? "  PRESS" : inCyc(player.pos) ? "  CYC" : inSpiral(player.pos) ? "  SPIRAL" : inOverflow(player.pos) ? "  OVER" : inReturn(player.pos) ? "  FLUME" : inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : onDispatchLoft(player.pos) ? "  LOFT" : inDispatch(player.pos) ? "  DISP" : onPackSled(player.pos) ? "  SLED" : inPack(player.pos) ? "  PACK" : onShipCart(player.pos) ? "  CART" : inShip(player.pos) ? "  SHIP" : onCage(player.pos) ? "  CAGE" : inAnnex(player.pos) ? "  RECV" : onCrane(player.pos) ? "  CRANE" : onAnnexBelt(player.pos) ? "  ROLL" : onCable(player.pos) ? "  CABLE" : onYard(player.pos) ? "  YARD" : onMezz(player.pos) ? "  MEZZ" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
+    const locTag = onDozer(player.pos) ? "  DOZER" : onMed(player.pos) ? "  MED" : MAP.dozer && MAP.dozer.driven ? "  CAB" : onFuel(player.pos) ? "  FUEL" : inSlake(player.pos) ? "  SLAKE" : inMilk(player.pos) ? "  MILK" : inRope(player.pos) ? "  ROPE" : onBucket(player.pos) ? "  BUCKET" : inSinter(player.pos) ? "  SINT" : onStrand(player.pos) ? "  STRAND" : inJig(player.pos) ? "  JIG" : onJigDeck(player.pos) ? "  DECK" : inHutch(player.pos) ? "  HUTCH" : inCool(player.pos) ? "  COOL" : onCoolCar(player.pos) ? "  DRUM" : inQuench(player.pos) ? "  QUENCH" : inFall(player.pos) ? "  FALL" : inBag(player.pos) ? "  BAG" : onBagRack(player.pos) ? "  RACK" : inFines(player.pos) ? "  FINES" : inDry(player.pos) ? "  DRY" : onDryShell(player.pos) ? "  SHELL" : inExhaust(player.pos) ? "  EXH" : inLoco(player.pos) ? "  LOCO" : onLoco(player.pos) ? "  ENGINE" : inSteam(player.pos) ? "  STEAM" : inAgit(player.pos) ? "  AGIT" : onRake(player.pos) ? "  RAKE" : inSlurry(player.pos) ? "  SLURRY" : inEw(player.pos) ? "  EW" : onCathode(player.pos) ? "  BAR" : inAcid(player.pos) ? "  ACID" : inCone(player.pos) ? "  CONE" : onMantle(player.pos) ? "  MANTLE" : inDischarge(player.pos) ? "  CHUTE" : inClas(player.pos) ? "  CLAS" : onClasRake(player.pos) ? "  RAKE" : inSands(player.pos) ? "  SANDS" : inMags(player.pos) ? "  MAGS" : onMagDrum(player.pos) ? "  DRUM" : inConc(player.pos) ? "  CONC" : inRod(player.pos) ? "  ROD" : onRodCharge(player.pos) ? "  CHARGE" : inRodDisch(player.pos) ? "  DISCH" : inSx(player.pos) ? "  SX" : onSxMixer(player.pos) ? "  MIXER" : inWeir(player.pos) ? "  WEIR" : inCil(player.pos) ? "  CIL" : onCilBasket(player.pos) ? "  BASKET" : inPulp(player.pos) ? "  PULP" : onCarbonScrew(player.pos) ? "  SCREW" : inMc(player.pos) ? "  MC" : onMcLeaf(player.pos) ? "  LEAF" : inBarren(player.pos) ? "  BARREN" : inCcd(player.pos) ? "  CCD" : onCcdRake(player.pos) ? "  RAKE" : inCcdUnder(player.pos) ? "  UNDER" : inPox(player.pos) ? "  POX" : onPoxShell(player.pos) ? "  SHELL" : inPoxVent(player.pos) ? "  VENT" : inRet(player.pos) ? "  RET" : onRetDrum(player.pos) ? "  DRUM" : inFlue(player.pos) ? "  FLUE" : inRev(player.pos) ? "  REV" : onHearth(player.pos) ? "  HEARTH" : inSlag(player.pos) ? "  SLAG" : inStamp(player.pos) ? "  STAMP" : onMortar(player.pos) ? "  MORTAR" : inStampFines(player.pos) ? "  FINES" : inGall(player.pos) ? "  GALL" : onOreCar(player.pos) ? "  CAR" : inDump(player.pos) ? "  DUMP" : inHeap(player.pos) ? "  HEAP" : onHeapBoom(player.pos) ? "  BOOM" : inPreg(player.pos) ? "  PREG" : inSag(player.pos) ? "  SAG" : onSagShell(player.pos) ? "  SHELL" : inSagDisch(player.pos) ? "  DISCH" : inJaw(player.pos) ? "  JAW" : onApron(player.pos) ? "  APRON" : inJawRock(player.pos) ? "  ROCK" : inElu(player.pos) ? "  ELU" : onEluCage(player.pos) ? "  CAGE" : inStrip(player.pos) ? "  STRIP" : inScrub(player.pos) ? "  SCRUB" : onScrubTray(player.pos) ? "  TRAY" : inLiquor(player.pos) ? "  LIQUOR" : inSilo(player.pos) ? "  SILO" : onScrew(player.pos) ? "  SCREW" : inPellet(player.pos) ? "  PEL" : onDisc(player.pos) ? "  DISC" : inChute(player.pos) ? "  CHUTE" : inClar(player.pos) ? "  CLAR" : onBridge(player.pos) ? "  BRIDGE" : inUnder(player.pos) ? "  UNDER" : inSample(player.pos) ? "  SAMP" : onSampleBoom(player.pos) ? "  CUTTER" : inReject(player.pos) ? "  REJECT" : inFloat(player.pos) ? "  FLOAT" : inFroth(player.pos) ? "  FROTH" : inFloatLaunder(player.pos) ? "  LAUNDER" : inStack(player.pos) ? "  STACK" : MAP.tech && MAP.tech.driven ? "  CAB" : onTech(player.pos) ? "  TECH" : onBowser(player.pos) ? "  BOWSER" : inBunker(player.pos) ? "  BUNK" : onHaul(player.pos) ? "  HAUL" : inPress(player.pos) ? "  PRESS" : inCyc(player.pos) ? "  CYC" : inSpiral(player.pos) ? "  SPIRAL" : inOverflow(player.pos) ? "  OVER" : inReturn(player.pos) ? "  FLUME" : inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : onDispatchLoft(player.pos) ? "  LOFT" : inDispatch(player.pos) ? "  DISP" : onPackSled(player.pos) ? "  SLED" : inPack(player.pos) ? "  PACK" : onShipCart(player.pos) ? "  CART" : inShip(player.pos) ? "  SHIP" : onCage(player.pos) ? "  CAGE" : inAnnex(player.pos) ? "  RECV" : onCrane(player.pos) ? "  CRANE" : onAnnexBelt(player.pos) ? "  ROLL" : onCable(player.pos) ? "  CABLE" : onYard(player.pos) ? "  YARD" : onMezz(player.pos) ? "  MEZZ" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
     headEl.textContent = (nearH < 90 ? `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}  ·  ${nearH.toFixed(0)}m` : `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}`) + `  PAD ${padM.toFixed(0)}m` + locTag + ztxt + bip;
   }
   const breathEl = document.getElementById("breath");
@@ -8183,6 +8333,14 @@ function drawMini() {
     mctx.fillStyle = MAP.gun && MAP.gun.stalled ? "#687888" : "#e07048";
     mctx.fillRect(mx(MAP.gunCrate.pos.x, MAP.gunCrate.pos.z) - 3, mz(MAP.gunCrate.pos.x, MAP.gunCrate.pos.z) - 2, 8, 3);
   }
+  if (MAP.dozerCrate) {
+    mctx.fillStyle = MAP.dozer && MAP.dozer.stalled ? "#687060" : "#c4a45a";
+    mctx.fillRect(mx(MAP.dozerCrate.pos.x, MAP.dozerCrate.pos.z) - 4, mz(MAP.dozerCrate.pos.x, MAP.dozerCrate.pos.z) - 2, 8, 3);
+  }
+  if (MAP.medCrate) {
+    mctx.fillStyle = MAP.med && MAP.med.medic <= 0 ? "#888" : "#e8e8ea";
+    mctx.fillRect(mx(MAP.medCrate.pos.x, MAP.medCrate.pos.z) - 3, mz(MAP.medCrate.pos.x, MAP.medCrate.pos.z) - 2, 7, 3);
+  }
   if (MAP.fuelCrate) {
     mctx.fillStyle = MAP.fuel && MAP.fuel.cooked ? "#ff5020" : MAP.fuel && MAP.fuel.stalled ? "#887060" : "#e09030";
     mctx.fillRect(mx(MAP.fuelCrate.pos.x, MAP.fuelCrate.pos.z) - 4, mz(MAP.fuelCrate.pos.x, MAP.fuelCrate.pos.z) - 2, 9, 3);
@@ -8594,6 +8752,8 @@ function drawCompass() {
   if (MAP.bowserCrate) markLab(MAP.bowserCrate.pos, "#70b0c8", MAP.bowser && MAP.bowser.stalled ? "STALL" : "BOWSER");
   if (MAP.gunCrate) markLab(MAP.gunCrate.pos, "#e07048", MAP.gun && MAP.gun.stalled ? "STALL" : MAP.gun && MAP.gun.gunner <= 0 ? "PINTLE" : "GUN");
   if (MAP.fuelCrate) markLab(MAP.fuelCrate.pos, "#e09030", MAP.fuel && MAP.fuel.cooked ? "FIRE" : MAP.fuel && MAP.fuel.stalled ? "STALL" : "FUEL");
+  if (MAP.dozerCrate) markLab(MAP.dozerCrate.pos, "#c4a45a", MAP.dozer && MAP.dozer.stalled ? "STALL" : "DOZER");
+  if (MAP.medCrate) markLab(MAP.medCrate.pos, "#e8e8ea", MAP.med && MAP.med.stalled ? "STALL" : MAP.med && MAP.med.medic <= 0 ? "NO MED" : "MED");
   if (MAP.fuelGate) markLab(new THREE.Vector3(MAP.fuelGate.x, 0, MAP.fuelGate.z), "#c87830", MAP.fuelGate.open < 0.5 ? "ARM" : "GATE");
   if (MAP.padGate) markLab(new THREE.Vector3(MAP.padGate.x, 0, MAP.padGate.z), "#d07050", MAP.padGate.open < 0.45 ? "GATE" : "OPEN");
   if (MAP.bunker) markLab(MAP.bunker, "#d8c090", "BUNK");

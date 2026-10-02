@@ -148,6 +148,26 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           }
         } else b.reviveT = Math.max(0, (b.reviveT || 0) - dt * 0.6);
       }
+      if (b.settled && !b.looted && MAP.medCrate && MAP.med && MAP.med.medic > 0 && !MAP.med.stalled) {
+        const c = MAP.medCrate;
+        if (b.pos.distanceTo(c.pos) < 7.5) {
+          MAP.med.hold = 1.2;
+          b.medT = (b.medT || 0) + dt;
+          if (b.medT >= 3.4) {
+            b.hp = 40;
+            b.settled = false;
+            b.medT = 0;
+            b.mesh.rotation.x = 0;
+            b.mesh.rotation.z = 0;
+            b.mesh.position.y = 0;
+            if (b.gun) b.gun.visible = true;
+            b.mag = 8;
+            b.state = "cover";
+            b._revived = true;
+            b._medevac = true;
+          }
+        } else b.medT = Math.max(0, (b.medT || 0) - dt);
+      }
       continue;
     }
     b.settled = false;
@@ -526,6 +546,57 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
         } else if (!onBed && b._gunRide) {
           b.mesh.position.y = 0;
           b._gunRide = false;
+        }
+      }
+      if (MAP.dozerCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.dozerCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.15 && Math.abs(dz) < 0.9;
+        if (onBed && (b.pos.y > 0.4 || b._dozerRide)) {
+          b.pos.x += MAP.dozerDx || 0;
+          b.pos.z += MAP.dozerDz || 0;
+          b.mesh.position.y = 1.05;
+          b._dozerRide = true;
+        }
+        const want = playerPos && playerPos.z > 16 && playerPos.x < 8 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.dozer && MAP.dozer.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.0 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.0 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._dozerRide = true;
+        } else if (!onBed && b._dozerRide) {
+          b.mesh.position.y = 0;
+          b._dozerRide = false;
+        }
+        if (MAP.dozer && MAP.dozer.ram && !onBed && b.pos.y < 1.5) {
+          const yaw = MAP.dozer.yaw || 0;
+          const fwd = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+          if (fwd > 0.5 && Math.hypot(dx, dz) < 2.3) {
+            b.pos.x += Math.cos(yaw) * 3.4 * dt;
+            b.pos.z -= Math.sin(yaw) * 3.4 * dt;
+            b.hp -= 8 * dt;
+          }
+        }
+      }
+      if (MAP.medCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.medCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.15 && Math.abs(dz) < 0.85;
+        if (onBed && (b.pos.y > 0.4 || b._medRide)) {
+          b.pos.x += MAP.medDx || 0;
+          b.pos.z += MAP.medDz || 0;
+          b.mesh.position.y = 1.1;
+          b._medRide = true;
+        }
+        const want = playerPos && playerPos.x > 20 && playerPos.z < -2 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.med && MAP.med.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._medRide = true;
+        } else if (!onBed && b._medRide) {
+          b.mesh.position.y = 0;
+          b._medRide = false;
         }
       }
       if (MAP.fuelCrate && b.hp > 0 && b.state !== "down" && !(MAP.fuel && MAP.fuel.cooked)) {

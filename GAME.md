@@ -916,4 +916,13 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Cook-off leaves a fire pool that burns and blocks hitscan
 - [x] West drop-arm stops the tanker (walk + hitscan); bots kick it if the player camps the post
 - [x] Bots board the catwalk when the player is on the west road; lane berms; FUEL compass/minimap; catwalk tin; ram
+- [x] North haul dozer patrol (moving hitscan cover, rideable deck, DOZER pip)
+- [x] Cab shots stall it; F crank restarts; F at the cab drives (WASD, A left D right, F dismount)
+- [x] Blade starts down; Ctrl toggles it while driving; down blade shoves player and bots
+- [x] Blade dust curtain blocks hitscan while the blade is moving
+- [x] Spoil berms drop behind the blade (walk + hitscan cover, vehicles ignore them)
+- [x] North lane berms; bots board the deck when the player is on the north haul
+- [x] East medevac patrol (rideable bed, cab stall, F crank, MED pip)
+- [x] Stops on a downed hostile and channels them up if the medic lives
+- [x] High hit on the box drops the medic and stops the channel; bots board on the east road
 - [ ] Next: owner topics or more juice

@@ -2027,6 +2027,117 @@ export function buildMap(scene) {
     MAP.crates.push({ pos: new THREE.Vector3(-27.2, 0, bz), mesh: bm, sx: 0.55, sy: 0.8, sz: 2.2 });
   }
 
+  // North haul dozer — patrol, rideable deck, blade shoves and curtains dust.
+  const dozer = new THREE.Group();
+  const dzTrack = box(scene, 0, 0, 0, 2.2, 0.42, 1.35, rust);
+  dzTrack.position.set(0, 0.32, 0);
+  const dzCab = box(scene, 0, 0, 0, 0.85, 0.72, 1.15, steel);
+  dzCab.position.set(-0.55, 0.95, 0);
+  const dzHood = box(scene, 0, 0, 0, 0.7, 0.42, 1.05, rust);
+  dzHood.position.set(0.45, 0.78, 0);
+  const dzBlade = box(scene, 0, 0, 0, 0.16, 0.72, 2.15, steel);
+  dzBlade.position.set(1.35, 0.55, 0);
+  dozer.add(dzTrack, dzCab, dzHood, dzBlade);
+  const dozerPath = [
+    new THREE.Vector3(-20.4, 0, 20.6),
+    new THREE.Vector3(4.2, 0, 20.6),
+    new THREE.Vector3(4.2, 0, 24.4),
+    new THREE.Vector3(-20.4, 0, 24.4),
+  ];
+  MAP.dozerPath = dozerPath;
+  MAP.dozerT = 0.15;
+  MAP.dozer = { hp: 78, stalled: false, driven: false, throttle: 0, steer: 0, blade: 1, yaw: 0 };
+  MAP.dozerMesh = dozer;
+  MAP.dozerBlade = dzBlade;
+  dozer.position.copy(dozerPath[0]);
+  scene.add(dozer);
+  const dozerCrate = { pos: dozerPath[0].clone(), mesh: dozer, sx: 2.4, sy: 1.45, sz: 1.45, dozer: true, climb: true };
+  MAP.crates.push(dozerCrate);
+  MAP.dozerCrate = dozerCrate;
+  MAP.dozerDx = 0;
+  MAP.dozerDz = 0;
+  MAP.dozerPlat = { x: -20, z: 20.6, sx: 1.1, sz: 0.9, top: 1.15 };
+  const dozerSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.26, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x6a6054, transparent: true, opacity: 0.4 })
+  );
+  dozerSmoke.position.set(-1.15, 1.35, 0);
+  dozerSmoke.visible = false;
+  dozer.add(dozerSmoke);
+  MAP.dozerSmoke = dozerSmoke;
+  const bladeCrate = { pos: dozerPath[0].clone(), mesh: dzBlade, sx: 0.28, sy: 0.8, sz: 2.2, dead: true, blade: true };
+  MAP.crates.push(bladeCrate);
+  MAP.dozerBladeCrate = bladeCrate;
+  const dust = new THREE.Mesh(
+    new THREE.SphereGeometry(0.9, 7, 6),
+    new THREE.MeshBasicMaterial({ color: 0xc4b08a, transparent: true, opacity: 0.28 })
+  );
+  dust.visible = false;
+  scene.add(dust);
+  MAP.dozerDust = dust;
+  const dustCrate = { pos: dozerPath[0].clone(), mesh: dust, sx: 1.6, sy: 1.5, sz: 2.4, dead: true, dust: true };
+  MAP.crates.push(dustCrate);
+  MAP.dozerDustCrate = dustCrate;
+  MAP.dozerSpoils = [];
+  const spoilMat = new THREE.MeshLambertMaterial({ color: 0x8a7348 });
+  for (let i = 0; i < 6; i++) {
+    const sm = box(scene, -40, -2, -40, 0.7, 0.62, 1.5, spoilMat);
+    const sc = { pos: new THREE.Vector3(-40, 0, -40), mesh: sm, sx: 0.7, sy: 0.62, sz: 1.5, dead: true, spoil: true };
+    MAP.crates.push(sc);
+    MAP.dozerSpoils.push(sc);
+  }
+  MAP.dozerSpoilI = 0;
+  const dozerBerm = new THREE.MeshLambertMaterial({ color: 0x7a6a48 });
+  for (const bz of [21.4, 23.6]) {
+    const bm = box(scene, -8.2, 0.38, bz, 1.6, 0.76, 0.45, dozerBerm);
+    MAP.crates.push({ pos: new THREE.Vector3(-8.2, 0, bz), mesh: bm, sx: 1.6, sy: 0.76, sz: 0.45 });
+  }
+
+  // East medevac — stops on a downed hostile and channels them back up if the medic lives.
+  const med = new THREE.Group();
+  const medBed = box(scene, 0, 0, 0, 2.1, 0.28, 1.2, steel);
+  medBed.position.set(0.25, 0.72, 0);
+  const medCab = box(scene, 0, 0, 0, 0.9, 0.7, 1.15, rust);
+  medCab.position.set(-1.05, 0.95, 0);
+  const medBox = box(scene, 0, 0, 0, 1.35, 0.7, 1.15, steel);
+  medBox.position.set(0.45, 1.15, 0);
+  const medCross = box(scene, 0, 0, 0, 0.12, 0.42, 0.42, rust);
+  medCross.position.set(0.45, 1.55, 0);
+  const medic = box(scene, 0, 0, 0, 0.32, 0.7, 0.32, rust);
+  medic.position.set(0.85, 1.35, 0);
+  med.add(medBed, medCab, medBox, medCross, medic);
+  const medPath = [
+    new THREE.Vector3(26.4, 0, -4.6),
+    new THREE.Vector3(36.2, 0, -4.6),
+    new THREE.Vector3(36.2, 0, -12.4),
+    new THREE.Vector3(26.4, 0, -12.4),
+  ];
+  MAP.medPath = medPath;
+  MAP.medT = 0.4;
+  MAP.med = { hp: 56, stalled: false, medic: 34, hold: 0, yaw: 0 };
+  MAP.medMesh = med;
+  MAP.medicMesh = medic;
+  med.position.copy(medPath[0]);
+  scene.add(med);
+  const medCrate = { pos: medPath[0].clone(), mesh: med, sx: 2.4, sy: 1.55, sz: 1.35, med: true, climb: true };
+  MAP.crates.push(medCrate);
+  MAP.medCrate = medCrate;
+  MAP.medDx = 0;
+  MAP.medDz = 0;
+  MAP.medPlat = { x: 26.8, z: -4.6, sx: 1.15, sz: 0.9, top: 1.2 };
+  const medSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.24, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.38 })
+  );
+  medSmoke.position.set(-1.45, 1.3, 0);
+  medSmoke.visible = false;
+  med.add(medSmoke);
+  MAP.medSmoke = medSmoke;
+  const medLamp = new THREE.PointLight(0xfff2d0, 0.35, 7);
+  medLamp.position.set(0.4, 1.7, 0);
+  med.add(medLamp);
+  MAP.medLamp = medLamp;
+
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
   const rz = 33;
@@ -11288,7 +11399,7 @@ function vehicleBlocked(nx, nz, self) {
   const h = MAP.half || 48;
   if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
   for (const c of MAP.crates) {
-    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel) continue;
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.blade || c.dust || c.spoil) continue;
     if (c.sy && c.sy < 0.45) continue;
     const hx = (c.sx || 0.6) * 0.5 + 1.15;
     const hz = (c.sz || 0.6) * 0.5 + 0.7;
@@ -11635,6 +11746,226 @@ export function updateBowser(dt) {
   if (MAP.bowserSmoke) MAP.bowserSmoke.visible = !!MAP.bowser.stalled;
 }
 
+
+export function onDozer(pos) {
+  const c = MAP.dozerCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.35 && Math.abs(pos.z - c.pos.z) < 1.15 && pos.y < 2.4 && pos.y > 0.65;
+}
+
+export function dozerCab(pos) {
+  const c = MAP.dozerCrate;
+  if (!c || !MAP.dozer) return false;
+  const yaw = MAP.dozer.yaw || 0;
+  const cx = c.pos.x - Math.cos(yaw) * 0.7;
+  const cz = c.pos.z + Math.sin(yaw) * 0.7;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.35 && pos.y < 2.2;
+}
+
+export function updateDozer(dt) {
+  const path = MAP.dozerPath;
+  const c = MAP.dozerCrate;
+  if (!path || !c || !MAP.dozerMesh || !MAP.dozer) return;
+  MAP.dozerDx = 0;
+  MAP.dozerDz = 0;
+  MAP.dozer.ram = 0;
+  const placeBlade = (yaw) => {
+    const down = MAP.dozer.blade > 0.45;
+    const fx = c.pos.x + Math.cos(yaw) * 1.45;
+    const fz = c.pos.z - Math.sin(yaw) * 1.45;
+    if (MAP.dozerBlade) {
+      MAP.dozerBlade.position.y = down ? 0.42 : 1.15;
+      MAP.dozerBlade.rotation.z = down ? 0 : -0.7;
+    }
+    if (MAP.dozerBladeCrate) {
+      MAP.dozerBladeCrate.pos.set(fx, 0, fz);
+      MAP.dozerBladeCrate.dead = !down;
+      MAP.dozerBladeCrate.sz = 2.2;
+    }
+    const moving = Math.hypot(MAP.dozerDx, MAP.dozerDz) > 0.002;
+    if (MAP.dozerDust) {
+      MAP.dozerDust.visible = down && moving;
+      MAP.dozerDust.position.set(fx + Math.cos(yaw) * 0.6, 0.7, fz - Math.sin(yaw) * 0.6);
+      MAP.dozerDust.material.opacity = 0.18 + Math.sin(performance.now() * 0.02) * 0.1;
+    }
+    if (MAP.dozerDustCrate) {
+      MAP.dozerDustCrate.pos.set(fx + Math.cos(yaw) * 0.55, 0, fz - Math.sin(yaw) * 0.55);
+      MAP.dozerDustCrate.dead = !(down && moving);
+    }
+  };
+  if (MAP.dozer.driven && !MAP.dozer.stalled) {
+    const yaw = (MAP.dozer.yaw || 0) + (MAP.dozer.steer || 0) * dt * 1.35;
+    MAP.dozer.yaw = yaw;
+    const sp = (MAP.dozer.throttle || 0) * 5.6;
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.dozerDx = nx - c.pos.x;
+    MAP.dozerDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.dozerMesh.position.set(nx, 0, nz);
+    MAP.dozerMesh.rotation.y = yaw;
+    if (MAP.dozerPlat) {
+      MAP.dozerPlat.x = nx - Math.cos(yaw) * 0.35;
+      MAP.dozerPlat.z = nz + Math.sin(yaw) * 0.35;
+      c.climbTo = MAP.dozerPlat;
+    }
+    placeBlade(yaw);
+    if (MAP.dozer.blade > 0.45 && Math.hypot(MAP.dozerDx, MAP.dozerDz) > 0.004) {
+      MAP.dozer.ram = 1;
+      MAP.dozer._spoil = (MAP.dozer._spoil || 0) + dt;
+      if (MAP.dozer._spoil > 0.85 && MAP.dozerSpoils && MAP.dozerSpoils.length) {
+        MAP.dozer._spoil = 0;
+        const sc = MAP.dozerSpoils[MAP.dozerSpoilI % MAP.dozerSpoils.length];
+        MAP.dozerSpoilI = (MAP.dozerSpoilI + 1) % MAP.dozerSpoils.length;
+        const sx = c.pos.x - Math.cos(yaw) * 1.1;
+        const sz = c.pos.z + Math.sin(yaw) * 1.1;
+        sc.pos.set(sx, 0, sz);
+        sc.dead = false;
+        if (sc.mesh) sc.mesh.position.set(sx, 0.31, sz);
+      }
+    }
+    if (MAP.dozerSmoke) MAP.dozerSmoke.visible = false;
+    return;
+  }
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.dozer.stalled ? 0 : 3.2;
+  if (speed > 0) {
+    const nextT = (MAP.dozerT + dt * speed) % total;
+    let remain = nextT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = MAP.dozer.yaw || 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      MAP.dozerT = nextT;
+      MAP.dozer.yaw = yaw;
+      MAP.dozerDx = nx - c.pos.x;
+      MAP.dozerDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.dozerMesh.position.set(nx, 0, nz);
+      MAP.dozerMesh.rotation.y = yaw;
+      if (MAP.dozerPlat) {
+        MAP.dozerPlat.x = nx - Math.cos(yaw) * 0.35;
+        MAP.dozerPlat.z = nz + Math.sin(yaw) * 0.35;
+        c.climbTo = MAP.dozerPlat;
+      }
+    }
+    placeBlade(MAP.dozer.yaw || yaw);
+    if (MAP.dozer.blade > 0.45 && Math.hypot(MAP.dozerDx, MAP.dozerDz) > 0.004) {
+      MAP.dozer.ram = 1;
+      MAP.dozer._spoil = (MAP.dozer._spoil || 0) + dt;
+      if (MAP.dozer._spoil > 1.1 && MAP.dozerSpoils && MAP.dozerSpoils.length) {
+        MAP.dozer._spoil = 0;
+        const sc = MAP.dozerSpoils[MAP.dozerSpoilI % MAP.dozerSpoils.length];
+        MAP.dozerSpoilI = (MAP.dozerSpoilI + 1) % MAP.dozerSpoils.length;
+        const yaw2 = MAP.dozer.yaw || yaw;
+        sc.pos.set(c.pos.x - Math.cos(yaw2) * 1.2, 0, c.pos.z + Math.sin(yaw2) * 1.2);
+        sc.dead = false;
+        if (sc.mesh) sc.mesh.position.set(sc.pos.x, 0.31, sc.pos.z);
+      }
+    }
+  } else {
+    MAP.dozerMesh.position.set(c.pos.x, 0, c.pos.z);
+    MAP.dozerMesh.rotation.y = MAP.dozer.yaw || 0;
+    placeBlade(MAP.dozer.yaw || 0);
+  }
+  if (MAP.dozerSmoke) {
+    MAP.dozerSmoke.visible = !!MAP.dozer.stalled;
+    MAP.dozerSmoke.scale.setScalar(1 + Math.sin(performance.now() * 0.01) * 0.2);
+  }
+}
+
+export function onMed(pos) {
+  const c = MAP.medCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.3 && Math.abs(pos.z - c.pos.z) < 1.1 && pos.y < 2.5 && pos.y > 0.65;
+}
+
+export function medCab(pos) {
+  const c = MAP.medCrate;
+  if (!c || !MAP.med) return false;
+  const yaw = MAP.med.yaw || 0;
+  const cx = c.pos.x - Math.cos(yaw) * 1.05;
+  const cz = c.pos.z + Math.sin(yaw) * 1.05;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.35 && pos.y < 2.2;
+}
+
+export function updateMed(dt) {
+  const path = MAP.medPath;
+  const c = MAP.medCrate;
+  if (!path || !c || !MAP.medMesh || !MAP.med) return;
+  MAP.medDx = 0;
+  MAP.medDz = 0;
+  const hold = (MAP.med.hold || 0) > 0 && MAP.med.medic > 0;
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.med.stalled || hold ? 0 : 4.4;
+  if (speed > 0) {
+    MAP.medT = (MAP.medT + dt * speed) % total;
+    let remain = MAP.medT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = MAP.med.yaw || 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      MAP.medDx = nx - c.pos.x;
+      MAP.medDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.medMesh.position.set(nx, 0, nz);
+      MAP.medMesh.rotation.y = yaw;
+      MAP.med.yaw = yaw;
+      if (MAP.medPlat) {
+        MAP.medPlat.x = nx + Math.cos(yaw) * 0.45;
+        MAP.medPlat.z = nz - Math.sin(yaw) * 0.45;
+        c.climbTo = MAP.medPlat;
+      }
+    }
+  } else {
+    MAP.medMesh.position.set(c.pos.x, 0, c.pos.z);
+    MAP.medMesh.rotation.y = MAP.med.yaw || 0;
+  }
+  if (MAP.medicMesh) MAP.medicMesh.visible = MAP.med.medic > 0;
+  if (MAP.medSmoke) MAP.medSmoke.visible = !!MAP.med.stalled;
+  if (MAP.medLamp) MAP.medLamp.intensity = hold ? 1.1 : 0.28;
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -11662,6 +11993,8 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.gun && pos.y > 1.15) continue;
     if (c.bowser && pos.y > 1.45) continue;
     if (c.fuel && pos.y > 1.55) continue;
+    if (c.dozer && pos.y > 1.05) continue;
+    if (c.med && pos.y > 1.15) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;
     const dz = pos.z - c.pos.z;
