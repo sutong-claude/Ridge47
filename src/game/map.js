@@ -566,6 +566,12 @@ export function onCilBasket(pos) {
   return Math.abs(pos.x - b.x) < 0.85 && Math.abs(pos.z - b.z) < 0.55 && pos.y < b.y + 1.4;
 }
 
+
+export function onCarbonScrew(pos) {
+  const s = MAP.carbonScrew;
+  if (!s || !MAP.cil || !MAP.cil.on) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz && pos.y < 1.4;
+}
 export function inPulp(pos) {
   const p = MAP.pulp;
   if (!p || !MAP.cil || !MAP.cil.on) return false;
@@ -6783,6 +6789,16 @@ export function buildMap(scene) {
   pulpMesh.material = new THREE.MeshLambertMaterial({ color: 0x3a8a78, transparent: true, opacity: 0.2 });
   MAP.pulpMesh = pulpMesh;
   MAP.pulp = { x: 42.7, z: cilZ, hx: 0.85, hz: 0.62, vx: -2.3 };
+
+  const screwMesh = box(scene, 40.4, 0.55, cilZ, 2.4, 0.35, 0.55, steel);
+  MAP.carbonScrewMesh = screwMesh;
+  MAP.carbonScrew = { x: 40.4, z: cilZ, hx: 1.25, hz: 0.4, vx: -2.6, spin: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(40.4, 0, cilZ), mesh: screwMesh, sx: 2.4, sy: 0.45, sz: 0.55, walkOn: true });
+  const screwDust = box(scene, 39.0, 1.1, cilZ, 0.24, 1.8, 1.1, sand);
+  screwDust.material = new THREE.MeshLambertMaterial({ color: 0x9a8870, transparent: true, opacity: 0.04 });
+  MAP.screwDust = screwDust;
+  MAP.screwDustCrate = { pos: new THREE.Vector3(39.0, 0, cilZ), mesh: screwDust, sx: 0.28, sy: 1.8, sz: 1.1, dead: true };
+  MAP.crates.push(MAP.screwDustCrate);
   const cilMotesGeo = new THREE.BufferGeometry();
   const cilN = 10;
   const cilPos = new Float32Array(cilN * 3);
@@ -8954,6 +8970,13 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     if (MAP.cilMist) MAP.cilMist.material.opacity = MAP.cil.on ? 0.46 : 0.04;
     if (MAP.cilMistCrate) MAP.cilMistCrate.dead = !MAP.cil.on;
     if (MAP.pulpMesh) MAP.pulpMesh.material.opacity = MAP.cil.on ? 0.55 : 0.16;
+
+    if (MAP.carbonScrew) {
+      MAP.carbonScrew.spin += dt * (MAP.cil.on ? 2.4 : 0.15);
+      if (MAP.carbonScrewMesh) MAP.carbonScrewMesh.rotation.x = MAP.carbonScrew.spin;
+    }
+    if (MAP.screwDust) MAP.screwDust.material.opacity = MAP.cil.on ? 0.42 : 0.04;
+    if (MAP.screwDustCrate) MAP.screwDustCrate.dead = !MAP.cil.on;
   }
   if (MAP.cilMotes && MAP.cilMotePhase) {
     const arr = MAP.cilMotes.geometry.attributes.position.array;

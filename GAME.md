@@ -795,4 +795,5 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Elution-door berms + cook-off drums
 - [x] Wrecked elution truck north of the house
 - [x] Clutch (F) raises the cage as moving cover; strip liquor shoves south; door steam blocks hitscan; column heat scalds
+- [x] Loaded-carbon screw west of the columns; carries player and bots, mouth dust blocks hitscan while columns run
 - [ ] Next: owner topics or more juice
