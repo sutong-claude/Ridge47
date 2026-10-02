@@ -556,9 +556,41 @@ export function inWeir(pos) {
   return Math.abs(pos.x - w.x) < w.hx && Math.abs(pos.z - w.z) < w.hz;
 }
 
+export function inCil(pos) {
+  return pos.x > 44.6 && pos.x < 48.2 && pos.z > 24.8 && pos.z < 28.4;
+}
+
+export function onCilBasket(pos) {
+  const b = MAP.cilBasket;
+  if (!b || !MAP.cil || !MAP.cil.on) return false;
+  return Math.abs(pos.x - b.x) < 0.85 && Math.abs(pos.z - b.z) < 0.55 && pos.y < b.y + 1.4;
+}
+
+export function inPulp(pos) {
+  const p = MAP.pulp;
+  if (!p || !MAP.cil || !MAP.cil.on) return false;
+  return Math.abs(pos.x - p.x) < p.hx && Math.abs(pos.z - p.z) < p.hz;
+}
+
+export function inElu(pos) {
+  return pos.x > -48.05 && pos.x < -44.4 && pos.z > 26.6 && pos.z < 30.2;
+}
+
+export function onEluCage(pos) {
+  const c = MAP.eluCage;
+  if (!c || !MAP.elu || !MAP.elu.on) return false;
+  return Math.abs(pos.x - c.x) < 0.7 && Math.abs(pos.z - c.z) < 0.7 && pos.y < c.y + 1.6;
+}
+
+export function inStrip(pos) {
+  const s = MAP.strip;
+  if (!s || !MAP.elu || !MAP.elu.on) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos);
 }
 
 export function floorY(x, z) {
@@ -6705,6 +6737,159 @@ export function buildMap(scene) {
   scene.add(faceLamp);
   MAP.faceLamp = faceLamp;
 
+  // East carbon column house — door gap west, rising carbon basket, pulp shove
+  const cilX = 46.4;
+  const cilZ = 26.6;
+  const cilMat = new THREE.MeshLambertMaterial({ color: 0x2c3834 });
+  const cilWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, cilMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  cilWall(cilX, 28.4, 3.6, 0.35);
+  cilWall(cilX, 24.8, 3.6, 0.35);
+  cilWall(48.2, cilZ, 0.35, 3.6);
+  cilWall(44.6, 27.7, 0.35, 1.05);
+  cilWall(44.6, 25.5, 0.35, 1.05);
+  box(scene, 44.6, 2.9, cilZ, 0.35, 0.38, 1.4, cilMat);
+  box(scene, cilX, 3.05, cilZ, 3.5, 0.14, 3.4, rock);
+  const cilFloor = box(scene, cilX, 0.04, cilZ, 3.3, 0.08, 3.2, concrete);
+  cilFloor.receiveShadow = true;
+  const colA = box(scene, 47.15, 1.15, 27.35, 0.7, 2.2, 0.7, steel);
+  const colB = box(scene, 47.15, 1.15, 25.85, 0.7, 2.2, 0.7, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(47.15, 0, 27.35), mesh: colA, sx: 0.7, sy: 2.2, sz: 0.7 });
+  MAP.crates.push({ pos: new THREE.Vector3(47.15, 0, 25.85), mesh: colB, sx: 0.7, sy: 2.2, sz: 0.7 });
+  const basketMesh = box(scene, cilX - 0.35, 0.48, cilZ, 1.35, 0.22, 0.85, rust);
+  MAP.cilBasketMesh = basketMesh;
+  MAP.cilBasket = { x: cilX - 0.35, z: cilZ, y: 0.48, t: 0, dir: 1, dx: 0, dz: 0, dy: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(cilX - 0.35, 0, cilZ), mesh: basketMesh, sx: 1.35, sy: 0.55, sz: 0.85, walkOn: true });
+  MAP.cilBasketCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.cilPlat = { x: cilX - 0.35, z: cilZ, sx: 1.25, sz: 0.8, top: 0.62 };
+  MAP.platforms.push(MAP.cilPlat);
+  MAP.cilDoor = new THREE.Vector3(44.6, 0, cilZ);
+  MAP.cil = { on: false, x: cilX + 0.85, z: cilZ - 1.05 };
+  const cilLamp = new THREE.PointLight(0x70d0c0, 0.35, 8, 2);
+  cilLamp.position.set(cilX, 2.4, cilZ);
+  scene.add(cilLamp);
+  MAP.cilLamp = cilLamp;
+  MAP.cilRing = box(scene, 44.6, 0.05, cilZ, 0.3, 0.04, 1.35, amber);
+  MAP.cilLever = box(scene, MAP.cil.x, 1.05, MAP.cil.z, 0.12, 0.55, 0.12, amber);
+  const cilMist = box(scene, 44.6, 1.2, cilZ, 0.22, 2.15, 1.35, sand);
+  cilMist.material = new THREE.MeshLambertMaterial({ color: 0x90d0c8, transparent: true, opacity: 0.04 });
+  MAP.cilMist = cilMist;
+  MAP.cilMistCrate = { pos: new THREE.Vector3(44.6, 0, cilZ), mesh: cilMist, sx: 0.26, sy: 2.15, sz: 1.35, dead: true };
+  MAP.crates.push(MAP.cilMistCrate);
+  const pulpMesh = box(scene, 42.7, 0.1, cilZ, 1.6, 0.1, 1.15, oil);
+  pulpMesh.material = new THREE.MeshLambertMaterial({ color: 0x3a8a78, transparent: true, opacity: 0.2 });
+  MAP.pulpMesh = pulpMesh;
+  MAP.pulp = { x: 42.7, z: cilZ, hx: 0.85, hz: 0.62, vx: -2.3 };
+  const cilMotesGeo = new THREE.BufferGeometry();
+  const cilN = 10;
+  const cilPos = new Float32Array(cilN * 3);
+  const cilPhase = [];
+  for (let i = 0; i < cilN; i++) {
+    cilPos[i * 3] = cilX + (Math.random() - 0.5) * 2.4;
+    cilPos[i * 3 + 1] = 0.3 + Math.random() * 1.4;
+    cilPos[i * 3 + 2] = cilZ + (Math.random() - 0.5) * 2.2;
+    cilPhase.push(Math.random() * 6);
+  }
+  cilMotesGeo.setAttribute("position", new THREE.BufferAttribute(cilPos, 3));
+  MAP.cilMotes = new THREE.Points(cilMotesGeo, new THREE.PointsMaterial({ color: 0x90e0d0, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(MAP.cilMotes);
+  MAP.cilMotePhase = cilPhase;
+  const cilBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz });
+  };
+  cilBerm(44.6, 28.05, 0.45, 0.7);
+  cilBerm(44.6, 25.15, 0.45, 0.7);
+  const cilDrum = box(scene, 43.7, 0.55, 28.05, 0.5, 1.05, 0.5, rust);
+  const cilDrum2 = box(scene, 43.7, 0.55, 25.15, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(43.7, 0, 28.05), mesh: cilDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(43.7, 0, 25.15), mesh: cilDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const cilTruck = box(scene, 42.2, 0.65, 24.5, 1.4, 1.15, 1.3, rust);
+  const cilBed = box(scene, 42.2, 0.4, 23.3, 1.15, 0.55, 1.15, steel);
+  MAP.cilTruck = new THREE.Vector3(42.2, 0, 24.5);
+  MAP.crates.push({ pos: MAP.cilTruck.clone(), mesh: cilTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(42.2, 0, 23.3), mesh: cilBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+  // West elution column — door gap east, rising cage, strip liquor shove south
+  const eluX = -46.2;
+  const eluZ = 28.4;
+  const eluMat = new THREE.MeshLambertMaterial({ color: 0x34302c });
+  const eluWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, eluMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+    return m;
+  };
+  eluWall(eluX, 30.2, 3.6, 0.35);
+  eluWall(eluX, 26.6, 3.6, 0.35);
+  eluWall(-48.05, eluZ, 0.35, 3.6);
+  eluWall(-44.4, 29.5, 0.35, 1.05);
+  eluWall(-44.4, 27.3, 0.35, 1.05);
+  box(scene, -44.4, 2.9, eluZ, 0.35, 0.38, 1.4, eluMat);
+  box(scene, eluX, 3.05, eluZ, 3.5, 0.14, 3.4, rock);
+  const eluFloor = box(scene, eluX, 0.04, eluZ, 3.3, 0.08, 3.2, concrete);
+  eluFloor.receiveShadow = true;
+  const vessel = box(scene, eluX - 0.45, 1.25, eluZ, 0.85, 2.4, 0.85, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(eluX - 0.45, 0, eluZ), mesh: vessel, sx: 0.85, sy: 2.4, sz: 0.85 });
+  const cageMesh = box(scene, eluX + 0.55, 0.42, eluZ, 0.95, 0.18, 0.95, rust);
+  const cageRail = box(scene, eluX + 0.55, 1.15, eluZ, 0.08, 1.3, 0.08, steel);
+  MAP.eluCageMesh = cageMesh;
+  MAP.eluRail = cageRail;
+  MAP.eluCage = { x: eluX + 0.55, z: eluZ, y: 0.42, t: 0, dir: 1, dx: 0, dz: 0, dy: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(eluX + 0.55, 0, eluZ), mesh: cageMesh, sx: 0.95, sy: 0.4, sz: 0.95, walkOn: true });
+  MAP.eluCageCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.eluPlat = { x: eluX + 0.55, z: eluZ, sx: 0.9, sz: 0.9, top: 0.54 };
+  MAP.platforms.push(MAP.eluPlat);
+  MAP.eluDoor = new THREE.Vector3(-44.4, 0, eluZ);
+  MAP.elu = { on: false, x: eluX - 0.9, z: eluZ + 0.95 };
+  const eluLamp = new THREE.PointLight(0xe0a060, 0.35, 8, 2);
+  eluLamp.position.set(eluX, 2.45, eluZ);
+  scene.add(eluLamp);
+  MAP.eluLamp = eluLamp;
+  MAP.eluRing = box(scene, -44.4, 0.05, eluZ, 0.3, 0.04, 1.35, amber);
+  MAP.eluLever = box(scene, MAP.elu.x, 1.05, MAP.elu.z, 0.12, 0.55, 0.12, amber);
+  const eluSteam = box(scene, -44.4, 1.2, eluZ, 0.22, 2.15, 1.35, sand);
+  eluSteam.material = new THREE.MeshLambertMaterial({ color: 0xe8d8c0, transparent: true, opacity: 0.04 });
+  MAP.eluSteam = eluSteam;
+  MAP.eluSteamCrate = { pos: new THREE.Vector3(-44.4, 0, eluZ), mesh: eluSteam, sx: 0.26, sy: 2.15, sz: 1.35, dead: true };
+  MAP.crates.push(MAP.eluSteamCrate);
+  const stripMesh = box(scene, eluX, 0.1, 25.15, 1.2, 0.1, 1.5, oil);
+  stripMesh.material = new THREE.MeshLambertMaterial({ color: 0xc09050, transparent: true, opacity: 0.2 });
+  MAP.stripMesh = stripMesh;
+  MAP.strip = { x: eluX, z: 25.15, hx: 0.65, hz: 0.8, vz: -2.2 };
+  const eluMotesGeo = new THREE.BufferGeometry();
+  const eluN = 10;
+  const eluPos = new Float32Array(eluN * 3);
+  const eluPhase = [];
+  for (let i = 0; i < eluN; i++) {
+    eluPos[i * 3] = eluX + (Math.random() - 0.5) * 2.2;
+    eluPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    eluPos[i * 3 + 2] = eluZ + (Math.random() - 0.5) * 2.2;
+    eluPhase.push(Math.random() * 6);
+  }
+  eluMotesGeo.setAttribute("position", new THREE.BufferAttribute(eluPos, 3));
+  MAP.eluMotes = new THREE.Points(eluMotesGeo, new THREE.PointsMaterial({ color: 0xe8c090, size: 0.05, transparent: true, opacity: 0.4 }));
+  scene.add(MAP.eluMotes);
+  MAP.eluMotePhase = eluPhase;
+  const eluBerm = (x, z, sx, sz) => {
+    const m = box(scene, x, 0.5, z, sx, 1.0, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 1.0, sz });
+  };
+  eluBerm(-44.4, 29.85, 0.45, 0.7);
+  eluBerm(-44.4, 26.95, 0.45, 0.7);
+  const eluDrum = box(scene, -43.5, 0.55, 29.85, 0.5, 1.05, 0.5, rust);
+  const eluDrum2 = box(scene, -43.5, 0.55, 26.95, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-43.5, 0, 29.85), mesh: eluDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(-43.5, 0, 26.95), mesh: eluDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const eluTruck = box(scene, eluX, 0.65, 31.5, 1.4, 1.15, 1.3, rust);
+  const eluBed = box(scene, eluX, 0.4, 32.7, 1.15, 0.55, 1.15, steel);
+  MAP.eluTruck = new THREE.Vector3(eluX, 0, 31.5);
+  MAP.crates.push({ pos: MAP.eluTruck.clone(), mesh: eluTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(eluX, 0, 32.7), mesh: eluBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+
 export function updateBirds(dt, spookAt = null) {
   if (!MAP.birds) return;
   for (const b of MAP.birds) {
@@ -8738,6 +8923,75 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
       arr[i * 3 + 1] = 0.22 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.3;
     }
     MAP.sxMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+  if (MAP.cilBasket && MAP.cil) {
+    const prevZ = MAP.cilBasket.z;
+    const prevY = MAP.cilBasket.y;
+    const spd = MAP.cil.on ? 0.85 : 0.06;
+    MAP.cilBasket.t += dt * spd * MAP.cilBasket.dir;
+    if (MAP.cilBasket.t > 1) { MAP.cilBasket.t = 1; MAP.cilBasket.dir = -1; MAP.cilBell = true; }
+    else if (MAP.cilBasket.t < -1) { MAP.cilBasket.t = -1; MAP.cilBasket.dir = 1; MAP.cilBell = true; }
+    MAP.cilBasket.z = 26.6 + MAP.cilBasket.t * 0.7;
+    MAP.cilBasket.y = 0.42 + (MAP.cil.on ? (Math.sin(MAP.cilBasket.t * Math.PI) * 0.95) : 0.06);
+    MAP.cilBasket.dz = MAP.cilBasket.z - prevZ;
+    MAP.cilBasket.dy = MAP.cilBasket.y - prevY;
+    MAP.cilBasket.dx = 0;
+    if (MAP.cilBasketMesh) {
+      MAP.cilBasketMesh.position.z = MAP.cilBasket.z;
+      MAP.cilBasketMesh.position.y = MAP.cilBasket.y;
+    }
+    if (MAP.cilBasketCrate) {
+      MAP.cilBasketCrate.pos.z = MAP.cilBasket.z;
+      MAP.cilBasketCrate.pos.y = MAP.cilBasket.y - 0.2;
+    }
+    if (MAP.cilPlat) {
+      MAP.cilPlat.z = MAP.cilBasket.z;
+      MAP.cilPlat.top = MAP.cilBasket.y + 0.16;
+    }
+    if (MAP.cilLever) MAP.cilLever.rotation.z = MAP.cil.on ? -0.7 : 0.24;
+    if (MAP.cilLamp) MAP.cilLamp.intensity = MAP.cil.on ? 1.25 : 0.16;
+    if (MAP.cilMist) MAP.cilMist.material.opacity = MAP.cil.on ? 0.46 : 0.04;
+    if (MAP.cilMistCrate) MAP.cilMistCrate.dead = !MAP.cil.on;
+    if (MAP.pulpMesh) MAP.pulpMesh.material.opacity = MAP.cil.on ? 0.55 : 0.16;
+  }
+  if (MAP.cilMotes && MAP.cilMotePhase) {
+    const arr = MAP.cilMotes.geometry.attributes.position.array;
+    const ph = MAP.cilMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.cil && MAP.cil.on ? 1.6 : 0.1);
+      arr[i * 3 + 1] = 0.22 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.4;
+    }
+    MAP.cilMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.eluCage && MAP.elu) {
+    const prevY = MAP.eluCage.y;
+    const spd = MAP.elu.on ? 0.55 : 0.05;
+    MAP.eluCage.t += dt * spd * MAP.eluCage.dir;
+    if (MAP.eluCage.t > 1) { MAP.eluCage.t = 1; MAP.eluCage.dir = -1; MAP.eluBell = true; }
+    else if (MAP.eluCage.t < 0) { MAP.eluCage.t = 0; MAP.eluCage.dir = 1; MAP.eluBell = true; }
+    MAP.eluCage.y = 0.42 + MAP.eluCage.t * (MAP.elu.on ? 1.55 : 0.08);
+    MAP.eluCage.dy = MAP.eluCage.y - prevY;
+    MAP.eluCage.dx = 0;
+    MAP.eluCage.dz = 0;
+    if (MAP.eluCageMesh) MAP.eluCageMesh.position.y = MAP.eluCage.y;
+    if (MAP.eluRail) MAP.eluRail.position.y = MAP.eluCage.y + 0.75;
+    if (MAP.eluCageCrate) MAP.eluCageCrate.pos.y = MAP.eluCage.y - 0.15;
+    if (MAP.eluPlat) MAP.eluPlat.top = MAP.eluCage.y + 0.14;
+    if (MAP.eluLever) MAP.eluLever.rotation.z = MAP.elu.on ? -0.65 : 0.22;
+    if (MAP.eluLamp) MAP.eluLamp.intensity = MAP.elu.on ? 1.3 : 0.15;
+    if (MAP.eluSteam) MAP.eluSteam.material.opacity = MAP.elu.on ? 0.48 : 0.04;
+    if (MAP.eluSteamCrate) MAP.eluSteamCrate.dead = !MAP.elu.on;
+    if (MAP.stripMesh) MAP.stripMesh.material.opacity = MAP.elu.on ? 0.55 : 0.16;
+  }
+  if (MAP.eluMotes && MAP.eluMotePhase) {
+    const arr = MAP.eluMotes.geometry.attributes.position.array;
+    const ph = MAP.eluMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.elu && MAP.elu.on ? 1.5 : 0.1);
+      arr[i * 3 + 1] = 0.24 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.5;
+    }
+    MAP.eluMotes.geometry.attributes.position.needsUpdate = true;
   }
 
   if (MAP.face) {

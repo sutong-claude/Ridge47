@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, inElu, onEluCage, inStrip, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -226,6 +226,8 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           : inMags(playerPos) || onMagDrum(playerPos) || inConc(playerPos) ? MAP.magsDoor
           : inRod(playerPos) || onRodCharge(playerPos) || inRodDisch(playerPos) ? MAP.rodDoor
           : inSx(playerPos) || onSxMixer(playerPos) || inWeir(playerPos) ? MAP.sxDoor
+          : inCil(playerPos) || onCilBasket(playerPos) || inPulp(playerPos) ? MAP.cilDoor
+          : inElu(playerPos) || onEluCage(playerPos) || inStrip(playerPos) ? MAP.eluDoor
           : inWarehouse(playerPos) && MAP.warehouseDoor
           ? MAP.warehouseDoor
           : inShed(playerPos) && MAP.shedDoor
@@ -662,6 +664,26 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       collideXZ(b.pos, 0.4);
     }
     if (inSx(b.pos) && MAP.sx && MAP.sx.on) b.hp -= 1.7 * dt;
+
+    if (onCilBasket(b.pos) && MAP.cilBasket) {
+      b.pos.z += MAP.cilBasket.dz || 0;
+      b.pos.y += MAP.cilBasket.dy || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inPulp(b.pos)) {
+      b.pos.x += (MAP.pulp ? MAP.pulp.vx : -2.3) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inCil(b.pos) && MAP.cil && MAP.cil.on) b.hp -= 1.8 * dt;
+    if (onEluCage(b.pos) && MAP.eluCage) {
+      b.pos.y += MAP.eluCage.dy || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inStrip(b.pos)) {
+      b.pos.z += (MAP.strip ? MAP.strip.vz : -2.2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inElu(b.pos) && MAP.elu && MAP.elu.on) b.hp -= 2.0 * dt;
     if (onScrew(b.pos)) {
       b.pos.x += (MAP.screw ? MAP.screw.vx : 2.15) * dt;
       collideXZ(b.pos, 0.4);

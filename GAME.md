@@ -783,4 +783,16 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Settler-door berms + cook-off drums
 - [x] Wrecked SX truck south of the house
 - [x] Clutch (F) strokes the mixer; player and bots ride; weir shoves east; door mist blocks hitscan; organic scalds
+- [x] East carbon column house (door gap + rising basket + collision + motes)
+- [x] Compass / minimap CIL pip + indoor loc tag + pulp pip
+- [x] Bot BREACH through column door when player camps CIL, the basket, or the pulp
+- [x] Column-door berms + cook-off drums
+- [x] Wrecked carbon truck west of the house
+- [x] Clutch (F) runs the carbon basket as moving cover; player and bots ride; pulp launder shoves west; door mist blocks hitscan; column liquor scalds
+- [x] West elution column (door gap + rising cage + collision + motes)
+- [x] Compass / minimap ELU pip + indoor loc tag + strip pip
+- [x] Bot BREACH through elution door when player camps ELU, the cage, or the strip
+- [x] Elution-door berms + cook-off drums
+- [x] Wrecked elution truck north of the house
+- [x] Clutch (F) raises the cage as moving cover; strip liquor shoves south; door steam blocks hitscan; column heat scalds
 - [ ] Next: owner topics or more juice
