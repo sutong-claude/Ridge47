@@ -771,4 +771,16 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Magnet-door berms + cook-off drums
 - [x] Wrecked magnet truck east of the house
 - [x] Clutch (F) spins the drum; player and bots ride; concentrate shoves south; door dust blocks hitscan; drum scalds
+- [x] South rod mill (door gap + tumbling charge + collision + motes)
+- [x] Compass / minimap ROD pip + indoor loc tag + discharge pip
+- [x] Bot BREACH through rod-mill door when player camps ROD, the charge, or the discharge
+- [x] Rod-mill door berms + cook-off drums
+- [x] Wrecked rod-mill truck north of the house
+- [x] Clutch (F) tumbles the charge; player and bots ride; discharge shoves south; door dust blocks hitscan; mill heat scalds
+- [x] Northeast SX settler (door gap + stroking mixer + collision + motes)
+- [x] Compass / minimap SX pip + indoor loc tag + weir pip
+- [x] Bot BREACH through settler door when player camps SX, the mixer, or the weir
+- [x] Settler-door berms + cook-off drums
+- [x] Wrecked SX truck south of the house
+- [x] Clutch (F) strokes the mixer; player and bots ride; weir shoves east; door mist blocks hitscan; organic scalds
 - [ ] Next: owner topics or more juice

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -224,6 +224,8 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           : inCone(playerPos) || onMantle(playerPos) || inDischarge(playerPos) ? MAP.coneDoor
           : inClas(playerPos) || onClasRake(playerPos) || inSands(playerPos) ? MAP.clasDoor
           : inMags(playerPos) || onMagDrum(playerPos) || inConc(playerPos) ? MAP.magsDoor
+          : inRod(playerPos) || onRodCharge(playerPos) || inRodDisch(playerPos) ? MAP.rodDoor
+          : inSx(playerPos) || onSxMixer(playerPos) || inWeir(playerPos) ? MAP.sxDoor
           : inWarehouse(playerPos) && MAP.warehouseDoor
           ? MAP.warehouseDoor
           : inShed(playerPos) && MAP.shedDoor
@@ -637,6 +639,29 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       collideXZ(b.pos, 0.4);
     }
     if (inMags(b.pos) && MAP.mags && MAP.mags.on) b.hp -= 1.8 * dt;
+
+    if (onRodCharge(b.pos) && MAP.rodCharge) {
+      const w = (MAP.rodCharge._omega || 0.05) * dt;
+      const dx = b.pos.x - MAP.rodCharge.x;
+      const dz = b.pos.z - MAP.rodCharge.z;
+      b.pos.x = MAP.rodCharge.x + dx * Math.cos(w) - dz * Math.sin(w);
+      b.pos.z = MAP.rodCharge.z + dx * Math.sin(w) + dz * Math.cos(w);
+      collideXZ(b.pos, 0.4);
+    }
+    if (inRodDisch(b.pos)) {
+      b.pos.z += (MAP.rodDisch ? MAP.rodDisch.vz : -2.2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inRod(b.pos) && MAP.rod && MAP.rod.on) b.hp -= 2.2 * dt;
+    if (onSxMixer(b.pos) && MAP.sxMixer) {
+      b.pos.x += MAP.sxMixer.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inWeir(b.pos)) {
+      b.pos.x += (MAP.weir ? MAP.weir.vx : 2.25) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inSx(b.pos) && MAP.sx && MAP.sx.on) b.hp -= 1.7 * dt;
     if (onScrew(b.pos)) {
       b.pos.x += (MAP.screw ? MAP.screw.vx : 2.15) * dt;
       collideXZ(b.pos, 0.4);
