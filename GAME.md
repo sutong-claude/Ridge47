@@ -891,4 +891,9 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] F dock cart shuttles player and bots through the cut; running cart curtains the cut (hitscan block)
 - [x] Shipping ammo tin
 - [x] Dock ramp cover on the south approach
+- [x] West packing bay (door + racks + strap sled + press + motes + collision) PACK/SLED pips
+- [x] F sled shuttles player and bots through the warehouse west cut; running sled curtains the cut
+- [x] Press ram drops while the sled runs, blocks hitscan, and shoves bodies clear
+- [x] Bot BREACH through the packing door when the player camps PACK or the sled
+- [x] Pack-door berms + cook-off drum + wrecked truck + ammo tin
 - [ ] Next: owner topics or more juice

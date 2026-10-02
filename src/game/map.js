@@ -30,6 +30,20 @@ export function inShip(pos) {
   return pos.x > -20.4 && pos.x < -14.6 && pos.z > 15.85 && pos.z < 21.35 && pos.y < 3.3;
 }
 
+export function inPack(pos) {
+  return pos.x > -37.95 && pos.x < -30.35 && pos.z > 21.45 && pos.z < 27.05 && pos.y < 3.4;
+}
+
+export function onPackSled(pos) {
+  const c = MAP.packSled;
+  if (!c || pos.y > 1.7) return false;
+  return Math.abs(pos.x - c.x) < 0.72 && Math.abs(pos.z - c.z) < 0.78;
+}
+
+export function inPackPress(pos) {
+  return pos.x > -35.6 && pos.x < -34.0 && pos.z > 25.0 && pos.z < 26.3 && pos.y < 2.3;
+}
+
 export function onShipCart(pos) {
   const c = MAP.shipCart;
   if (!c || pos.y > 1.7) return false;
@@ -933,7 +947,9 @@ export function buildMap(scene) {
   whWall(-26.55, 30, 6.9, 1.15);
   whWall(-17.45, 30, 6.9, 1.15);
   box(scene, -22, 6.15, 30, 2.5, 1.7, 1.15, steel); // lintel over dispatch cut
-  whWall(-30, 24.15, 1.15, 5.5);
+  whWall(-30, 22.45, 1.15, 2.1);
+  whWall(-30, 26.15, 1.15, 1.5);
+  box(scene, -30, 5.55, 24.45, 1.15, 2.5, 1.9, steel); // lintel over packing cut
   whWall(-30, 29.85, 1.15, 1.3);
   box(scene, -30, 5.55, 28.65, 1.15, 2.5, 1.7, steel); // lintel over service cut
   whWall(-14, 23.15, 1.15, 3.5);
@@ -1438,6 +1454,109 @@ export function buildMap(scene) {
   const ramp = box(scene, -17.55, 0.38, 14.15, 2.4, 0.55, 1.15, crateWood);
   MAP.crates.push({ pos: new THREE.Vector3(-17.55, 0, 14.15), mesh: ramp, sx: 2.4, sy: 0.7, sz: 1.15 });
   MAP.shipRamp = new THREE.Vector3(-17.55, 0, 14.15);
+
+  // West packing bay — cut in the warehouse west wall. Strap sled curtains the gap; press ram blocks shots.
+  const pkWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 2.05, z, sx, 4.1, sz, rust);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 4.1, sz });
+    return m;
+  };
+  pkWall(-37.7, 24.25, 0.7, 5.6);
+  pkWall(-34.15, 27.05, 6.4, 0.7);
+  pkWall(-36.35, 21.45, 2.2, 0.7);
+  pkWall(-32.15, 21.45, 3.3, 0.7);
+  box(scene, -34.55, 3.55, 21.45, 2.1, 1.15, 0.7, rust);
+  box(scene, -34.15, 4.25, 24.25, 6.6, 0.28, 5.5, rust);
+  const packFloor = box(scene, -34.15, 0.04, 24.25, 6.3, 0.08, 5.2, concrete);
+  packFloor.receiveShadow = true;
+  MAP.packDoor = new THREE.Vector3(-34.55, 0, 21.05);
+  MAP.packCut = new THREE.Vector3(-30.05, 0, 24.45);
+  const packLamp = new THREE.PointLight(0xffb070, 0.8, 12);
+  packLamp.position.set(-34.2, 3.35, 24.3);
+  scene.add(packLamp);
+  MAP.packLamp = packLamp;
+  const packRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.02, 1.28, 16),
+    new THREE.MeshBasicMaterial({ color: 0xd0a060, side: THREE.DoubleSide, transparent: true, opacity: 0.7 })
+  );
+  packRing.rotation.x = -Math.PI / 2;
+  packRing.position.copy(MAP.packDoor).setY(0.05);
+  scene.add(packRing);
+  MAP.packRing = packRing;
+  const packRacks = [
+    [-36.7, 0.7, 22.55, 1.05, 1.4, 0.85],
+    [-32.15, 0.55, 22.7, 1.15, 1.1, 0.9],
+    [-36.55, 0.5, 26.15, 1.05, 1.0, 0.75],
+  ];
+  for (const r of packRacks) {
+    const m = box(scene, r[0], r[1], r[2], r[3], r[4], r[5], crateWood);
+    MAP.crates.push({ pos: new THREE.Vector3(r[0], 0, r[2]), mesh: m, sx: r[3], sy: r[4], sz: r[5] });
+  }
+  MAP.packAmmo = new THREE.Vector3(-36.55, 0.4, 23.55);
+  box(scene, -36.55, 0.4, 23.55, 0.42, 0.3, 0.32, rust);
+  const packMoteN = 20;
+  const packGeo = new THREE.BufferGeometry();
+  const packPos = new Float32Array(packMoteN * 3);
+  const packPhase = new Float32Array(packMoteN);
+  for (let i = 0; i < packMoteN; i++) {
+    packPos[i * 3] = -37.2 + Math.random() * 6.2;
+    packPos[i * 3 + 1] = 0.25 + Math.random() * 2.2;
+    packPos[i * 3 + 2] = 21.8 + Math.random() * 4.8;
+    packPhase[i] = Math.random() * Math.PI * 2;
+  }
+  packGeo.setAttribute("position", new THREE.BufferAttribute(packPos, 3));
+  const packMotes = new THREE.Points(
+    packGeo,
+    new THREE.PointsMaterial({ color: 0xe0b060, size: 0.04, transparent: true, opacity: 0.36, depthWrite: false })
+  );
+  scene.add(packMotes);
+  MAP.packMotes = packMotes;
+  MAP.packMotePhase = packPhase;
+  const sledMesh = box(scene, -34.4, 0.48, 24.45, 1.25, 0.72, 1.35, night);
+  const sledCrate = { pos: new THREE.Vector3(-34.4, 0, 24.45), mesh: sledMesh, sx: 1.25, sy: 1.05, sz: 1.35, sled: true };
+  MAP.crates.push(sledCrate);
+  box(scene, -32.6, 0.16, 23.85, 7.4, 0.08, 0.08, steel);
+  box(scene, -32.6, 0.16, 25.05, 7.4, 0.08, 0.08, steel);
+  const packCurtain = box(scene, -30.05, 1.15, 24.45, 0.42, 2.2, 1.85, night);
+  packCurtain.material = new THREE.MeshBasicMaterial({ color: 0x8a6840, transparent: true, opacity: 0.06, depthWrite: false });
+  MAP.packCurtain = {
+    mesh: packCurtain,
+    crate: { pos: new THREE.Vector3(-30.05, 0, 24.45), mesh: packCurtain, sx: 0.62, sy: 2.25, sz: 1.95, dead: true },
+  };
+  MAP.crates.push(MAP.packCurtain.crate);
+  MAP.packSled = {
+    x: -34.4,
+    z: 24.45,
+    dir: 1,
+    on: false,
+    dx: 0,
+    min: -36.15,
+    max: -28.55,
+    mesh: sledMesh,
+    crate: sledCrate,
+  };
+  MAP.packHook = new THREE.Vector3(-35.6, 0, 24.45);
+  MAP.packHookIn = new THREE.Vector3(-29.15, 0, 24.45);
+  const pressMesh = box(scene, -34.8, 2.55, 25.65, 1.35, 0.42, 1.05, rust);
+  const pressCrate = { pos: new THREE.Vector3(-34.8, 0, 25.65), mesh: pressMesh, sx: 1.4, sy: 0.4, sz: 1.1, dead: true, press: true };
+  MAP.crates.push(pressCrate);
+  box(scene, -35.45, 2.4, 25.65, 0.16, 3.2, 0.16, steel);
+  box(scene, -34.15, 2.4, 25.65, 0.16, 3.2, 0.16, steel);
+  MAP.packPress = { mesh: pressMesh, crate: pressCrate, phase: 0, down: false };
+  const packBerm = box(scene, -36.15, 0.42, 20.55, 1.05, 0.84, 0.5, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-36.15, 0, 20.55), mesh: packBerm, sx: 1.05, sy: 0.84, sz: 0.5 });
+  const packBerm2 = box(scene, -32.85, 0.42, 20.55, 1.05, 0.84, 0.5, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-32.85, 0, 20.55), mesh: packBerm2, sx: 1.05, sy: 0.84, sz: 0.5 });
+  const packDrum = box(scene, -32.35, 0.55, 21.85, 0.52, 1.05, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-32.35, 0, 21.85), mesh: packDrum, sx: 0.52, sy: 1.05, sz: 0.52, drum: true });
+  const ptx = -31.4;
+  const ptz = 19.15;
+  box(scene, ptx, 0.58, ptz, 3.05, 0.48, 1.3, rust);
+  box(scene, ptx + 0.8, 1.0, ptz, 1.1, 0.88, 1.15, rust);
+  box(scene, ptx - 1.15, 0.78, ptz, 0.62, 0.72, 1.05, steel);
+  MAP.packTruck = new THREE.Vector3(ptx, 0, ptz);
+  const packHull = box(scene, ptx, 0.68, ptz, 3.05, 1.22, 1.3, rust);
+  MAP.crates.push({ pos: MAP.packTruck.clone(), mesh: packHull, sx: 3.05, sy: 1.22, sz: 1.3 });
 
 
 
@@ -10762,6 +10881,46 @@ export function updateAnnex(dt) {
   }
 }
 
+
+export function updatePack(dt) {
+  const c = MAP.packSled;
+  if (!c) return;
+  const prev = c.x;
+  if (c.on) {
+    c.x += c.dir * 2.1 * dt;
+    if (c.x <= c.min) { c.x = c.min; c.dir = 1; }
+    if (c.x >= c.max) { c.x = c.max; c.dir = -1; }
+  }
+  c.dx = c.x - prev;
+  if (c.mesh) c.mesh.position.x = c.x;
+  if (c.crate) c.crate.pos.x = c.x;
+  const crossing = c.on && c.x > -30.85 && c.x < -29.15;
+  if (MAP.packCurtain) {
+    MAP.packCurtain.crate.dead = !crossing;
+    if (MAP.packCurtain.mesh.material) MAP.packCurtain.mesh.material.opacity = crossing ? 0.42 : 0.05;
+  }
+  const press = MAP.packPress;
+  if (press) {
+    press.phase = (press.phase || 0) + dt * (c.on ? 1.35 : 0.12);
+    const down = c.on && Math.sin(press.phase) > 0.32;
+    press.down = down;
+    if (press.mesh) press.mesh.position.y = down ? 1.05 : 2.55;
+    if (press.crate) {
+      press.crate.dead = !down;
+      press.crate.sy = down ? 2.2 : 0.35;
+    }
+  }
+  if (MAP.packLamp) MAP.packLamp.intensity = c.on ? 0.42 + Math.random() * 0.5 : 0.82;
+  if (MAP.packMotes && MAP.packMotePhase) {
+    const arr = MAP.packMotes.geometry.attributes.position.array;
+    const ph = MAP.packMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (c.on ? 1.4 : 0.16);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.1;
+    }
+    MAP.packMotes.geometry.attributes.position.needsUpdate = true;
+  }
+}
 
 export function updateShip(dt) {
   const c = MAP.shipCart;
