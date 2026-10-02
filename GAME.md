@@ -896,4 +896,8 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Press ram drops while the sled runs, blocks hitscan, and shoves bodies clear
 - [x] Bot BREACH through the packing door when the player camps PACK or the sled
 - [x] Pack-door berms + cook-off drum + wrecked truck + ammo tin
+- [x] Extract technical — pad jeep patrols a loop north of the pad (moving hitscan cover)
+- [x] Bed is a platform; player vaults/rides, bots board when the player camps extract
+- [x] Cab shots stall the technical; F crank beside the cab restarts it; horn + diesel tick
+- [x] Pad slit bunker north of extract (firing port via crate minY, bunk tin, BUNK pip)
 - [ ] Next: owner topics or more juice

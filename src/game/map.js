@@ -290,6 +290,16 @@ export function onHaul(pos) {
   return Math.abs(pos.x - h.pos.x) < 1.15 && Math.abs(pos.z - h.pos.z) < 1.55 && pos.y < 1.7;
 }
 
+export function onTech(pos) {
+  const c = MAP.techCrate;
+  if (!c || pos.y < 2.15) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.45 && Math.abs(pos.z - c.pos.z) < 1.15;
+}
+
+export function inBunker(pos) {
+  return pos.x > 16.55 && pos.x < 19.85 && pos.z > -10.55 && pos.z < -8.55;
+}
+
 
 export function inSlake(pos) {
   return pos.x > -0.95 && pos.x < 5.75 && pos.z > 27.15 && pos.z < 33.05;
@@ -1754,10 +1764,65 @@ export function buildMap(scene) {
   const jBed = box(scene, 0, 0, 0, 1.15, 0.22, 1.2, steel);
   jBed.position.set(0.7, 0.95, 0);
   jeep.add(jBody, jCab, jBed);
-  jeep.position.set(MAP.extract.x + 5.4, 0, MAP.extract.z + 3.2);
-  jeep.rotation.y = -0.55;
+  jeep.position.set(12.2, 0, -11.6);
+  jeep.rotation.y = 0;
   scene.add(jeep);
   MAP.extractJeep = jeep;
+  // Extract technical — pad jeep patrols a loop. Bed is rideable cover; cab shots stall it.
+  const techPath = [
+    new THREE.Vector3(12.2, 0, -11.6),
+    new THREE.Vector3(24.6, 0, -11.6),
+    new THREE.Vector3(24.6, 0, -19.6),
+    new THREE.Vector3(12.2, 0, -19.6),
+  ];
+  MAP.techPath = techPath;
+  MAP.techT = 0.4;
+  MAP.tech = { hp: 90, stalled: false };
+  MAP.techMesh = jeep;
+  const pintle = box(scene, 0, 0, 0, 0.08, 0.55, 0.08, steel);
+  pintle.position.set(0.7, 1.35, 0);
+  jeep.add(pintle);
+  const techSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.28, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x222018, transparent: true, opacity: 0.45 })
+  );
+  techSmoke.position.set(-0.45, 1.55, 0);
+  techSmoke.visible = false;
+  jeep.add(techSmoke);
+  MAP.techSmoke = techSmoke;
+  const techCrate = { pos: techPath[0].clone(), mesh: jeep, sx: 2.7, sy: 1.4, sz: 1.5, tech: true, climb: true };
+  MAP.crates.push(techCrate);
+  MAP.techCrate = techCrate;
+  MAP.techDx = 0;
+  MAP.techDz = 0;
+  MAP.techPlat = { x: 12.9, z: -11.6, sx: 1.2, sz: 1.2, top: 1.08 };
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.techPlat);
+  techCrate.climbTo = MAP.techPlat;
+
+  // Pad slit bunker — low walls, firing port (minY lintel), ammo tin. North of extract.
+  const bkX = 18.2;
+  const bkZ = -9.55;
+  const bkMat = new THREE.MeshLambertMaterial({ color: 0x6a6254 });
+  const bkWall = (x, z, sx, sz, sy = 1.15, minY = 0) => {
+    const m = box(scene, x, minY + sy * 0.5, z, sx, sy, sz, bkMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: minY + sy, sz, minY });
+  };
+  bkWall(bkX - 1.35, bkZ, 0.35, 1.7);
+  bkWall(bkX + 1.35, bkZ, 0.35, 1.7);
+  bkWall(bkX, -8.65, 2.4, 0.32);
+  bkWall(bkX - 0.85, -10.4, 0.85, 0.32, 0.72);
+  bkWall(bkX + 0.85, -10.4, 0.85, 0.32, 0.72);
+  bkWall(bkX, -10.4, 1.15, 0.28, 0.42, 1.35);
+  box(scene, bkX, 0.04, bkZ, 2.2, 0.08, 1.4, concrete);
+  const bkLamp = new THREE.PointLight(0xc8b080, 0.4, 6);
+  bkLamp.position.set(bkX, 1.4, bkZ);
+  scene.add(bkLamp);
+  MAP.bunkerLamp = bkLamp;
+  MAP.bunker = new THREE.Vector3(bkX, 0, bkZ);
+  MAP.bunkAmmo = new THREE.Vector3(bkX + 0.7, 0, bkZ + 0.15);
+  const tin = box(scene, MAP.bunkAmmo.x, 0.22, MAP.bunkAmmo.z, 0.38, 0.28, 0.28, ammo ? ammo : steel);
+  MAP.bunkTin = tin;
 
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
@@ -8541,14 +8606,16 @@ export function rayVsCrates(origin, dir, maxDist = 80, ignore = null) {
   for (const c of MAP.crates) {
     if (c === ignore) continue;
     if (c.dead) continue;
+    const minY = c.minY || 0;
+    const maxY = c.minY ? c.sy : Math.max(c.sy, 1.2);
     const t = rayAabb(
       origin,
       d,
       c.pos.x - c.sx * 0.5,
-      0,
+      minY,
       c.pos.z - c.sz * 0.5,
       c.pos.x + c.sx * 0.5,
-      Math.max(c.sy, 1.2),
+      maxY,
       c.pos.z + c.sz * 0.5
     );
     if (t != null && t > 0.08 && t < best && t < maxDist) {
@@ -10999,6 +11066,57 @@ export function updateCable(dt) {
   }
 }
 
+export function updateTech(dt) {
+  const path = MAP.techPath;
+  const c = MAP.techCrate;
+  if (!path || !c || !MAP.techMesh) return;
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.tech && MAP.tech.stalled ? 0 : 3.6;
+  if (speed > 0) MAP.techT = (MAP.techT + dt * speed) % total;
+  let remain = MAP.techT;
+  let nx = path[0].x;
+  let nz = path[0].z;
+  let yaw = 0;
+  for (let i = 0; i < lens.length; i++) {
+    const a = path[i];
+    const b = path[(i + 1) % path.length];
+    if (remain <= lens[i] || i === lens.length - 1) {
+      const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+      nx = a.x + (b.x - a.x) * t;
+      nz = a.z + (b.z - a.z) * t;
+      const dx = b.x - a.x;
+      const dz = b.z - a.z;
+      yaw = Math.atan2(-dz, dx);
+      break;
+    }
+    remain -= lens[i];
+  }
+  MAP.techDx = nx - c.pos.x;
+  MAP.techDz = nz - c.pos.z;
+  c.pos.set(nx, 0, nz);
+  MAP.techMesh.position.set(nx, 0, nz);
+  MAP.techMesh.rotation.y = yaw;
+  if (MAP.techPlat) {
+    const ox = Math.cos(yaw) * 0.7;
+    const oz = -Math.sin(yaw) * 0.7;
+    MAP.techPlat.x = nx + ox;
+    MAP.techPlat.z = nz + oz;
+    c.climbTo = MAP.techPlat;
+  }
+  if (MAP.techSmoke) {
+    MAP.techSmoke.visible = !!(MAP.tech && MAP.tech.stalled);
+    MAP.techSmoke.scale.setScalar(1 + Math.sin(performance.now() * 0.01) * 0.2);
+  }
+  MAP.techHorn = false;
+  if (speed > 0 && MAP.techT < dt * speed + 0.05) MAP.techHorn = true;
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -11022,6 +11140,7 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.dead) continue;
     if (c.cable && pos.y > 2.15) continue;
     if (c.crane && pos.y < 2.15) continue;
+    if (c.tech && pos.y > 2.15) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;
     const dz = pos.z - c.pos.z;
