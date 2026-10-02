@@ -869,4 +869,11 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] West cable trolley from mezz to exterior yard deck (F run/stop, ride, moving hitscan cover)
 - [x] Yard deck ladder + cover; cable car blocks the service cut while it crosses
 - [x] Bots climb for a yard/cable fight, board the trolley, and flank the service cut when the bay is shut
+- [x] East receiving annex (door + racks + collision + motes) off the warehouse cut
+- [x] Compass / minimap RECV pip + indoor loc tag + roller hook
+- [x] Bot BREACH through annex door when the player camps RECV
+- [x] Annex-door berms + cook-off drum + wrecked flatbed
+- [x] F rollers carry player and bots east through the cut; running belt curtains the cut (hitscan block)
+- [x] Bridge crane on the mezz lip (F run/stop, ride, moving hitscan cover); bots board it
+- [x] Annex ammo tin
 - [ ] Next: owner topics or more juice
