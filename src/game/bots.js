@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -222,6 +222,8 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           : inScrub(playerPos) || onScrubTray(playerPos) || inLiquor(playerPos) ? MAP.scrubDoor
           : inEw(playerPos) || onCathode(playerPos) || inAcid(playerPos) ? MAP.ewDoor
           : inCone(playerPos) || onMantle(playerPos) || inDischarge(playerPos) ? MAP.coneDoor
+          : inClas(playerPos) || onClasRake(playerPos) || inSands(playerPos) ? MAP.clasDoor
+          : inMags(playerPos) || onMagDrum(playerPos) || inConc(playerPos) ? MAP.magsDoor
           : inWarehouse(playerPos) && MAP.warehouseDoor
           ? MAP.warehouseDoor
           : inShed(playerPos) && MAP.shedDoor
@@ -613,6 +615,28 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       collideXZ(b.pos, 0.4);
     }
     if (inCone(b.pos) && MAP.cone && MAP.cone.on) b.hp -= 2.4 * dt;
+    if (onClasRake(b.pos) && MAP.clasRake) {
+      b.pos.z += MAP.clasRake.dz || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inSands(b.pos)) {
+      b.pos.x += (MAP.sands ? MAP.sands.vx : -2.3) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inClas(b.pos) && MAP.clas && MAP.clas.on) b.hp -= 2.1 * dt;
+    if (onMagDrum(b.pos) && MAP.magDrum) {
+      const w = (MAP.magDrum._omega || 0.04) * dt;
+      const dx = b.pos.x - MAP.magDrum.x;
+      const dz = b.pos.z - MAP.magDrum.z;
+      b.pos.x = MAP.magDrum.x + dx * Math.cos(w) - dz * Math.sin(w);
+      b.pos.z = MAP.magDrum.z + dx * Math.sin(w) + dz * Math.cos(w);
+      collideXZ(b.pos, 0.4);
+    }
+    if (inConc(b.pos)) {
+      b.pos.z += (MAP.conc ? MAP.conc.vz : -2.35) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inMags(b.pos) && MAP.mags && MAP.mags.on) b.hp -= 1.8 * dt;
     if (onScrew(b.pos)) {
       b.pos.x += (MAP.screw ? MAP.screw.vx : 2.15) * dt;
       collideXZ(b.pos, 0.4);

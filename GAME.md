@@ -759,4 +759,16 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Cone-door berms + cook-off drums
 - [x] Wrecked cone truck north of the house
 - [x] Clutch (F) spins the mantle; player and bots ride; discharge shoves east; door dust blocks hitscan; bowl heat scalds
+- [x] East spiral classifier (door gap + stroking rake + collision + motes)
+- [x] Compass / minimap CLAS pip + indoor loc tag + sands pip
+- [x] Bot BREACH through classifier door when player camps CLAS, the rake, or the sands
+- [x] Classifier-door berms + cook-off drums
+- [x] Wrecked classifier truck west of the house
+- [x] Clutch (F) strokes the rake; player and bots ride; sands flume shoves west; door dust blocks hitscan; tank slurry scalds
+- [x] West magnet house (door gap + spinning drum + collision + motes)
+- [x] Compass / minimap MAGS pip + indoor loc tag + concentrate pip
+- [x] Bot BREACH through magnet door when player camps MAGS, the drum, or the concentrate
+- [x] Magnet-door berms + cook-off drums
+- [x] Wrecked magnet truck east of the house
+- [x] Clutch (F) spins the drum; player and bots ride; concentrate shoves south; door dust blocks hitscan; drum scalds
 - [ ] Next: owner topics or more juice
