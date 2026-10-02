@@ -729,4 +729,34 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Dryer-door berms + cook-off drums
 - [x] Wrecked dryer truck east of the house
 - [x] Clutch (F) runs the shell as moving cover; player and bots ride; exhaust shoves south and door dust blocks hitscan; shell heat scalds
+- [x] Southeast loco shed (door gap + rideable engine + collision + motes)
+- [x] Compass / minimap LOCO pip + indoor loc tag + steam pip
+- [x] Bot BREACH through loco door when player camps LOCO, the engine, or the steam
+- [x] Loco-door berms + cook-off drums
+- [x] Wrecked loco truck north of the shed
+- [x] Clutch (F) runs the engine as moving cover; steam shoves south and door dust blocks hitscan; cab heat scalds
+- [x] Southwest agitator (door gap + spinning rake + collision + motes)
+- [x] Compass / minimap AGIT pip + indoor loc tag + slurry pip
+- [x] Bot BREACH through agitator door when player camps AGIT, the rake, or the slurry
+- [x] Agitator-door berms + cook-off drums
+- [x] Wrecked agitator truck east of the house
+- [x] Clutch (F) spins the rake; player and bots ride; slurry shoves east; door dust blocks hitscan
+- [x] East scrubber house (door gap + rideable tray + collision + motes)
+- [x] Compass / minimap SCRUB pip + indoor loc tag + liquor pip
+- [x] Bot BREACH through scrubber door when player camps SCRUB, the tray, or the liquor
+- [x] Scrubber-door berms + cook-off drums
+- [x] Wrecked scrubber truck south of the house
+- [x] Clutch (F) runs the tray as moving cover; liquor shoves west and door dust blocks hitscan; stack heat scalds
+- [x] Northwest electrowin house (door gap + cathode bar + collision + motes)
+- [x] Compass / minimap EW pip + indoor loc tag + acid pip
+- [x] Bot BREACH through electrowin door when player camps EW, the bar, or the acid
+- [x] Electrowin-door berms + cook-off drums
+- [x] Wrecked electrowin truck south of the house
+- [x] Clutch (F) runs the cathode bar as moving cover; acid launder shoves south and door mist blocks hitscan; cell acid scalds
+- [x] Southeast cone crusher (door gap + spinning mantle + collision + motes)
+- [x] Compass / minimap CONE pip + indoor loc tag + chute pip
+- [x] Bot BREACH through cone door when player camps CONE, the mantle, or the discharge
+- [x] Cone-door berms + cook-off drums
+- [x] Wrecked cone truck north of the house
+- [x] Clutch (F) spins the mantle; player and bots ride; discharge shoves east; door dust blocks hitscan; bowl heat scalds
 - [ ] Next: owner topics or more juice
