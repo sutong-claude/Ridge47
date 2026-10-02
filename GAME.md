@@ -911,4 +911,9 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] F mans the pintle after the gunner is down (LMB, heat, F off); bed tin restocks half a mag
 - [x] South-road berms between the lanes (cover from the MG) + GUN compass/minimap pip
 - [x] Dropped gunner bails as R-GUN rifleman beside the truck
+- [x] West-road fuel tanker patrols a loop (moving hitscan cover, rideable catwalk)
+- [x] Cab shots stall it; F crank restarts; tank shots cook and cook-off blasts
+- [x] Cook-off leaves a fire pool that burns and blocks hitscan
+- [x] West drop-arm stops the tanker (walk + hitscan); bots kick it if the player camps the post
+- [x] Bots board the catwalk when the player is on the west road; lane berms; FUEL compass/minimap; catwalk tin; ram
 - [ ] Next: owner topics or more juice

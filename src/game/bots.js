@@ -528,6 +528,34 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           b._gunRide = false;
         }
       }
+      if (MAP.fuelCrate && b.hp > 0 && b.state !== "down" && !(MAP.fuel && MAP.fuel.cooked)) {
+        const c = MAP.fuelCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.25 && Math.abs(dz) < 0.9;
+        if (onBed && (b.pos.y > 0.4 || b._fuelRide)) {
+          b.pos.x += MAP.fuelDx || 0;
+          b.pos.z += MAP.fuelDz || 0;
+          b.mesh.position.y = 1.35;
+          b._fuelRide = true;
+        }
+        const want = playerPos && playerPos.x < -12 && playerPos.z > 2 && playerPos.z < 28 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.fuel && MAP.fuel.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.3) b._fuelRide = true;
+        } else if (!onBed && b._fuelRide) {
+          b.mesh.position.y = 0;
+          b._fuelRide = false;
+        }
+      }
+      if (MAP.fuelGate && MAP.fuelGate.open < 0.4 && MAP.fuelGatePost && b.hp > 0 && playerPos && playerPos.distanceTo(MAP.fuelGatePost) < 7 && b.pos.distanceTo(MAP.fuelGatePost) < 2.2) {
+        b._fuelKick = (b._fuelKick || 0) + dt;
+        if (b._fuelKick > 0.8) {
+          MAP.fuelGate.target = 1;
+          b._fuelKick = 0;
+        }
+      }
       if (MAP.padGate && MAP.padGate.open < 0.4 && MAP.padGatePost && b.hp > 0 && playerPos && playerPos.distanceTo(MAP.padGatePost) < 7 && b.pos.distanceTo(MAP.padGatePost) < 2.2) {
         b._gateKick = (b._gateKick || 0) + dt;
         if (b._gateKick > 0.7) {

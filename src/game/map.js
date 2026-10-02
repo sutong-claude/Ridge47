@@ -1947,6 +1947,86 @@ export function buildMap(scene) {
   const tin = box(scene, MAP.bunkAmmo.x, 0.22, MAP.bunkAmmo.z, 0.38, 0.28, 0.28, ammo ? ammo : steel);
   MAP.bunkTin = tin;
 
+  // West-road fuel tanker — patrols a loop, catwalk is rideable cover.
+  // Cab shots stall it. Tank shots cook; cook-off leaves a fire that blocks hitscan.
+  const fuel = new THREE.Group();
+  const fTank = box(scene, 0, 0, 0, 2.7, 0.92, 1.22, new THREE.MeshLambertMaterial({ color: 0x8a5a28 }));
+  fTank.position.set(0.42, 0.92, 0);
+  const fCab = box(scene, 0, 0, 0, 0.92, 0.74, 1.18, steel);
+  fCab.position.set(-1.12, 0.95, 0);
+  const fWalk = box(scene, 0, 0, 0, 1.7, 0.12, 1.05, rust);
+  fWalk.position.set(0.45, 1.46, 0);
+  const fValve = box(scene, 0, 0, 0, 0.18, 0.22, 0.18, rust);
+  fValve.position.set(1.55, 0.7, 0.55);
+  fuel.add(fTank, fCab, fWalk, fValve);
+  const fuelPath = [
+    new THREE.Vector3(-36.2, 0, 6.2),
+    new THREE.Vector3(-36.2, 0, 23.4),
+    new THREE.Vector3(-18.4, 0, 23.4),
+    new THREE.Vector3(-18.4, 0, 6.2),
+  ];
+  MAP.fuelPath = fuelPath;
+  MAP.fuelT = 0.35;
+  MAP.fuel = { hp: 64, stalled: false, cook: 0, cooked: false, burn: 0, yaw: 0 };
+  MAP.fuelMesh = fuel;
+  fuel.position.copy(fuelPath[0]);
+  scene.add(fuel);
+  const fuelCrate = { pos: fuelPath[0].clone(), mesh: fuel, sx: 2.85, sy: 1.7, sz: 1.4, fuel: true, climb: true };
+  MAP.crates.push(fuelCrate);
+  MAP.fuelCrate = fuelCrate;
+  MAP.fuelDx = 0;
+  MAP.fuelDz = 0;
+  MAP.fuelPlat = { x: -35.6, z: 6.2, sx: 1.2, sz: 0.95, top: 1.5 };
+  const fuelSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.32, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x2a2018, transparent: true, opacity: 0.45 })
+  );
+  fuelSmoke.position.set(-1.4, 1.4, 0);
+  fuelSmoke.visible = false;
+  fuel.add(fuelSmoke);
+  MAP.fuelSmoke = fuelSmoke;
+  const fuelFlame = new THREE.Mesh(
+    new THREE.SphereGeometry(0.55, 7, 6),
+    new THREE.MeshBasicMaterial({ color: 0xff6a20, transparent: true, opacity: 0.55 })
+  );
+  fuelFlame.position.set(0.4, 1.7, 0);
+  fuelFlame.visible = false;
+  fuel.add(fuelFlame);
+  MAP.fuelFlame = fuelFlame;
+  const fuelTin = box(scene, 0, 0, 0, 0.28, 0.2, 0.22, rust);
+  fuelTin.position.set(0.2, 1.58, 0.35);
+  fuel.add(fuelTin);
+  MAP.fuelTin = fuelTin;
+  const fuelFire = new THREE.Mesh(
+    new THREE.SphereGeometry(1.6, 8, 6),
+    new THREE.MeshBasicMaterial({ color: 0xff4a18, transparent: true, opacity: 0.42 })
+  );
+  fuelFire.position.set(-36, 0.4, 14);
+  fuelFire.visible = false;
+  scene.add(fuelFire);
+  MAP.fuelFire = fuelFire;
+  const fuelFireCrate = { pos: new THREE.Vector3(-36, 0, 14), mesh: fuelFire, sx: 3.2, sy: 1.6, sz: 3.2, dead: true, fire: true };
+  MAP.crates.push(fuelFireCrate);
+  MAP.fuelFireCrate = fuelFireCrate;
+  // Drop-arm across the west leg. Down blocks walk, hitscan, and the tanker.
+  const fgX = -36.2;
+  const fgZ = 14.6;
+  const fgL = box(scene, fgX, 1.2, fgZ - 1.85, 0.28, 2.4, 0.28, steel);
+  const fgR = box(scene, fgX, 1.2, fgZ + 1.85, 0.28, 2.4, 0.28, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(fgX, 0, fgZ - 1.85), mesh: fgL, sx: 0.28, sy: 2.4, sz: 0.28 });
+  MAP.crates.push({ pos: new THREE.Vector3(fgX, 0, fgZ + 1.85), mesh: fgR, sx: 0.28, sy: 2.4, sz: 0.28 });
+  const fgSlab = box(scene, fgX, 1.15, fgZ, 0.22, 1.65, 3.3, rust);
+  const fgCrate = { pos: new THREE.Vector3(fgX, 0, fgZ), mesh: fgSlab, sx: 0.36, sy: 1.65, sz: 3.3, gate: true, dead: true };
+  MAP.crates.push(fgCrate);
+  MAP.fuelGate = { open: 1, target: 1, mesh: fgSlab, crate: fgCrate, x: fgX, z: fgZ };
+  MAP.fuelGatePost = new THREE.Vector3(fgX + 1.35, 0, fgZ - 1.85);
+  // Berms between the tanker lanes — cover, not a wall across the road.
+  const fuelBerm = new THREE.MeshLambertMaterial({ color: 0x7a6a48 });
+  for (const bz of [9.4, 14.2, 19.2]) {
+    const bm = box(scene, -27.2, 0.4, bz, 0.55, 0.8, 2.2, fuelBerm);
+    MAP.crates.push({ pos: new THREE.Vector3(-27.2, 0, bz), mesh: bm, sx: 0.55, sy: 0.8, sz: 2.2 });
+  }
+
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
   const rz = 33;
@@ -11208,7 +11288,7 @@ function vehicleBlocked(nx, nz, self) {
   const h = MAP.half || 48;
   if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
   for (const c of MAP.crates) {
-    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun) continue;
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel) continue;
     if (c.sy && c.sy < 0.45) continue;
     const hx = (c.sx || 0.6) * 0.5 + 1.15;
     const hz = (c.sz || 0.6) * 0.5 + 0.7;
@@ -11318,6 +11398,96 @@ export function updateTech(dt) {
   if (speed > 0 && MAP.techT < dt * speed + 0.05) MAP.techHorn = true;
 }
 
+
+export function onFuel(pos) {
+  const c = MAP.fuelCrate;
+  if (!c || (MAP.fuel && MAP.fuel.cooked)) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.45 && Math.abs(pos.z - c.pos.z) < 1.05 && pos.y < 2.5;
+}
+
+export function fuelCab(pos) {
+  const c = MAP.fuelCrate;
+  if (!c || !MAP.fuel) return false;
+  const yaw = MAP.fuel.yaw || 0;
+  const cx = c.pos.x - Math.cos(yaw) * 1.05;
+  const cz = c.pos.z + Math.sin(yaw) * 1.05;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.4 && pos.y < 2.3;
+}
+
+export function updateFuel(dt) {
+  const path = MAP.fuelPath;
+  const c = MAP.fuelCrate;
+  if (!path || !c || !MAP.fuelMesh || !MAP.fuel) return;
+  const gate = MAP.fuelGate;
+  if (gate && gate.mesh) {
+    const prev = gate.open;
+    gate.open += (gate.target - gate.open) * Math.min(1, dt * 3.1);
+    if (Math.abs(gate.target - gate.open) < 0.02) gate.open = gate.target;
+    const down = 1 - gate.open;
+    gate.mesh.position.y = 1.15 * down + 2.6 * gate.open;
+    gate.mesh.rotation.z = gate.open * 1.1;
+    gate.crate.dead = gate.open > 0.55;
+    gate.moving = Math.abs(gate.open - prev) > 0.004;
+  }
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.fuel.stalled || MAP.fuel.cooked ? 0 : 3.6;
+  MAP.fuelDx = 0;
+  MAP.fuelDz = 0;
+  if (speed > 0) {
+    MAP.fuelT = (MAP.fuelT + dt * speed) % total;
+    let remain = MAP.fuelT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = MAP.fuel.yaw || 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      MAP.fuelDx = nx - c.pos.x;
+      MAP.fuelDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.fuelMesh.position.set(nx, 0, nz);
+      MAP.fuelMesh.rotation.y = yaw;
+      MAP.fuel.yaw = yaw;
+      if (MAP.fuelPlat) {
+        MAP.fuelPlat.x = nx + Math.cos(yaw) * 0.4;
+        MAP.fuelPlat.z = nz - Math.sin(yaw) * 0.4;
+        c.climbTo = MAP.fuelPlat;
+      }
+    }
+  } else {
+    MAP.fuelMesh.position.set(c.pos.x, 0, c.pos.z);
+    MAP.fuelMesh.rotation.y = MAP.fuel.yaw || 0;
+  }
+  if (MAP.fuel.burn > 0) {
+    MAP.fuel.burn = Math.max(0, MAP.fuel.burn - dt);
+    if (MAP.fuelFire) {
+      MAP.fuelFire.visible = true;
+      MAP.fuelFire.scale.setScalar(0.85 + Math.sin(MAP.fuel.burn * 9) * 0.08);
+      MAP.fuelFire.material.opacity = 0.28 + Math.sin(MAP.fuel.burn * 14) * 0.12;
+    }
+    if (MAP.fuelFireCrate && MAP.fuel.burn <= 0) MAP.fuelFireCrate.dead = true;
+    if (MAP.fuelFire && MAP.fuel.burn <= 0) MAP.fuelFire.visible = false;
+  }
+  if (MAP.fuelSmoke) MAP.fuelSmoke.visible = !!MAP.fuel.stalled || !!MAP.fuel.cooked;
+  if (MAP.fuelFlame) MAP.fuelFlame.visible = !!MAP.fuel.cooked || (MAP.fuel.cook || 0) > 28;
+  if (MAP.fuel.cooked && MAP.fuelMesh) MAP.fuelMesh.position.y = 0;
+}
 
 export function onGun(pos) {
   const c = MAP.gunCrate;
@@ -11491,6 +11661,7 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.tech && pos.y > 2.15) continue;
     if (c.gun && pos.y > 1.15) continue;
     if (c.bowser && pos.y > 1.45) continue;
+    if (c.fuel && pos.y > 1.55) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;
     const dz = pos.z - c.pos.z;
