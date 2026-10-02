@@ -1795,7 +1795,65 @@ export function buildMap(scene) {
   MAP.techCrate = techCrate;
   MAP.techDx = 0;
   MAP.techDz = 0;
+  MAP.tech.driven = false;
+  MAP.tech.yaw = 0;
+  MAP.tech.throttle = 0;
+  MAP.tech.steer = 0;
   MAP.techPlat = { x: 12.9, z: -11.6, sx: 1.2, sz: 1.2, top: 1.08 };
+
+  // Pad boom gate — west leg of the technical loop. F drops the slab (walk + hitscan).
+  const gateX = 12.2;
+  const gateZ = -15.6;
+  const gPostL = box(scene, gateX, 1.15, gateZ - 1.7, 0.28, 2.3, 0.28, steel);
+  const gPostR = box(scene, gateX, 1.15, gateZ + 1.7, 0.28, 2.3, 0.28, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(gateX, 0, gateZ - 1.7), mesh: gPostL, sx: 0.28, sy: 2.3, sz: 0.28 });
+  MAP.crates.push({ pos: new THREE.Vector3(gateX, 0, gateZ + 1.7), mesh: gPostR, sx: 0.28, sy: 2.3, sz: 0.28 });
+  const gateSlab = box(scene, gateX, 1.15, gateZ, 0.22, 1.7, 3.15, rust);
+  const gateCrate = { pos: new THREE.Vector3(gateX, 0, gateZ), mesh: gateSlab, sx: 0.34, sy: 1.7, sz: 3.15, gate: true, dead: true };
+  MAP.crates.push(gateCrate);
+  MAP.padGate = { open: 1, target: 1, mesh: gateSlab, crate: gateCrate, x: gateX, z: gateZ };
+  MAP.padGatePost = new THREE.Vector3(gateX + 1.15, 0, gateZ - 1.7);
+  const gateLamp = new THREE.PointLight(0xffb060, 0.35, 6);
+  gateLamp.position.set(gateX, 2.3, gateZ);
+  scene.add(gateLamp);
+  MAP.padGateLamp = gateLamp;
+
+  // East water bowser — patrol loop, rideable tank bed, cab shots stall it.
+  const bowser = new THREE.Group();
+  const bTank = box(scene, 0, 0, 0, 2.4, 0.85, 1.15, steel);
+  bTank.position.set(0.35, 0.85, 0);
+  const bCab = box(scene, 0, 0, 0, 0.95, 0.7, 1.15, rust);
+  bCab.position.set(-0.95, 0.95, 0);
+  const bBed = box(scene, 0, 0, 0, 1.5, 0.16, 1.05, rust);
+  bBed.position.set(0.45, 1.32, 0);
+  bowser.add(bTank, bCab, bBed);
+  const bowserPath = [
+    new THREE.Vector3(16.4, 0, 4.4),
+    new THREE.Vector3(27.2, 0, 4.4),
+    new THREE.Vector3(27.2, 0, 12.2),
+    new THREE.Vector3(16.4, 0, 12.2),
+  ];
+  MAP.bowserPath = bowserPath;
+  MAP.bowserT = 0.2;
+  MAP.bowser = { hp: 70, stalled: false };
+  MAP.bowserMesh = bowser;
+  bowser.position.copy(bowserPath[0]);
+  scene.add(bowser);
+  const bowserCrate = { pos: bowserPath[0].clone(), mesh: bowser, sx: 2.5, sy: 1.35, sz: 1.35, bowser: true, climb: true };
+  MAP.crates.push(bowserCrate);
+  MAP.bowserCrate = bowserCrate;
+  MAP.bowserDx = 0;
+  MAP.bowserDz = 0;
+  MAP.bowserPlat = { x: 16.8, z: 4.4, sx: 1.3, sz: 1.0, top: 1.4 };
+  const bowserSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.28, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x666058, transparent: true, opacity: 0.35 })
+  );
+  bowserSmoke.position.set(-1.35, 1.35, 0);
+  bowserSmoke.visible = false;
+  bowser.add(bowserSmoke);
+  MAP.bowserSmoke = bowserSmoke;
+
   MAP.platforms = MAP.platforms || [];
   MAP.platforms.push(MAP.techPlat);
   techCrate.climbTo = MAP.techPlat;
@@ -11066,10 +11124,80 @@ export function updateCable(dt) {
   }
 }
 
+export function techCab(pos) {
+  const c = MAP.techCrate;
+  if (!c || !MAP.tech) return false;
+  const yaw = MAP.tech.yaw || 0;
+  const cx = c.pos.x - Math.cos(yaw) * 0.85;
+  const cz = c.pos.z + Math.sin(yaw) * 0.85;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.35 && pos.y < 2.3;
+}
+
+export function onBowser(pos) {
+  const c = MAP.bowserCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.35 && Math.abs(pos.z - c.pos.z) < 1.05 && pos.y < 2.4;
+}
+
+function vehicleBlocked(nx, nz, self) {
+  const h = MAP.half || 48;
+  if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
+  for (const c of MAP.crates) {
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser) continue;
+    if (c.sy && c.sy < 0.45) continue;
+    const hx = (c.sx || 0.6) * 0.5 + 1.15;
+    const hz = (c.sz || 0.6) * 0.5 + 0.7;
+    if (Math.abs(nx - c.pos.x) < hx && Math.abs(nz - c.pos.z) < hz) return true;
+  }
+  return false;
+}
+
 export function updateTech(dt) {
   const path = MAP.techPath;
   const c = MAP.techCrate;
-  if (!path || !c || !MAP.techMesh) return;
+  if (!path || !c || !MAP.techMesh || !MAP.tech) return;
+  const gate = MAP.padGate;
+  if (gate && gate.mesh) {
+    const prev = gate.open;
+    gate.open += (gate.target - gate.open) * Math.min(1, dt * 3.2);
+    if (Math.abs(gate.target - gate.open) < 0.02) gate.open = gate.target;
+    const down = 1 - gate.open;
+    gate.mesh.position.y = 1.15 * down + 2.55 * gate.open;
+    gate.mesh.rotation.z = gate.open * 1.15;
+    gate.crate.dead = gate.open > 0.55;
+    gate.crate.pos.y = 0;
+    if (MAP.padGateLamp) MAP.padGateLamp.intensity = gate.open > 0.5 ? 0.2 : 0.85;
+    gate.moving = Math.abs(gate.open - prev) > 0.004;
+  }
+  MAP.techHorn = false;
+  if (MAP.tech.hornAsk) {
+    MAP.techHorn = true;
+    MAP.tech.hornAsk = false;
+  }
+  if (MAP.tech.driven && !MAP.tech.stalled) {
+    const yaw = (MAP.tech.yaw || 0) + (MAP.tech.steer || 0) * dt * 1.7;
+    MAP.tech.yaw = yaw;
+    const sp = (MAP.tech.throttle || 0) * 7.4;
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+      MAP.techHorn = true;
+    }
+    MAP.techDx = nx - c.pos.x;
+    MAP.techDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.techMesh.position.set(nx, 0, nz);
+    MAP.techMesh.rotation.y = yaw;
+    if (MAP.techPlat) {
+      MAP.techPlat.x = nx + Math.cos(yaw) * 0.7;
+      MAP.techPlat.z = nz - Math.sin(yaw) * 0.7;
+      c.climbTo = MAP.techPlat;
+    }
+    if (MAP.techSmoke) MAP.techSmoke.visible = false;
+    return;
+  }
   const lens = [];
   let total = 0;
   for (let i = 0; i < path.length; i++) {
@@ -11077,44 +11205,100 @@ export function updateTech(dt) {
     lens.push(L);
     total += L;
   }
-  const speed = MAP.tech && MAP.tech.stalled ? 0 : 3.6;
-  if (speed > 0) MAP.techT = (MAP.techT + dt * speed) % total;
-  let remain = MAP.techT;
-  let nx = path[0].x;
-  let nz = path[0].z;
-  let yaw = 0;
-  for (let i = 0; i < lens.length; i++) {
-    const a = path[i];
-    const b = path[(i + 1) % path.length];
-    if (remain <= lens[i] || i === lens.length - 1) {
-      const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
-      nx = a.x + (b.x - a.x) * t;
-      nz = a.z + (b.z - a.z) * t;
-      const dx = b.x - a.x;
-      const dz = b.z - a.z;
-      yaw = Math.atan2(-dz, dx);
-      break;
+  const speed = MAP.tech.stalled ? 0 : 3.6;
+  if (speed > 0) {
+    const nextT = (MAP.techT + dt * speed) % total;
+    let remain = nextT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = MAP.tech.yaw || 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
     }
-    remain -= lens[i];
-  }
-  MAP.techDx = nx - c.pos.x;
-  MAP.techDz = nz - c.pos.z;
-  c.pos.set(nx, 0, nz);
-  MAP.techMesh.position.set(nx, 0, nz);
-  MAP.techMesh.rotation.y = yaw;
-  if (MAP.techPlat) {
-    const ox = Math.cos(yaw) * 0.7;
-    const oz = -Math.sin(yaw) * 0.7;
-    MAP.techPlat.x = nx + ox;
-    MAP.techPlat.z = nz + oz;
-    c.climbTo = MAP.techPlat;
+    if (vehicleBlocked(nx, nz, c)) {
+      MAP.techHorn = true;
+      MAP.techDx = 0;
+      MAP.techDz = 0;
+    } else {
+      MAP.techT = nextT;
+      MAP.tech.yaw = yaw;
+      MAP.techDx = nx - c.pos.x;
+      MAP.techDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.techMesh.position.set(nx, 0, nz);
+      MAP.techMesh.rotation.y = yaw;
+      if (MAP.techPlat) {
+        MAP.techPlat.x = nx + Math.cos(yaw) * 0.7;
+        MAP.techPlat.z = nz - Math.sin(yaw) * 0.7;
+        c.climbTo = MAP.techPlat;
+      }
+    }
+  } else {
+    MAP.techDx = 0;
+    MAP.techDz = 0;
   }
   if (MAP.techSmoke) {
-    MAP.techSmoke.visible = !!(MAP.tech && MAP.tech.stalled);
+    MAP.techSmoke.visible = !!MAP.tech.stalled;
     MAP.techSmoke.scale.setScalar(1 + Math.sin(performance.now() * 0.01) * 0.2);
   }
-  MAP.techHorn = false;
   if (speed > 0 && MAP.techT < dt * speed + 0.05) MAP.techHorn = true;
+}
+
+export function updateBowser(dt) {
+  const path = MAP.bowserPath;
+  const c = MAP.bowserCrate;
+  if (!path || !c || !MAP.bowserMesh || !MAP.bowser) return;
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.bowser.stalled ? 0 : 2.8;
+  MAP.bowserDx = 0;
+  MAP.bowserDz = 0;
+  if (speed > 0) {
+    MAP.bowserT = (MAP.bowserT + dt * speed) % total;
+    let remain = MAP.bowserT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      MAP.bowserDx = nx - c.pos.x;
+      MAP.bowserDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.bowserMesh.position.set(nx, 0, nz);
+      MAP.bowserMesh.rotation.y = yaw;
+      if (MAP.bowserPlat) {
+        MAP.bowserPlat.x = nx + Math.cos(yaw) * 0.45;
+        MAP.bowserPlat.z = nz - Math.sin(yaw) * 0.45;
+        c.climbTo = MAP.bowserPlat;
+      }
+    }
+  }
+  if (MAP.bowserSmoke) MAP.bowserSmoke.visible = !!MAP.bowser.stalled;
 }
 
 export function updateBayDoor(dt) {

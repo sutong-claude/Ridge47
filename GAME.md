@@ -900,4 +900,7 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Bed is a platform; player vaults/rides, bots board when the player camps extract
 - [x] Cab shots stall the technical; F crank beside the cab restarts it; horn + diesel tick
 - [x] Pad slit bunker north of extract (firing port via crate minY, bunk tin, BUNK pip)
+- [x] Extract technical is drivable: F at the cab mounts, WASD throttle/steer (A left, D right), Shift horn, F dismounts; cab shots still stall and kick the driver
+- [x] Pad boom gate on the technical's west leg (F drop/raise, blocks walk + hitscan, patrol and driven jeep stop, bots kick it if the player camps the post)
+- [x] East water bowser patrol (rideable bed, cab shots stall, F crank, minimap/compass BOWSER, bots board when the player is in the east quarry)
 - [ ] Next: owner topics or more juice
