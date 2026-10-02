@@ -695,6 +695,20 @@ export function inPreg(pos) {
   return Math.abs(pos.x - d.x) < d.hx && Math.abs(pos.z - d.z) < d.hz;
 }
 
+export function inGall(pos) {
+  return pos.x > 21.15 && pos.x < 30.85 && pos.z > 39.95 && pos.z < 42.65;
+}
+export function onOreCar(pos) {
+  const c = MAP.oreCar;
+  if (!c || !MAP.gall || !MAP.gall.on) return false;
+  return Math.abs(pos.x - c.x) < 0.9 && Math.abs(pos.z - c.z) < 0.7 && pos.y < 1.55;
+}
+export function inDump(pos) {
+  const d = MAP.gallDump;
+  if (!d || !d.live) return false;
+  return Math.abs(pos.x - d.x) < d.hx && Math.abs(pos.z - d.z) < d.hz;
+}
+
 export function inSag(pos) {
   return pos.x > -1.6 && pos.x < 2.4 && pos.z > -45.1 && pos.z < -41.35;
 }
@@ -724,7 +738,7 @@ export function inJawRock(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos) || inSag(pos) || inHeap(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos) || inSag(pos) || inHeap(pos) || inGall(pos);
 }
 
 export function floorY(x, z) {
@@ -927,6 +941,47 @@ export function buildMap(scene) {
     climbTo: new THREE.Vector3(-25.2, 0, 28.45),
   });
   MAP.warehouseMezz = new THREE.Vector3(mzX, 3.26, mzZ);
+
+  // Rolling bay door — parks open on the east jamb, slides shut across the gap.
+  const bayMat = new THREE.MeshLambertMaterial({ color: 0x6e665c });
+  const bayMesh = box(scene, -19.35, 2.15, 22, 3.15, 4.3, 0.28, bayMat);
+  const bayCrate = {
+    pos: new THREE.Vector3(-19.35, 0, 22),
+    mesh: bayMesh,
+    sx: 3.05,
+    sy: 4.3,
+    sz: 0.34,
+    dead: true,
+    bay: true,
+  };
+  MAP.crates.push(bayCrate);
+  MAP.bayDoor = { open: 1, target: 1, mesh: bayMesh, crate: bayCrate, kicked: false };
+  box(scene, -22, 4.42, 22.02, 3.55, 0.1, 0.2, steel);
+  // East ladder so the catwalk is not a one-way roost.
+  const whLad2 = box(scene, -18.35, 1.6, 26.85, 0.42, 3.2, 0.16, steel);
+  MAP.crates.push({
+    pos: new THREE.Vector3(-18.35, 0, 26.85),
+    mesh: whLad2,
+    sx: 0.42,
+    sy: 3.2,
+    sz: 0.16,
+    climb: true,
+    climbTo: new THREE.Vector3(-18.75, 0, 28.35),
+  });
+  MAP.mezzLadders = [
+    { x: -25.6, z: 26.85, to: new THREE.Vector3(-25.2, 3.26, 28.45) },
+    { x: -18.35, z: 26.85, to: new THREE.Vector3(-18.75, 3.26, 28.35) },
+  ];
+  const mezCover2 = box(scene, -25.2, 3.82, 28.55, 1.05, 0.8, 0.48, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-25.2, 0, 28.55), mesh: mezCover2, sx: 1.05, sy: 4.22, sz: 0.48 });
+  MAP.mezzAmmo = new THREE.Vector3(-22.1, 3.4, 28.15);
+  box(scene, -22.1, 3.52, 28.15, 0.42, 0.28, 0.34, rust);
+  // Exterior jamb berms — fighting position when the bay is shut.
+  const bayBerm = box(scene, -24.35, 0.42, 20.35, 1.15, 0.8, 0.42, rock);
+  const bayBerm2 = box(scene, -19.65, 0.42, 20.35, 1.15, 0.8, 0.42, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(-24.35, 0, 20.35), mesh: bayBerm, sx: 1.15, sy: 0.8, sz: 0.42 });
+  MAP.crates.push({ pos: new THREE.Vector3(-19.65, 0, 20.35), mesh: bayBerm2, sx: 1.15, sy: 0.8, sz: 0.42 });
+
 
   // East pump shed — door gap on west wall at x≈23, z≈21
   const shWall = (x, z, sx, sz) => {
@@ -7699,6 +7754,81 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.heapTruck.clone(), mesh: hpTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
   MAP.crates.push({ pos: new THREE.Vector3(hpX + 3.4, 0, 37.6), mesh: hpBed, sx: 1.15, sy: 0.55, sz: 1.15 });
 
+  // North transfer gallery — covered spur, rideable ore car, drop gate, dump curtain
+  const gx = 26;
+  const gz = 41.3;
+  const gMat = new THREE.MeshLambertMaterial({ color: 0x5c5648 });
+  const gWall = (x, z, w, d) => {
+    const m = box(scene, x, 1.45, z, w, 2.7, d, gMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx: w, sy: 2.7, sz: d });
+  };
+  gWall(21.35, gz, 0.28, 2.5);
+  gWall(30.65, gz + 0.55, 0.28, 1.35);
+  gWall(30.65, gz - 0.7, 0.28, 0.7);
+  gWall(gx, 42.5, 9.2, 0.28);
+  gWall(23.15, 40.1, 3.6, 0.28);
+  gWall(28.55, 40.1, 3.9, 0.28);
+  box(scene, 26.0, 2.85, 40.1, 1.7, 0.32, 0.28, gMat);
+  box(scene, gx, 2.95, gz, 9.6, 0.14, 2.7, rock);
+  box(scene, gx, 0.04, gz, 9.2, 0.08, 2.35, concrete);
+  const rail = box(scene, gx, 0.12, gz, 8.6, 0.08, 0.22, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(gx, 0, gz), mesh: rail, sx: 8.6, sy: 0.16, sz: 0.22, walkOn: true });
+  const car = box(scene, 22.6, 0.55, gz, 1.55, 0.7, 1.05, rust);
+  const carLip = box(scene, 22.6, 0.95, gz, 1.35, 0.12, 0.9, steel);
+  MAP.oreCarMesh = car;
+  MAP.oreCarLip = carLip;
+  MAP.oreCar = { x: 22.6, z: gz, phase: 0, dir: 1, dx: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(22.6, 0, gz), mesh: car, sx: 1.55, sy: 0.85, sz: 1.05, walkOn: true, oreCar: true });
+  MAP.oreCarCrate = MAP.crates[MAP.crates.length - 1];
+  const gate = box(scene, 26.0, 2.35, 40.1, 1.45, 1.55, 0.16, steel);
+  MAP.gallGate = gate;
+  MAP.gallGateCrate = { pos: new THREE.Vector3(26.0, 0, 40.1), mesh: gate, sx: 1.45, sy: 1.7, sz: 0.22, dead: true };
+  MAP.crates.push(MAP.gallGateCrate);
+  MAP.gallDoor = new THREE.Vector3(26.0, 0, 39.7);
+  MAP.gall = { on: false, x: 24.6, z: 40.55 };
+  const gLamp = new THREE.PointLight(0xe0c080, 0.55, 9);
+  gLamp.position.set(gx, 2.4, gz);
+  scene.add(gLamp);
+  MAP.gallLamp = gLamp;
+  MAP.gallRing = box(scene, 26.0, 0.05, 39.7, 1.5, 0.04, 0.28, amber);
+  const dump = box(scene, 30.85, 1.15, gz, 0.28, 2.1, 1.35, sand);
+  dump.material = new THREE.MeshLambertMaterial({ color: 0xc4b48a, transparent: true, opacity: 0.04 });
+  MAP.gallDumpMesh = dump;
+  MAP.gallDump = { x: 30.85, z: gz, hx: 0.55, hz: 0.7, vx: 2.4, live: false };
+  MAP.gallDumpCrate = { pos: new THREE.Vector3(30.85, 0, gz), mesh: dump, sx: 0.4, sy: 2.1, sz: 1.35, dead: true };
+  MAP.crates.push(MAP.gallDumpCrate);
+  const bin = box(scene, 22.3, 0.7, 41.85, 1.1, 1.15, 0.7, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(22.3, 0, 41.85), mesh: bin, sx: 1.1, sy: 1.15, sz: 0.7 });
+  const bin2 = box(scene, 28.8, 0.65, 41.9, 1.2, 1.05, 0.65, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(28.8, 0, 41.9), mesh: bin2, sx: 1.2, sy: 1.05, sz: 0.65 });
+  const gMotesGeo = new THREE.BufferGeometry();
+  const gPos = new Float32Array(36);
+  const gPhase = [];
+  for (let i = 0; i < 12; i++) {
+    gPos[i * 3] = gx + (Math.random() - 0.5) * 8;
+    gPos[i * 3 + 1] = 0.3 + Math.random() * 1.5;
+    gPos[i * 3 + 2] = gz + (Math.random() - 0.5) * 1.8;
+    gPhase.push(Math.random() * 6.2);
+  }
+  gMotesGeo.setAttribute("position", new THREE.BufferAttribute(gPos, 3));
+  MAP.gallMotes = new THREE.Points(gMotesGeo, new THREE.PointsMaterial({ color: 0xe0c890, size: 0.045 }));
+  scene.add(MAP.gallMotes);
+  MAP.gallMotePhase = gPhase;
+  const gBerm = box(scene, 24.55, 0.45, 39.15, 1.05, 0.85, 0.42, rock);
+  const gBerm2 = box(scene, 27.45, 0.45, 39.15, 1.05, 0.85, 0.42, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(24.55, 0, 39.15), mesh: gBerm, sx: 1.05, sy: 0.85, sz: 0.42 });
+  MAP.crates.push({ pos: new THREE.Vector3(27.45, 0, 39.15), mesh: gBerm2, sx: 1.05, sy: 0.85, sz: 0.42 });
+  const gDrum = box(scene, 24.15, 0.55, 38.7, 0.5, 1.05, 0.5, rust);
+  const gDrum2 = box(scene, 27.85, 0.55, 38.7, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(24.15, 0, 38.7), mesh: gDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(27.85, 0, 38.7), mesh: gDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const gTruck = box(scene, 21.2, 0.65, 39.15, 1.4, 1.15, 1.3, rust);
+  const gBed = box(scene, 21.2, 0.4, 37.95, 1.15, 0.55, 1.15, steel);
+  MAP.gallTruck = new THREE.Vector3(21.2, 0, 39.15);
+  MAP.crates.push({ pos: MAP.gallTruck.clone(), mesh: gTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(21.2, 0, 37.95), mesh: gBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+
 export function updateBirds(dt, spookAt = null) {
   if (!MAP.birds) return;
   for (const b of MAP.birds) {
@@ -10106,6 +10236,52 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
     if (MAP.faceLever) MAP.faceLever.rotation.z = MAP.face.armed ? -0.8 : 0.25;
     if (!MAP.face.armed && MAP.faceLamp) MAP.faceLamp.intensity = live ? 0.9 : 0.12;
   }
+
+
+  if (MAP.oreCar) {
+    const on = MAP.gall && MAP.gall.on;
+    const speed = on ? 2.35 : 0;
+    const prev = MAP.oreCar.dir;
+    MAP.oreCar.x += MAP.oreCar.dir * speed * dt;
+    if (MAP.oreCar.x > 29.4) { MAP.oreCar.x = 29.4; MAP.oreCar.dir = -1; }
+    if (MAP.oreCar.x < 22.5) { MAP.oreCar.x = 22.5; MAP.oreCar.dir = 1; }
+    MAP.gallClack = on && MAP.oreCar.dir !== prev;
+    MAP.oreCar.dx = on ? MAP.oreCar.dir * speed * dt : 0;
+    if (MAP.oreCarMesh) MAP.oreCarMesh.position.x = MAP.oreCar.x;
+    if (MAP.oreCarLip) MAP.oreCarLip.position.x = MAP.oreCar.x;
+    if (MAP.oreCarCrate) MAP.oreCarCrate.pos.x = MAP.oreCar.x;
+    const dumping = on && MAP.oreCar.x > 28.6 && MAP.oreCar.dir > 0;
+    if (MAP.gallDump) MAP.gallDump.live = dumping;
+    if (MAP.gallDumpCrate) MAP.gallDumpCrate.dead = !dumping;
+    if (MAP.gallDumpMesh && MAP.gallDumpMesh.material) MAP.gallDumpMesh.material.opacity = dumping ? 0.48 : 0.04;
+    if (MAP.gallGate) MAP.gallGate.position.y = on ? 0.85 : 2.35;
+    if (MAP.gallGateCrate) MAP.gallGateCrate.dead = !on;
+    if (MAP.gallLamp) MAP.gallLamp.intensity = on ? 1.2 : 0.16;
+  }
+  if (MAP.gallMotes && MAP.gallMotePhase) {
+    const arr = MAP.gallMotes.geometry.attributes.position.array;
+    const ph = MAP.gallMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.gall && MAP.gall.on ? 1.6 : 0.08);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.2;
+    }
+    MAP.gallMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+
+export function updateBayDoor(dt) {
+  const d = MAP.bayDoor;
+  if (!d || !d.mesh) return;
+  const prev = d.open;
+  d.open += (d.target - d.open) * Math.min(1, dt * 3.4);
+  if (Math.abs(d.target - d.open) < 0.012) d.open = d.target;
+  const x = -19.35 + (-22 - -19.35) * (1 - d.open);
+  d.mesh.position.x = x;
+  d.crate.pos.x = x;
+  d.crate.dead = d.open > 0.4;
+  d.moving = Math.abs(d.open - prev) > 0.004;
+  if (d.kicked && d.open > 0.92) d.kicked = false;
+}
 
 export function collideXZ(pos, radius = 0.45) {
   const h = MAP.half;

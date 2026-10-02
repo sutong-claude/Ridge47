@@ -859,4 +859,9 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Grenades bounce off crate faces (reflect, separate, distance slap) instead of reversing in place
 - [x] Carbine punches one corrugated sheet; scatter and sidearm stop on the sheet
 - [x] Per-gun viewmodel rest (scatter low and left, sidearm high and in)
+- [x] Warehouse rolling bay door (F at the gap shuts a slab that blocks hitscan and walk; motor; minimap bar)
+- [x] Bots kick a shut bay after 1.25s; a blast on the gap blows it open
+- [x] East mezz ladder + west catwalk crate + door berms + mezz ammo tin
+- [x] Bots path to the nearer ladder and fight on the catwalk; one hostile starts on the mezz
+- [x] Shot traces and bot fire use deck height so the catwalk is a real angle
 - [ ] Next: owner topics or more juice
