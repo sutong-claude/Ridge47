@@ -876,4 +876,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] F rollers carry player and bots east through the cut; running belt curtains the cut (hitscan block)
 - [x] Bridge crane on the mezz lip (F run/stop, ride, moving hitscan cover); bots board it
 - [x] Annex ammo tin
+- [x] North dispatch office (door + racks + loft + collision + motes) off the warehouse north cut
+- [x] Compass / minimap DISP pip + indoor loc tag + CAGE / LOFT
+- [x] Bot BREACH through dispatch door when the player camps DISP, the cage, or the loft
+- [x] Dispatch-door berms + cook-off drum + wrecked truck
+- [x] F cage shuttles player and bots through the cut; running cage curtains the cut (hitscan block)
+- [x] Dispatch loft ladder + cover; bots climb to the loft and drop when the player leaves
+- [x] Dispatch ammo tin
+- [x] Live loop ticks annex rollers/crane (they were only updating on the score card)
 - [ ] Next: owner topics or more juice
