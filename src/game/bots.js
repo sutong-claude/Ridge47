@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inSluice, onBelt, inInterior, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inSluice, onBelt, inInterior, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -227,6 +227,10 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           : inRod(playerPos) || onRodCharge(playerPos) || inRodDisch(playerPos) ? MAP.rodDoor
           : inSx(playerPos) || onSxMixer(playerPos) || inWeir(playerPos) ? MAP.sxDoor
           : inCil(playerPos) || onCilBasket(playerPos) || inPulp(playerPos) || onCarbonScrew(playerPos) ? MAP.cilDoor
+          : inMc(playerPos) || onMcLeaf(playerPos) || inBarren(playerPos) ? MAP.mcDoor
+          : inCcd(playerPos) || onCcdRake(playerPos) || inCcdUnder(playerPos) ? MAP.ccdDoor
+          : inPox(playerPos) || onPoxShell(playerPos) || inPoxVent(playerPos) ? MAP.poxDoor
+          : inRet(playerPos) || onRetDrum(playerPos) || inFlue(playerPos) ? MAP.retDoor
           : inElu(playerPos) || onEluCage(playerPos) || inStrip(playerPos) ? MAP.eluDoor
           : inWarehouse(playerPos) && MAP.warehouseDoor
           ? MAP.warehouseDoor
@@ -688,6 +692,48 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       collideXZ(b.pos, 0.4);
     }
     if (inElu(b.pos) && MAP.elu && MAP.elu.on) b.hp -= 2.0 * dt;
+    if (onMcLeaf(b.pos) && MAP.mcLeaf) {
+      b.pos.z += MAP.mcLeaf.dz || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inBarren(b.pos)) {
+      b.pos.z += (MAP.barren ? MAP.barren.vz : -2.15) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inMc(b.pos) && MAP.mc && MAP.mc.on) b.hp -= 1.6 * dt;
+    if (onCcdRake(b.pos) && MAP.ccdRake) {
+      b.pos.x += MAP.ccdRake.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inCcdUnder(b.pos)) {
+      b.pos.z += (MAP.ccdUnder ? MAP.ccdUnder.vz : 2.2) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inCcd(b.pos) && MAP.ccd && MAP.ccd.on) b.hp -= 1.7 * dt;
+    if (onPoxShell(b.pos) && MAP.poxShell && MAP.pox && MAP.pox.on) {
+      const ang = (MAP.poxShell.omega || 0) * dt;
+      const dx = b.pos.x - MAP.poxShell.x;
+      const dz = b.pos.z - MAP.poxShell.z;
+      const c = Math.cos(ang);
+      const sn = Math.sin(ang);
+      b.pos.x = MAP.poxShell.x + dx * c - dz * sn;
+      b.pos.z = MAP.poxShell.z + dx * sn + dz * c;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inPoxVent(b.pos)) {
+      b.pos.x += (MAP.poxVent ? MAP.poxVent.vx : 2.35) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inPox(b.pos) && MAP.pox && MAP.pox.on) b.hp -= 2.2 * dt;
+    if (onRetDrum(b.pos) && MAP.retDrum) {
+      b.pos.x += MAP.retDrum.dx || 0;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inFlue(b.pos)) {
+      b.pos.x += (MAP.flue ? MAP.flue.vx : 2.25) * dt;
+      collideXZ(b.pos, 0.4);
+    }
+    if (inRet(b.pos) && MAP.ret && MAP.ret.on) b.hp -= 1.9 * dt;
     if (onScrew(b.pos)) {
       b.pos.x += (MAP.screw ? MAP.screw.vx : 2.15) * dt;
       collideXZ(b.pos, 0.4);

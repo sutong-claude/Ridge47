@@ -796,4 +796,28 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Wrecked elution truck north of the house
 - [x] Clutch (F) raises the cage as moving cover; strip liquor shoves south; door steam blocks hitscan; column heat scalds
 - [x] Loaded-carbon screw west of the columns; carries player and bots, mouth dust blocks hitscan while columns run
+- [x] East Merrill-Crowe (door gap + stroking leaf filter + motes)
+- [x] Compass / minimap MC pip + indoor loc tag + barren pip
+- [x] Bot BREACH through Merrill-Crowe door when player camps MC, the leaf, or the barren
+- [x] Merrill-Crowe door berms + cook-off drums
+- [x] Wrecked Merrill-Crowe truck west of the house
+- [x] Clutch (F) strokes the leaf filter; player and bots ride; barren liquor shoves south; door mist blocks hitscan; zinc cloud drifts as cover; liquor scalds
+- [x] West CCD train (door gap + stroking rake + motes)
+- [x] Compass / minimap CCD pip + indoor loc tag + underflow pip
+- [x] Bot BREACH through CCD door when player camps CCD, the rake, or the underflow
+- [x] CCD-door berms + cook-off drums
+- [x] Wrecked CCD truck east of the house
+- [x] Clutch (F) strokes the rake; player and bots ride; underflow shoves north; door dust blocks hitscan; sludge scalds
+- [x] Northwest autoclave (door gap + spinning shell + motes)
+- [x] Compass / minimap POX pip + indoor loc tag + vent pip
+- [x] Bot BREACH through autoclave door when player camps POX, the shell, or the vent
+- [x] Autoclave-door berms + cook-off drums
+- [x] Wrecked autoclave truck east of the house
+- [x] Clutch (F) spins the shell; player and bots ride the roll; relief vent shoves east; door steam blocks hitscan; pressure scalds
+- [x] South retort (door gap + rolling drum + motes)
+- [x] Compass / minimap RET pip + indoor loc tag + flue pip
+- [x] Bot BREACH through retort door when player camps RET, the drum, or the flue
+- [x] Retort-door berms + cook-off drums
+- [x] Wrecked retort truck north of the house
+- [x] Clutch (F) rolls the drum; player and bots ride; flue shoves east; door steam blocks hitscan; retort heat scalds
 - [ ] Next: owner topics or more juice
