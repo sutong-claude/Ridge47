@@ -903,4 +903,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Extract technical is drivable: F at the cab mounts, WASD throttle/steer (A left, D right), Shift horn, F dismounts; cab shots still stall and kick the driver
 - [x] Pad boom gate on the technical's west leg (F drop/raise, blocks walk + hitscan, patrol and driven jeep stop, bots kick it if the player camps the post)
 - [x] East water bowser patrol (rideable bed, cab shots stall, F crank, minimap/compass BOWSER, bots board when the player is in the east quarry)
+- [x] South-road gun truck patrols between the extract and the south berms (moving hitscan cover)
+- [x] Pintle MG engages on LOS, spotlight tracks, truck slows to fire; near miss shakes, hits deal damage
+- [x] Cab shots stall the truck; gunner is a high hit (drop the gunner to silence the MG)
+- [x] F cranks a stalled truck (gunner remans); bed is rideable; bots board when the player is on the south road
+- [x] Ram if you stand in the lane
+- [x] F mans the pintle after the gunner is down (LMB, heat, F off); bed tin restocks half a mag
+- [x] South-road berms between the lanes (cover from the MG) + GUN compass/minimap pip
+- [x] Dropped gunner bails as R-GUN rifleman beside the truck
 - [ ] Next: owner topics or more juice

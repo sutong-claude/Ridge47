@@ -1854,9 +1854,74 @@ export function buildMap(scene) {
   bowser.add(bowserSmoke);
   MAP.bowserSmoke = bowserSmoke;
 
+  // South-road gun truck — patrols, rams, pintle MG. Cab shots stall; gunner is a separate target.
+  const gunTruck = new THREE.Group();
+  const gBed = box(scene, 0, 0, 0, 2.3, 0.42, 1.28, rust);
+  gBed.position.set(0.15, 0.52, 0);
+  const gCab = box(scene, 0, 0, 0, 0.95, 0.78, 1.22, steel);
+  gCab.position.set(-1.05, 0.82, 0);
+  const gGunner = box(scene, 0, 0, 0, 0.36, 0.52, 0.34, new THREE.MeshLambertMaterial({ color: 0x6a4030 }));
+  gGunner.position.set(0.62, 1.28, 0);
+  const gPintle = new THREE.Group();
+  gPintle.position.set(0.62, 1.52, 0);
+  const gBarrel = box(scene, 0, 0, 0, 0.72, 0.07, 0.07, steel);
+  gBarrel.position.set(0.36, 0.04, 0);
+  gPintle.add(gBarrel);
+  const gShield = box(scene, 0, 0, 0, 0.06, 0.32, 0.42, steel);
+  gShield.position.set(0.12, 0.08, 0);
+  gPintle.add(gShield);
+  gunTruck.add(gBed, gCab, gGunner, gPintle);
+  const gunPath = [
+    new THREE.Vector3(-16, 0, -30.2),
+    new THREE.Vector3(26.4, 0, -30.2),
+    new THREE.Vector3(26.4, 0, -25.4),
+    new THREE.Vector3(-16, 0, -25.4),
+  ];
+  MAP.gunPath = gunPath;
+  MAP.gunT = 0.15;
+  MAP.gun = { hp: 84, stalled: false, gunner: 36, heat: 0, manned: false };
+  MAP.gunMesh = gunTruck;
+  MAP.gunnerMesh = gGunner;
+  MAP.gunPintle = gPintle;
+  gunTruck.position.copy(gunPath[0]);
+  scene.add(gunTruck);
+  const gunCrate = { pos: gunPath[0].clone(), mesh: gunTruck, sx: 2.6, sy: 1.85, sz: 1.4, gun: true, climb: true };
+  MAP.crates.push(gunCrate);
+  MAP.gunCrate = gunCrate;
+  MAP.gunDx = 0;
+  MAP.gunDz = 0;
+  MAP.gun.yaw = 0;
+  MAP.gunPlat = { x: -15.4, z: -30.2, sx: 1.15, sz: 1.05, top: 1.05 };
+  const gunSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.3, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x2a241c, transparent: true, opacity: 0.4 })
+  );
+  gunSmoke.position.set(-1.35, 1.35, 0);
+  gunSmoke.visible = false;
+  gunTruck.add(gunSmoke);
+  MAP.gunSmoke = gunSmoke;
+  const gunLamp = new THREE.SpotLight(0xffe0b0, 0, 28, 0.42, 0.45, 1);
+  gunLamp.position.set(0.7, 1.7, 0);
+  gunLamp.target.position.set(2.4, 1.1, 0);
+  gunTruck.add(gunLamp);
+  gunTruck.add(gunLamp.target);
+  MAP.gunLamp = gunLamp;
+  // South-road berms between the gun-truck lanes. Cover, not a wall across the road.
+  const bermMat = new THREE.MeshLambertMaterial({ color: 0x8a7a58 });
+  for (const bx of [-12, -4, 4, 12, 20]) {
+    const bm = box(scene, bx, 0.42, -27.8, 2.4, 0.84, 0.55, bermMat);
+    MAP.crates.push({ pos: new THREE.Vector3(bx, 0, -27.8), mesh: bm, sx: 2.4, sy: 0.84, sz: 0.55 });
+  }
+  const gunTin = box(scene, -15.2, 0.28, -29.4, 0.36, 0.26, 0.28, steel);
+  MAP.gunTin = gunTin;
+  MAP.gunTinHome = new THREE.Vector3(0.7, 0.85, 0.35);
+
+
   MAP.platforms = MAP.platforms || [];
   MAP.platforms.push(MAP.techPlat);
   techCrate.climbTo = MAP.techPlat;
+  MAP.platforms.push(MAP.gunPlat);
+  gunCrate.climbTo = MAP.gunPlat;
 
   // Pad slit bunker — low walls, firing port (minY lintel), ammo tin. North of extract.
   const bkX = 18.2;
@@ -11143,7 +11208,7 @@ function vehicleBlocked(nx, nz, self) {
   const h = MAP.half || 48;
   if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
   for (const c of MAP.crates) {
-    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser) continue;
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun) continue;
     if (c.sy && c.sy < 0.45) continue;
     const hx = (c.sx || 0.6) * 0.5 + 1.15;
     const hz = (c.sz || 0.6) * 0.5 + 0.7;
@@ -11253,6 +11318,105 @@ export function updateTech(dt) {
   if (speed > 0 && MAP.techT < dt * speed + 0.05) MAP.techHorn = true;
 }
 
+
+export function onGun(pos) {
+  const c = MAP.gunCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.4 && Math.abs(pos.z - c.pos.z) < 1.15 && pos.y < 2.5 && pos.y > 0.7;
+}
+
+export function gunCab(pos) {
+  const c = MAP.gunCrate;
+  if (!c || !MAP.gun) return false;
+  const yaw = MAP.gun.yaw || 0;
+  const cx = c.pos.x - Math.cos(yaw) * 1.05;
+  const cz = c.pos.z + Math.sin(yaw) * 1.05;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.4 && pos.y < 2.2;
+}
+
+export function gunMuzzle() {
+  const c = MAP.gunCrate;
+  if (!c || !MAP.gun) return null;
+  const yaw = MAP.gun.aim || MAP.gun.yaw || 0;
+  return new THREE.Vector3(
+    c.pos.x + Math.cos(yaw) * 1.15,
+    1.58,
+    c.pos.z - Math.sin(yaw) * 1.15
+  );
+}
+
+export function updateGun(dt) {
+  const path = MAP.gunPath;
+  const c = MAP.gunCrate;
+  if (!path || !c || !MAP.gunMesh || !MAP.gun) return;
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const engage = MAP.gun.engage ? 0.35 : 1;
+  const speed = MAP.gun.stalled || MAP.gun.manned ? 0 : 4.1 * engage;
+  MAP.gunDx = 0;
+  MAP.gunDz = 0;
+  MAP.gun.ram = 0;
+  if (speed > 0) {
+    MAP.gunT = (MAP.gunT + dt * speed) % total;
+    let remain = MAP.gunT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = MAP.gun.yaw || 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      const dx = nx - c.pos.x;
+      const dz = nz - c.pos.z;
+      MAP.gunDx = dx;
+      MAP.gunDz = dz;
+      c.pos.set(nx, 0, nz);
+      MAP.gunMesh.position.set(nx, 0, nz);
+      MAP.gunMesh.rotation.y = yaw;
+      MAP.gun.yaw = yaw;
+      if (MAP.gunPlat) {
+        MAP.gunPlat.x = nx + Math.cos(yaw) * 0.55;
+        MAP.gunPlat.z = nz - Math.sin(yaw) * 0.55;
+        c.climbTo = MAP.gunPlat;
+      }
+    }
+  } else {
+    MAP.gunMesh.position.set(c.pos.x, 0, c.pos.z);
+    MAP.gunMesh.rotation.y = MAP.gun.yaw || 0;
+  }
+  if (MAP.gunnerMesh) MAP.gunnerMesh.visible = MAP.gun.gunner > 0 && !MAP.gun.manned;
+  if (MAP.gunSmoke) MAP.gunSmoke.visible = !!MAP.gun.stalled;
+  if (MAP.gunTin && MAP.gunTinHome) {
+    const yaw = MAP.gun.yaw || 0;
+    const hx = MAP.gunTinHome.x;
+    const hz = MAP.gunTinHome.z;
+    MAP.gunTin.position.set(
+      c.pos.x + Math.cos(yaw) * hx + Math.sin(yaw) * hz,
+      0.9,
+      c.pos.z - Math.sin(yaw) * hx + Math.cos(yaw) * hz
+    );
+  }
+  if (MAP.gunPintle) {
+    const rel = (MAP.gun.aim || MAP.gun.yaw || 0) - (MAP.gun.yaw || 0);
+    MAP.gunPintle.rotation.y = rel;
+  }
+  MAP.gun.heat = Math.max(0, (MAP.gun.heat || 0) - dt * 0.45);
+}
+
 export function updateBowser(dt) {
   const path = MAP.bowserPath;
   const c = MAP.bowserCrate;
@@ -11325,6 +11489,8 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.cable && pos.y > 2.15) continue;
     if (c.crane && pos.y < 2.15) continue;
     if (c.tech && pos.y > 2.15) continue;
+    if (c.gun && pos.y > 1.15) continue;
+    if (c.bowser && pos.y > 1.45) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;
     const dz = pos.z - c.pos.z;

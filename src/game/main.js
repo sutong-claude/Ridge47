@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, onMezz, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, onTech, inBunker, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS, rayVsCover, updateBayDoor, updateCable, updateAnnex, updateDispatch, updateShip, onCable, onYard, inAnnex, onAnnexBelt, onCrane, inDispatch, onCage, onDispatchLoft, inShip, onShipCart, inPack, onPackSled, inPackPress, updatePack, updateTech, updateBowser, techCab, onBowser } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, onMezz, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, onTech, inBunker, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS, rayVsCover, updateBayDoor, updateCable, updateAnnex, updateDispatch, updateShip, onCable, onYard, inAnnex, onAnnexBelt, onCrane, inDispatch, onCage, onDispatchLoft, inShip, onShipCart, inPack, onPackSled, inPackPress, updatePack, updateTech, updateBowser, techCab, onBowser, updateGun, onGun, gunCab, gunMuzzle } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -748,6 +748,10 @@ function lookDir() {
 
 function fire() {
   if (player.dead > 0 || player.scoreOpen) return;
+  if (player.gunMount) {
+    firePintle();
+    return;
+  }
   const w = LOADOUT[player.gun];
   const a = player.ammo[player.gun];
   if (player.shootCd > 0) return;
@@ -876,6 +880,29 @@ function fire() {
           MAP.bowser.hp = 0;
           feed("BOWSER STALLED · cab");
           sfxAt(block.crate.pos, 64, 0.2, 0.05, "sawtooth");
+        }
+      }
+      if (block.crate && block.crate.gun && MAP.gun) {
+        const hitY = origin.y + dir.y * block.dist;
+        if (hitY > 1.35 && MAP.gun.gunner > 0 && !MAP.gun.manned) {
+          MAP.gun.gunner -= w.dmg;
+          beep(140, 0.04, 0.03, 1, "square");
+          if (MAP.gun.gunner <= 0) {
+            MAP.gun.gunner = 0;
+            feed("GUNNER DOWN");
+            sfxAt(block.crate.pos, 180, 0.12, 0.04, "triangle");
+          }
+        } else if (!MAP.gun.stalled) {
+          MAP.gun.hp -= w.dmg;
+          beep(78, 0.05, 0.03, 1, "square");
+          if (MAP.gun.hp <= 0) {
+            MAP.gun.stalled = true;
+            MAP.gun.hp = 0;
+            MAP.gun.manned = false;
+            player.gunMount = false;
+            feed("GUN TRUCK STALLED · cab");
+            sfxAt(block.crate.pos, 60, 0.2, 0.05, "sawtooth");
+          }
         }
       }
     } else if (!hit) {
@@ -2796,6 +2823,112 @@ function onCallout(bot) {
   }
 }
 
+
+function firePintle() {
+  if (!MAP.gun || MAP.gun.stalled || !player.gunMount) return;
+  if ((MAP.gun.cool || 0) > 0) return;
+  if ((MAP.gun.heat || 0) > 1) {
+    beep(90, 0.05, 0.03, 1, "square");
+    feed("PINTLE HOT");
+    MAP.gun.cool = 0.45;
+    return;
+  }
+  MAP.gun.cool = 0.09;
+  MAP.gun.heat = Math.min(1.4, (MAP.gun.heat || 0) + 0.16);
+  const origin = gunMuzzle();
+  if (!origin) return;
+  const dir = lookDir();
+  spawnTracer(origin, dir, 46, false);
+  sfxAt(origin, 140, 0.05, 0.05, "square");
+  player.shake = Math.min(1, (player.shake || 0) + 0.05);
+  const hit = hitscan(origin, dir, bots, 48);
+  if (hit && hit.bot) {
+    const dmg = 11;
+    hit.bot.hp -= dmg;
+    player.hits++;
+    player.dmgDealt += dmg;
+    showHitmark(hit.bot.hp <= 0);
+    if (hit.bot.hp <= 0) {
+      player.kills++;
+      feed(`DOWNED · ${hit.bot.unit || "HOSTILE"} · PINTLE`, "kill");
+    }
+  }
+}
+
+function tickGun(dt) {
+  if (!MAP.gun || !MAP.gunCrate) return;
+  MAP.gun.cool = Math.max(0, (MAP.gun.cool || 0) - dt);
+  MAP.gun.engage = false;
+  const c = MAP.gunCrate;
+  const dx = player.pos.x - c.pos.x;
+  const dz = player.pos.z - c.pos.z;
+  const dist = Math.hypot(dx, dz);
+  if (!MAP.gun.stalled && dist < 1.35 && player.pos.y < 1.5 && !player.gunMount && !onGun(player.pos)) {
+    const fwd = Math.cos(MAP.gun.yaw || 0) * dx - Math.sin(MAP.gun.yaw || 0) * dz;
+    if (fwd > 0.2) MAP.gun.ram = 1;
+  }
+  if (MAP.gun.gunner <= 0 && !MAP.gun.dropped) {
+    MAP.gun.dropped = true;
+    reinforce(scene, bots, 1);
+    const b = bots[bots.length - 1];
+    if (b && MAP.gunCrate) {
+      b.pos.set(MAP.gunCrate.pos.x + 1.6, 0, MAP.gunCrate.pos.z + 0.4);
+      b.mesh.position.copy(b.pos);
+      b.unit = "R-GUN";
+      b.hp = 70;
+      feed("GUNNER BAILED");
+    }
+  }
+  if (MAP.gun.stalled || MAP.gun.manned || MAP.gun.gunner <= 0 || player.dead > 0) {
+    if (MAP.gunLamp) MAP.gunLamp.intensity = 0;
+    return;
+  }
+  if (dist > 42 || dist < 6) {
+    if (MAP.gunLamp) MAP.gunLamp.intensity = 0;
+    return;
+  }
+  const origin = gunMuzzle();
+  if (!origin) return;
+  const to = player.pos.clone().setY(player.crouch ? 1.05 : 1.45);
+  const dir = to.clone().sub(origin);
+  const len = dir.length();
+  if (len < 0.2) return;
+  dir.multiplyScalar(1 / len);
+  if (!hasLOS(origin, to)) {
+    if (MAP.gunLamp) MAP.gunLamp.intensity = 0;
+    return;
+  }
+  MAP.gun.engage = true;
+  MAP.gun.aim = Math.atan2(-dir.z, dir.x);
+  if (MAP.gunLamp) {
+    MAP.gunLamp.intensity = 1.4;
+    MAP.gunLamp.target.position.set(dir.x * 6, 1.1, dir.z * 6);
+  }
+  if ((MAP.gun.cool || 0) > 0) return;
+  MAP.gun.cool = 0.16;
+  dir.x += (Math.random() - 0.5) * 0.04;
+  dir.y += (Math.random() - 0.5) * 0.03;
+  dir.z += (Math.random() - 0.5) * 0.04;
+  dir.normalize();
+  spawnTracer(origin, dir, 40, true);
+  sfxAt(origin, 120, 0.05, 0.045, "square");
+  const aim = dir.dot(to.clone().sub(origin).normalize());
+  const cover = rayVsCover(origin, dir, dist);
+  if (cover.block && cover.block.dist < dist - 0.45) return;
+  if (aim > 0.985 && dist < 40) {
+    const pen = cover.pen || 1;
+    player.hp -= (8 + Math.random() * 5) * pen;
+    player.shake = Math.min(1, (player.shake || 0) + 0.18);
+    if ((player._gunHitT || 0) <= 0) {
+      player._gunHitT = 0.7;
+      feed("HIT · GUN TRUCK");
+    }
+  } else if (aim > 0.9) {
+    player.shake = Math.min(1, (player.shake || 0) + 0.06);
+  }
+  player._gunHitT = Math.max(0, (player._gunHitT || 0) - dt);
+}
+
 function fireAtPlayer(bot, dir) {
   if (!bot._saw) {
     bot._saw = true;
@@ -2929,6 +3062,8 @@ function tick(now) {
     updatePack(dt);
     updateTech(dt);
     updateBowser(dt);
+    updateGun(dt);
+    tickGun(dt);
     updateHangarFx(dt, 0);
     updateGrit(dt);
     updateBirds(dt, null);
@@ -3050,6 +3185,8 @@ function tick(now) {
     updatePack(dt);
     updateTech(dt);
     updateBowser(dt);
+    updateGun(dt);
+    tickGun(dt);
     updateHangarFx(dt, 0);
     updateGrit(dt);
     updateBirds(dt, null);
@@ -3096,7 +3233,9 @@ function tick(now) {
   const right = new THREE.Vector3(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   const wish = new THREE.Vector3();
   const driving = !!(MAP.tech && MAP.tech.driven && !MAP.tech.stalled);
-  if (driving) {
+  if (player.gunMount) {
+    MAP.gun.aim = player.yaw;
+  } else if (driving) {
     MAP.tech.throttle = (keys.has("KeyW") ? 1 : 0) - (keys.has("KeyS") ? 0.62 : 0);
     MAP.tech.steer = (keys.has("KeyA") ? 1 : 0) - (keys.has("KeyD") ? 1 : 0);
     if ((keys.has("ShiftLeft") || keys.has("ShiftRight")) && !player._hornHold) {
@@ -3172,6 +3311,41 @@ function tick(now) {
       feed("BOWSER BED");
     }
   } else player._bowseOn = false;
+  if (player.gunMount && MAP.gunCrate && MAP.gun && !MAP.gun.stalled) {
+    const yaw = MAP.gun.yaw || 0;
+    player.pos.x = MAP.gunCrate.pos.x + Math.cos(yaw) * 0.55;
+    player.pos.z = MAP.gunCrate.pos.z - Math.sin(yaw) * 0.55;
+    player.pos.y = player.eye || 1.65;
+    player.vel.y = 0;
+    player.grounded = true;
+    MAP.gun.manned = true;
+    MAP.gun.aim = player.yaw;
+  } else if (onGun(player.pos) && MAP.gunCrate) {
+    player.pos.x += MAP.gunDx || 0;
+    player.pos.z += MAP.gunDz || 0;
+    MAP.gun.manned = false;
+    if (!player._gunOn) {
+      player._gunOn = true;
+      feed("GUN BED · F man pintle");
+    }
+  } else {
+    player._gunOn = false;
+    if (MAP.gun) MAP.gun.manned = false;
+    player.gunMount = false;
+  }
+  if (MAP.gun && MAP.gun.ram) {
+    player.hp -= 14 * dt;
+    player.shake = Math.min(1, (player.shake || 0) + 0.35);
+    const push = MAP.gun.yaw || 0;
+    player.pos.x += Math.cos(push) * 2.4 * dt;
+    player.pos.z -= Math.sin(push) * 2.4 * dt;
+    if ((player._ramT || 0) <= 0) {
+      player._ramT = 0.8;
+      feed("RAMMED · gun truck");
+      sfxAt(player.pos, 70, 0.12, 0.05, "sawtooth");
+    }
+  }
+  player._ramT = Math.max(0, (player._ramT || 0) - dt);
   if (MAP.binSkipPlat && player.grounded) {
     const c = MAP.binSkipPlat;
     const dx = player.pos.x - c.x;
@@ -5395,6 +5569,27 @@ function tick(now) {
     beep(120, 0.12, 0.04, 1, "square");
     keys.delete("KeyF");
   }
+  if (player.gunMount && keys.has("KeyF") && !canEx) {
+    player.gunMount = false;
+    if (MAP.gun) MAP.gun.manned = false;
+    player.pos.y = 1.2;
+    keys.delete("KeyF");
+    feed("OFF PINTLE");
+  }
+  if (!player.gunMount && onGun(player.pos) && MAP.gun && !MAP.gun.stalled && MAP.gun.gunner <= 0 && keys.has("KeyF") && !canEx) {
+    player.gunMount = true;
+    MAP.gun.manned = true;
+    keys.delete("KeyF");
+    feed("PINTLE · LMB · F off");
+  }
+  if (MAP.gun && MAP.gun.stalled && MAP.gunCrate && keys.has("KeyF") && !canEx && player.pos.distanceTo(MAP.gunCrate.pos) < 2.6 && player.pos.y < 2.2 && !player.gunMount) {
+    MAP.gun.stalled = false;
+    MAP.gun.hp = 84;
+    MAP.gun.gunner = 36;
+    keys.delete("KeyF");
+    feed("GUN TRUCK CRANKED");
+    sfxAt(MAP.gunCrate.pos, 90, 0.16, 0.04, "sawtooth");
+  }
   if (MAP.bowser && MAP.bowser.stalled && MAP.bowserCrate && keys.has("KeyF") && !canEx && player.pos.distanceTo(MAP.bowserCrate.pos) < 2.5 && player.pos.y < 2.2) {
     MAP.bowser.stalled = false;
     MAP.bowser.hp = 40;
@@ -5866,6 +6061,16 @@ function tick(now) {
       feed("SHIP TIN · half mag");
     }
   }
+  if (MAP.gunTin && (onGun(player.pos) || player.gunMount) && player.pos.distanceTo(MAP.gunTin.position) < 1.6) {
+    if ((player.gunTinCd || 0) <= 0) {
+      const w = player.ammo[player.gun];
+      w.mag = Math.min(LOADOUT[player.gun].mag, w.mag + Math.ceil(LOADOUT[player.gun].mag * 0.5));
+      player.gunTinCd = 14;
+      beep(440, 0.06, 0.03, 1, "sine");
+      feed("GUN TIN · half mag");
+    }
+  }
+  if (player.gunTinCd > 0) player.gunTinCd -= dt;
   if (MAP.bunkAmmo && inBunker(player.pos) && player.pos.distanceTo(MAP.bunkAmmo) < 1.25) {
     if ((player.bunkTinCd || 0) <= 0) {
       const w = player.ammo[player.gun];
@@ -6217,6 +6422,10 @@ function tick(now) {
     else if (MAP.tech && MAP.tech.stalled && MAP.techCrate && player.pos.distanceTo(MAP.techCrate.pos) < 2.4 && player.pos.y < 2.2) prompt.textContent = "F · CRANK TECH";
     else if (nearCab) prompt.textContent = "F · DRIVE TECH";
     else if (MAP.bowser && MAP.bowser.stalled && MAP.bowserCrate && player.pos.distanceTo(MAP.bowserCrate.pos) < 2.5) prompt.textContent = "F · CRANK BOWSER";
+    else if (player.gunMount) prompt.textContent = "PINTLE · LMB fire · F off";
+    else if (MAP.gun && MAP.gun.stalled && MAP.gunCrate && player.pos.distanceTo(MAP.gunCrate.pos) < 2.6) prompt.textContent = "F · CRANK GUN TRUCK";
+    else if (onGun(player.pos) && MAP.gun && MAP.gun.gunner <= 0 && !MAP.gun.stalled) prompt.textContent = "F · MAN PINTLE";
+    else if (onGun(player.pos)) prompt.textContent = "GUN BED · moving cover";
     else if (onTech(player.pos)) prompt.textContent = "TECH BED · moving cover";
     else if (onBowser(player.pos)) prompt.textContent = "BOWSER BED · moving cover";
     else if (MAP.padGatePost && player.pos.distanceTo(MAP.padGatePost) < 1.7) prompt.textContent = MAP.padGate && MAP.padGate.target < 0.5 ? "F · RAISE GATE" : "F · DROP GATE";
@@ -6392,6 +6601,8 @@ function tick(now) {
     updatePack(dt);
     updateTech(dt);
     updateBowser(dt);
+    updateGun(dt);
+    tickGun(dt);
   if (MAP.bayDoor && MAP.bayDoor.moving) beep(55 + MAP.bayDoor.open * 40, 0.05, 0.012, 1, "sawtooth");
   if (MAP.bayDoor && MAP.bayDoor.kicked && !MAP.bayDoor.kickHeard) {
     beep(90, 0.08, 0.04, 1, "square");
@@ -7851,6 +8062,10 @@ function drawMini() {
     mctx.fillStyle = MAP.bowser && MAP.bowser.stalled ? "#687888" : "#70b0c8";
     mctx.fillRect(mx(MAP.bowserCrate.pos.x, MAP.bowserCrate.pos.z) - 3, mz(MAP.bowserCrate.pos.x, MAP.bowserCrate.pos.z) - 2, 7, 3);
   }
+  if (MAP.gunCrate) {
+    mctx.fillStyle = MAP.gun && MAP.gun.stalled ? "#687888" : "#e07048";
+    mctx.fillRect(mx(MAP.gunCrate.pos.x, MAP.gunCrate.pos.z) - 3, mz(MAP.gunCrate.pos.x, MAP.gunCrate.pos.z) - 2, 8, 3);
+  }
   if (MAP.padGate) {
     mctx.fillStyle = MAP.padGate.open < 0.45 ? "#d07050" : "#a09070";
     mctx.fillRect(mx(MAP.padGate.x, MAP.padGate.z) - 1, mz(MAP.padGate.x, MAP.padGate.z) - 3, 2, 6);
@@ -8252,6 +8467,7 @@ function drawCompass() {
   if (MAP.under) markLab(new THREE.Vector3(MAP.under.x, 0, MAP.under.z), "#70a8b0", "UNDER");
   if (MAP.techCrate) markLab(MAP.techCrate.pos, "#e0a060", MAP.tech && MAP.tech.driven ? "CAB" : MAP.tech && MAP.tech.stalled ? "STALL" : "TECH");
   if (MAP.bowserCrate) markLab(MAP.bowserCrate.pos, "#70b0c8", MAP.bowser && MAP.bowser.stalled ? "STALL" : "BOWSER");
+  if (MAP.gunCrate) markLab(MAP.gunCrate.pos, "#e07048", MAP.gun && MAP.gun.stalled ? "STALL" : MAP.gun && MAP.gun.gunner <= 0 ? "PINTLE" : "GUN");
   if (MAP.padGate) markLab(new THREE.Vector3(MAP.padGate.x, 0, MAP.padGate.z), "#d07050", MAP.padGate.open < 0.45 ? "GATE" : "OPEN");
   if (MAP.bunker) markLab(MAP.bunker, "#d8c090", "BUNK");
   if (MAP.haulCrate) markLab(MAP.haulCrate.pos, "#c88848", "HAUL");

@@ -507,6 +507,27 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           b._bowseRide = false;
         }
       }
+      if (MAP.gunCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.gunCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 0.9;
+        if (onBed && (b.pos.y > 0.4 || b._gunRide)) {
+          b.pos.x += MAP.gunDx || 0;
+          b.pos.z += MAP.gunDz || 0;
+          b.mesh.position.y = 1.15;
+          b._gunRide = true;
+        }
+        const want = playerPos && playerPos.z < -18 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.gun && MAP.gun.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.2 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.2 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.3) b._gunRide = true;
+        } else if (!onBed && b._gunRide) {
+          b.mesh.position.y = 0;
+          b._gunRide = false;
+        }
+      }
       if (MAP.padGate && MAP.padGate.open < 0.4 && MAP.padGatePost && b.hp > 0 && playerPos && playerPos.distanceTo(MAP.padGatePost) < 7 && b.pos.distanceTo(MAP.padGatePost) < 2.2) {
         b._gateKick = (b._gateKick || 0) + dt;
         if (b._gateKick > 0.7) {
