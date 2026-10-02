@@ -864,4 +864,9 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] East mezz ladder + west catwalk crate + door berms + mezz ammo tin
 - [x] Bots path to the nearer ladder and fight on the catwalk; one hostile starts on the mezz
 - [x] Shot traces and bot fire use deck height so the catwalk is a real angle
+- [x] West warehouse service cut (wall split + lintel) so a shut bay is not the only way in
+- [x] Mezz hatch (F) drops the center plate; player falls through with fall damage; bots on the plate drop
+- [x] West cable trolley from mezz to exterior yard deck (F run/stop, ride, moving hitscan cover)
+- [x] Yard deck ladder + cover; cable car blocks the service cut while it crosses
+- [x] Bots climb for a yard/cable fight, board the trolley, and flank the service cut when the bay is shut
 - [ ] Next: owner topics or more juice

@@ -744,9 +744,31 @@ export function inInterior(pos) {
 export function floorY(x, z) {
   let y = 0;
   for (const p of MAP.platforms || []) {
+    if (p.hatch && MAP.hatch && MAP.hatch.open) continue;
     if (Math.abs(x - p.x) < p.sx * 0.5 && Math.abs(z - p.z) < p.sz * 0.5) y = Math.max(y, p.top);
   }
   return y;
+}
+
+export function onCable(pos) {
+  const c = MAP.cable;
+  if (!c || pos.y < 2.4) return false;
+  return Math.abs(pos.x - c.x) < 0.7 && Math.abs(pos.z - c.z) < 0.55;
+}
+
+export function onYard(pos) {
+  const y = MAP.yard;
+  if (!y || pos.y < 2.4) return false;
+  return Math.abs(pos.x - y.x) < y.sx * 0.5 && Math.abs(pos.z - y.z) < y.sz * 0.5;
+}
+
+export function onHighDeck(pos) {
+  if (pos.y < 2.2) return false;
+  if (Math.abs(pos.x + 22) < 5.9 && Math.abs(pos.z - 28.65) < 1.2) return true;
+  if (Math.abs(pos.z - 28.65) < 1.15 && pos.x < -21.2 && pos.x > -37.6) return true;
+  if (onCable(pos)) return true;
+  if (onYard(pos)) return true;
+  return false;
 }
 
 function box(scene, x, y, z, sx, sy, sz, mat) {
@@ -866,7 +888,9 @@ export function buildMap(scene) {
   whWall(-17.2, 22, 6.4, 1.15);
   box(scene, -22, 6.15, 22, 3.4, 1.7, 1.15, steel); // lintel over door
   whWall(-22, 30, 16.2, 1.15);
-  whWall(-30, 26, 1.15, 9.2);
+  whWall(-30, 24.15, 1.15, 5.5);
+  whWall(-30, 29.85, 1.15, 1.3);
+  box(scene, -30, 5.55, 28.65, 1.15, 2.5, 1.7, steel); // lintel over service cut
   whWall(-14, 26, 1.15, 9.2);
   box(scene, -22, 7.2, 26, 16.2, 0.45, 9.2, steel);
   MAP.warehouseDoor = new THREE.Vector3(-22, 0, 21.15);
@@ -981,6 +1005,64 @@ export function buildMap(scene) {
   const bayBerm2 = box(scene, -19.65, 0.42, 20.35, 1.15, 0.8, 0.42, rock);
   MAP.crates.push({ pos: new THREE.Vector3(-24.35, 0, 20.35), mesh: bayBerm, sx: 1.15, sy: 0.8, sz: 0.42 });
   MAP.crates.push({ pos: new THREE.Vector3(-19.65, 0, 20.35), mesh: bayBerm2, sx: 1.15, sy: 0.8, sz: 0.42 });
+
+  // Mezz hatch — center deck plate drops so the catwalk is not a sealed loft.
+  MAP.hatch = { open: false, x: -22, z: 28.65 };
+  const hatchMesh = box(scene, -22, 3.22, 28.65, 1.35, 0.1, 1.55, rust);
+  MAP.hatch.mesh = hatchMesh;
+  const hatchPlat = MAP.platforms.find((p) => Math.abs(p.x + 22) < 0.2 && Math.abs(p.z - 28.65) < 0.2 && p.sx > 8);
+  if (hatchPlat) {
+    MAP.platforms = MAP.platforms.filter((p) => p !== hatchPlat);
+    MAP.platforms.push({ x: -25.55, z: 28.65, sx: 4.5, sz: 1.95, top: 3.26 });
+    MAP.platforms.push({ x: -18.45, z: 28.65, sx: 4.5, sz: 1.95, top: 3.26 });
+    MAP.platforms.push({ x: -22, z: 28.65, sx: 1.45, sz: 1.7, top: 3.26, hatch: true });
+  }
+
+  // West cable: mezz end to an exterior yard deck. Car blocks the service cut while it crosses.
+  const yardX = -36.2;
+  const yardZ = 28.65;
+  const yardDeck = box(scene, yardX, 3.18, yardZ, 2.6, 0.16, 2.4, rust);
+  yardDeck.castShadow = true;
+  const yardPost = box(scene, yardX, 1.6, yardZ - 1.35, 0.28, 3.2, 0.28, steel);
+  box(scene, yardX, 1.6, yardZ + 1.35, 0.28, 3.2, 0.28, steel);
+  box(scene, -27.7, 4.55, yardZ, 0.16, 0.16, 0.16, steel);
+  const cableLine = box(scene, -31.6, 4.35, yardZ, 9.2, 0.06, 0.06, steel);
+  MAP.yard = { x: yardX, z: yardZ, sx: 2.3, sz: 2.1, top: 3.26 };
+  MAP.platforms.push(MAP.yard);
+  MAP.yardDeck = new THREE.Vector3(yardX, 3.26, yardZ);
+  const yardLad = box(scene, yardX, 1.6, yardZ - 1.55, 0.42, 3.2, 0.16, steel);
+  MAP.crates.push({
+    pos: new THREE.Vector3(yardX, 0, yardZ - 1.55),
+    mesh: yardLad,
+    sx: 0.42,
+    sy: 3.2,
+    sz: 0.16,
+    climb: true,
+    climbTo: new THREE.Vector3(yardX, 0, yardZ - 0.4),
+  });
+  MAP.mezzLadders.push({ x: yardX, z: yardZ - 1.55, to: new THREE.Vector3(yardX, 3.26, yardZ - 0.35) });
+  const yardCover = box(scene, yardX - 0.7, 3.72, yardZ, 0.7, 0.7, 0.45, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(yardX - 0.7, 0, yardZ), mesh: yardCover, sx: 0.7, sy: 4.1, sz: 0.45 });
+  const car = box(scene, -27.6, 3.55, yardZ, 1.15, 0.85, 0.85, night);
+  const carPlat = { x: -27.6, z: yardZ, sx: 1.05, sz: 0.8, top: 3.26 };
+  MAP.platforms.push(carPlat);
+  const carCrate = { pos: new THREE.Vector3(-27.6, 0, yardZ), mesh: car, sx: 1.15, sy: 4.1, sz: 0.9, cable: true };
+  MAP.crates.push(carCrate);
+  MAP.cable = {
+    x: -27.6,
+    z: yardZ,
+    dir: -1,
+    on: false,
+    dx: 0,
+    min: -35.5,
+    max: -27.6,
+    mesh: car,
+    plat: carPlat,
+    crate: carCrate,
+    line: cableLine,
+  };
+  MAP.cableHook = new THREE.Vector3(-27.6, 3.26, yardZ);
+  MAP.yardHook = new THREE.Vector3(yardX + 0.9, 3.26, yardZ);
 
 
   // East pump shed — door gap on west wall at x≈23, z≈21
@@ -10269,6 +10351,25 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
   }
 
 
+export function updateCable(dt) {
+  const c = MAP.cable;
+  if (!c) return;
+  const prev = c.x;
+  if (c.on) {
+    c.x += c.dir * 2.4 * dt;
+    if (c.x <= c.min) { c.x = c.min; c.dir = 1; }
+    if (c.x >= c.max) { c.x = c.max; c.dir = -1; }
+  }
+  c.dx = c.x - prev;
+  if (c.mesh) c.mesh.position.x = c.x;
+  if (c.plat) c.plat.x = c.x;
+  if (c.crate) c.crate.pos.x = c.x;
+  if (MAP.hatch && MAP.hatch.mesh) {
+    const drop = MAP.hatch.open ? 2.4 : 0;
+    MAP.hatch.mesh.position.y = 3.22 - drop;
+  }
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -10290,6 +10391,7 @@ export function collideXZ(pos, radius = 0.45) {
   for (const c of MAP.crates) {
     if (c.walkOn) continue;
     if (c.dead) continue;
+    if (c.cable && pos.y > 2.15) continue;
     const dx = pos.x - c.pos.x;
     const dz = pos.z - c.pos.z;
     const hx = c.sx * 0.5 + radius;

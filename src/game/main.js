@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, onMezz, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS, rayVsCover, updateBayDoor } from "./map.js";
+import { buildMap, collideXZ, MAP, rayVsCrates, updateHangarFx, updateGrit, updateBirds, updateWildlife, inHangar, inWarehouse, onMezz, inShed, inRadio, inShop, inHut, inCistern, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, inLookout, nearestCrate, floorY, hasLOS, rayVsCover, updateBayDoor, updateCable, onCable, onYard } from "./map.js";
 import { LOADOUT, makeViewmodel, updateViewmodel, hitscan, applyRecoil, setViewmodelGun, stainViewmodel } from "./weapons.js";
 import { spawnBots, updateBots, reinforce } from "./bots.js";
 
@@ -2900,6 +2900,7 @@ function tick(now) {
     }
     updateFlares(dt);
     updateBayDoor(dt);
+    updateCable(dt);
     updateHangarFx(dt, 0);
     updateGrit(dt);
     updateBirds(dt, null);
@@ -3014,6 +3015,7 @@ function tick(now) {
     settleBotFx();
     updateFlares(dt);
     updateBayDoor(dt);
+    updateCable(dt);
     updateHangarFx(dt, 0);
     updateGrit(dt);
     updateBirds(dt, null);
@@ -3169,6 +3171,15 @@ function tick(now) {
       feed("LIQUOR");
     }
   } else player._heapScald = false;
+  if (onCable(player.pos) && MAP.cable) {
+    player.pos.x += MAP.cable.dx || 0;
+    player.pos.y = Math.max(player.pos.y, 3.26 + player.eye * 0.0);
+    if (!player._cableOn) {
+      player._cableOn = true;
+      feed("CABLE");
+    }
+    if (MAP.cable.on && Math.random() < dt * 4) beep(90 + Math.random() * 30, 0.03, 0.014, 1, "square");
+  } else player._cableOn = false;
   if (onOreCar(player.pos) && player.grounded && MAP.oreCar) {
     player.pos.x += MAP.oreCar.dx || 0;
     collideXZ(player.pos, 0.35);
@@ -5172,6 +5183,24 @@ function tick(now) {
     feed(MAP.bayDoor.target < 0.5 ? "BAY SHUT" : "BAY OPEN");
     beep(MAP.bayDoor.target < 0.5 ? 70 : 110, 0.14, 0.05, 1, "sawtooth");
   }
+  const nearHatch = MAP.hatch && onMezz(player.pos) && Math.abs(player.pos.x + 22) < 1.1 && Math.abs(player.pos.z - 28.65) < 0.9;
+  if (nearHatch && keys.has("KeyF") && !canEx && !nearBay) {
+    MAP.hatch.open = !MAP.hatch.open;
+    keys.delete("KeyF");
+    feed(MAP.hatch.open ? "HATCH OPEN" : "HATCH SHUT");
+    beep(MAP.hatch.open ? 80 : 140, 0.1, 0.04, 1, "triangle");
+  }
+  const nearCable = MAP.cable && (
+    (onCable(player.pos)) ||
+    (player.pos.distanceTo(MAP.cableHook) < 1.6 && player.pos.y > 2.2) ||
+    (player.pos.distanceTo(MAP.yardHook) < 1.6 && player.pos.y > 2.2)
+  );
+  if (nearCable && keys.has("KeyF") && !canEx && !nearBay && !nearHatch) {
+    MAP.cable.on = !MAP.cable.on;
+    keys.delete("KeyF");
+    feed(MAP.cable.on ? "CABLE RUN" : "CABLE STOP");
+    beep(MAP.cable.on ? 120 : 70, 0.1, 0.04, 1, "square");
+  }
   const nearSump = MAP.sump && player.pos.distanceTo(new THREE.Vector3(MAP.sump.x, 0, MAP.sump.z)) < 1.8;
   if (nearSump && keys.has("KeyF") && !canEx && !nearBay) {
     MAP.sump.on = !MAP.sump.on;
@@ -5883,6 +5912,8 @@ function tick(now) {
     else if (player.jam > 0) prompt.textContent = "R · CLEAR JAM";
     else if (lootBot) prompt.textContent = "F · LOOT";
     else if (nearBay && MAP.bayDoor) prompt.textContent = MAP.bayDoor.target < 0.5 ? "F · OPEN BAY" : "F · SHUT BAY";
+    else if (MAP.hatch && onMezz(player.pos) && Math.abs(player.pos.x + 22) < 1.1) prompt.textContent = MAP.hatch.open ? "F · SHUT HATCH" : "F · OPEN HATCH";
+    else if (MAP.cable && (onCable(player.pos) || (player.pos.y > 2.2 && (player.pos.distanceTo(MAP.cableHook) < 1.6 || player.pos.distanceTo(MAP.yardHook) < 1.6)))) prompt.textContent = MAP.cable.on ? "F · STOP CABLE" : "F · RUN CABLE";
     else if (MAP.mezzAmmo && onMezz(player.pos) && player.pos.distanceTo(MAP.mezzAmmo) < 1.4) prompt.textContent = "WALK · MEZZ TIN";
     else if (nearEx && live <= 2) prompt.textContent = "HOLD F · EXTRACT";
     else if (nearEx) prompt.textContent = `${live} HOSTILES · CLEAR FIRST`;
@@ -6044,6 +6075,7 @@ function tick(now) {
     beep(90 + Math.random() * 30, 0.18, 0.012, 1, "sine");
   }
   updateBayDoor(dt);
+    updateCable(dt);
   if (MAP.bayDoor && MAP.bayDoor.moving) beep(55 + MAP.bayDoor.open * 40, 0.05, 0.012, 1, "sawtooth");
   if (MAP.bayDoor && MAP.bayDoor.kicked && !MAP.bayDoor.kickHeard) {
     beep(90, 0.08, 0.04, 1, "square");
@@ -6189,7 +6221,7 @@ function tick(now) {
     const card = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(yawDeg / 45) % 8];
     const bip = player.ads && player.prone ? "  BIPOD" : "";
     const padM = player.pos.distanceTo(MAP.extract);
-    const locTag = inSlake(player.pos) ? "  SLAKE" : inMilk(player.pos) ? "  MILK" : inRope(player.pos) ? "  ROPE" : onBucket(player.pos) ? "  BUCKET" : inSinter(player.pos) ? "  SINT" : onStrand(player.pos) ? "  STRAND" : inJig(player.pos) ? "  JIG" : onJigDeck(player.pos) ? "  DECK" : inHutch(player.pos) ? "  HUTCH" : inCool(player.pos) ? "  COOL" : onCoolCar(player.pos) ? "  DRUM" : inQuench(player.pos) ? "  QUENCH" : inFall(player.pos) ? "  FALL" : inBag(player.pos) ? "  BAG" : onBagRack(player.pos) ? "  RACK" : inFines(player.pos) ? "  FINES" : inDry(player.pos) ? "  DRY" : onDryShell(player.pos) ? "  SHELL" : inExhaust(player.pos) ? "  EXH" : inLoco(player.pos) ? "  LOCO" : onLoco(player.pos) ? "  ENGINE" : inSteam(player.pos) ? "  STEAM" : inAgit(player.pos) ? "  AGIT" : onRake(player.pos) ? "  RAKE" : inSlurry(player.pos) ? "  SLURRY" : inEw(player.pos) ? "  EW" : onCathode(player.pos) ? "  BAR" : inAcid(player.pos) ? "  ACID" : inCone(player.pos) ? "  CONE" : onMantle(player.pos) ? "  MANTLE" : inDischarge(player.pos) ? "  CHUTE" : inClas(player.pos) ? "  CLAS" : onClasRake(player.pos) ? "  RAKE" : inSands(player.pos) ? "  SANDS" : inMags(player.pos) ? "  MAGS" : onMagDrum(player.pos) ? "  DRUM" : inConc(player.pos) ? "  CONC" : inRod(player.pos) ? "  ROD" : onRodCharge(player.pos) ? "  CHARGE" : inRodDisch(player.pos) ? "  DISCH" : inSx(player.pos) ? "  SX" : onSxMixer(player.pos) ? "  MIXER" : inWeir(player.pos) ? "  WEIR" : inCil(player.pos) ? "  CIL" : onCilBasket(player.pos) ? "  BASKET" : inPulp(player.pos) ? "  PULP" : onCarbonScrew(player.pos) ? "  SCREW" : inMc(player.pos) ? "  MC" : onMcLeaf(player.pos) ? "  LEAF" : inBarren(player.pos) ? "  BARREN" : inCcd(player.pos) ? "  CCD" : onCcdRake(player.pos) ? "  RAKE" : inCcdUnder(player.pos) ? "  UNDER" : inPox(player.pos) ? "  POX" : onPoxShell(player.pos) ? "  SHELL" : inPoxVent(player.pos) ? "  VENT" : inRet(player.pos) ? "  RET" : onRetDrum(player.pos) ? "  DRUM" : inFlue(player.pos) ? "  FLUE" : inRev(player.pos) ? "  REV" : onHearth(player.pos) ? "  HEARTH" : inSlag(player.pos) ? "  SLAG" : inStamp(player.pos) ? "  STAMP" : onMortar(player.pos) ? "  MORTAR" : inStampFines(player.pos) ? "  FINES" : inGall(player.pos) ? "  GALL" : onOreCar(player.pos) ? "  CAR" : inDump(player.pos) ? "  DUMP" : inHeap(player.pos) ? "  HEAP" : onHeapBoom(player.pos) ? "  BOOM" : inPreg(player.pos) ? "  PREG" : inSag(player.pos) ? "  SAG" : onSagShell(player.pos) ? "  SHELL" : inSagDisch(player.pos) ? "  DISCH" : inJaw(player.pos) ? "  JAW" : onApron(player.pos) ? "  APRON" : inJawRock(player.pos) ? "  ROCK" : inElu(player.pos) ? "  ELU" : onEluCage(player.pos) ? "  CAGE" : inStrip(player.pos) ? "  STRIP" : inScrub(player.pos) ? "  SCRUB" : onScrubTray(player.pos) ? "  TRAY" : inLiquor(player.pos) ? "  LIQUOR" : inSilo(player.pos) ? "  SILO" : onScrew(player.pos) ? "  SCREW" : inPellet(player.pos) ? "  PEL" : onDisc(player.pos) ? "  DISC" : inChute(player.pos) ? "  CHUTE" : inClar(player.pos) ? "  CLAR" : onBridge(player.pos) ? "  BRIDGE" : inUnder(player.pos) ? "  UNDER" : inSample(player.pos) ? "  SAMP" : onSampleBoom(player.pos) ? "  CUTTER" : inReject(player.pos) ? "  REJECT" : inFloat(player.pos) ? "  FLOAT" : inFroth(player.pos) ? "  FROTH" : inFloatLaunder(player.pos) ? "  LAUNDER" : inStack(player.pos) ? "  STACK" : onHaul(player.pos) ? "  HAUL" : inPress(player.pos) ? "  PRESS" : inCyc(player.pos) ? "  CYC" : inSpiral(player.pos) ? "  SPIRAL" : inOverflow(player.pos) ? "  OVER" : inReturn(player.pos) ? "  FLUME" : inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : onMezz(player.pos) ? "  MEZZ" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
+    const locTag = inSlake(player.pos) ? "  SLAKE" : inMilk(player.pos) ? "  MILK" : inRope(player.pos) ? "  ROPE" : onBucket(player.pos) ? "  BUCKET" : inSinter(player.pos) ? "  SINT" : onStrand(player.pos) ? "  STRAND" : inJig(player.pos) ? "  JIG" : onJigDeck(player.pos) ? "  DECK" : inHutch(player.pos) ? "  HUTCH" : inCool(player.pos) ? "  COOL" : onCoolCar(player.pos) ? "  DRUM" : inQuench(player.pos) ? "  QUENCH" : inFall(player.pos) ? "  FALL" : inBag(player.pos) ? "  BAG" : onBagRack(player.pos) ? "  RACK" : inFines(player.pos) ? "  FINES" : inDry(player.pos) ? "  DRY" : onDryShell(player.pos) ? "  SHELL" : inExhaust(player.pos) ? "  EXH" : inLoco(player.pos) ? "  LOCO" : onLoco(player.pos) ? "  ENGINE" : inSteam(player.pos) ? "  STEAM" : inAgit(player.pos) ? "  AGIT" : onRake(player.pos) ? "  RAKE" : inSlurry(player.pos) ? "  SLURRY" : inEw(player.pos) ? "  EW" : onCathode(player.pos) ? "  BAR" : inAcid(player.pos) ? "  ACID" : inCone(player.pos) ? "  CONE" : onMantle(player.pos) ? "  MANTLE" : inDischarge(player.pos) ? "  CHUTE" : inClas(player.pos) ? "  CLAS" : onClasRake(player.pos) ? "  RAKE" : inSands(player.pos) ? "  SANDS" : inMags(player.pos) ? "  MAGS" : onMagDrum(player.pos) ? "  DRUM" : inConc(player.pos) ? "  CONC" : inRod(player.pos) ? "  ROD" : onRodCharge(player.pos) ? "  CHARGE" : inRodDisch(player.pos) ? "  DISCH" : inSx(player.pos) ? "  SX" : onSxMixer(player.pos) ? "  MIXER" : inWeir(player.pos) ? "  WEIR" : inCil(player.pos) ? "  CIL" : onCilBasket(player.pos) ? "  BASKET" : inPulp(player.pos) ? "  PULP" : onCarbonScrew(player.pos) ? "  SCREW" : inMc(player.pos) ? "  MC" : onMcLeaf(player.pos) ? "  LEAF" : inBarren(player.pos) ? "  BARREN" : inCcd(player.pos) ? "  CCD" : onCcdRake(player.pos) ? "  RAKE" : inCcdUnder(player.pos) ? "  UNDER" : inPox(player.pos) ? "  POX" : onPoxShell(player.pos) ? "  SHELL" : inPoxVent(player.pos) ? "  VENT" : inRet(player.pos) ? "  RET" : onRetDrum(player.pos) ? "  DRUM" : inFlue(player.pos) ? "  FLUE" : inRev(player.pos) ? "  REV" : onHearth(player.pos) ? "  HEARTH" : inSlag(player.pos) ? "  SLAG" : inStamp(player.pos) ? "  STAMP" : onMortar(player.pos) ? "  MORTAR" : inStampFines(player.pos) ? "  FINES" : inGall(player.pos) ? "  GALL" : onOreCar(player.pos) ? "  CAR" : inDump(player.pos) ? "  DUMP" : inHeap(player.pos) ? "  HEAP" : onHeapBoom(player.pos) ? "  BOOM" : inPreg(player.pos) ? "  PREG" : inSag(player.pos) ? "  SAG" : onSagShell(player.pos) ? "  SHELL" : inSagDisch(player.pos) ? "  DISCH" : inJaw(player.pos) ? "  JAW" : onApron(player.pos) ? "  APRON" : inJawRock(player.pos) ? "  ROCK" : inElu(player.pos) ? "  ELU" : onEluCage(player.pos) ? "  CAGE" : inStrip(player.pos) ? "  STRIP" : inScrub(player.pos) ? "  SCRUB" : onScrubTray(player.pos) ? "  TRAY" : inLiquor(player.pos) ? "  LIQUOR" : inSilo(player.pos) ? "  SILO" : onScrew(player.pos) ? "  SCREW" : inPellet(player.pos) ? "  PEL" : onDisc(player.pos) ? "  DISC" : inChute(player.pos) ? "  CHUTE" : inClar(player.pos) ? "  CLAR" : onBridge(player.pos) ? "  BRIDGE" : inUnder(player.pos) ? "  UNDER" : inSample(player.pos) ? "  SAMP" : onSampleBoom(player.pos) ? "  CUTTER" : inReject(player.pos) ? "  REJECT" : inFloat(player.pos) ? "  FLOAT" : inFroth(player.pos) ? "  FROTH" : inFloatLaunder(player.pos) ? "  LAUNDER" : inStack(player.pos) ? "  STACK" : onHaul(player.pos) ? "  HAUL" : inPress(player.pos) ? "  PRESS" : inCyc(player.pos) ? "  CYC" : inSpiral(player.pos) ? "  SPIRAL" : inOverflow(player.pos) ? "  OVER" : inReturn(player.pos) ? "  FLUME" : inBall(player.pos) ? "  BALL" : inThick(player.pos) ? "  THICK" : inLaunder(player.pos) ? "  LAUNDER" : inTail(player.pos) ? "  TAIL" : inBin(player.pos) ? "  BIN" : inRaise(player.pos) ? "  RAISE" : inVent(player.pos) ? "  VENT" : inWinze(player.pos) ? "  WINZE" : inCross(player.pos) ? "  XCUT" : inAdit(player.pos) ? "  ADIT" : inTip(player.pos) ? "  TIP" : inSkip(player.pos) ? "  SKIP" : inFuse(player.pos) ? "  FUSE" : inPow(player.pos) ? "  POW" : inLab(player.pos) ? "  LAB" : inSort(player.pos) ? "  SORT" : inKiln(player.pos) ? "  KILN" : inMill(player.pos) ? "  MILL" : inHoist(player.pos) ? "  HOIST" : inBatt(player.pos) ? "  BATT" : inWeld(player.pos) ? "  WELD" : inParts(player.pos) ? "  PARTS" : inPaint(player.pos) ? "  PAINT" : inTire(player.pos) ? "  TIRE" : inWash(player.pos) ? "  WASH" : inLube(player.pos) ? "  LUBE" : inComp(player.pos) ? "  COMP" : inGen(player.pos) ? "  GEN" : inWeigh(player.pos) ? "  WEIGH" : inAssay(player.pos) ? "  ASSAY" : inDock(player.pos) ? "  DOCK" : inCrush(player.pos) ? "  CRUSH" : inMag(player.pos) ? "  MAG" : inHut(player.pos) ? "  HUT" : inShop(player.pos) ? "  SHOP" : onCable(player.pos) ? "  CABLE" : onYard(player.pos) ? "  YARD" : onMezz(player.pos) ? "  MEZZ" : inWarehouse(player.pos) ? "  WARE" : inLookout(player.pos) ? "  LOOK" : inCistern(player.pos) ? "  TANK" : "";
     headEl.textContent = (nearH < 90 ? `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}  ·  ${nearH.toFixed(0)}m` : `${String(Math.round(yawDeg)).padStart(3, "0")} ${card}`) + `  PAD ${padM.toFixed(0)}m` + locTag + ztxt + bip;
   }
   const breathEl = document.getElementById("breath");
@@ -7030,6 +7062,14 @@ function drawMini() {
       mctx.fillStyle = "#e07040";
       mctx.fillRect(mx(MAP.warehouseDoor.x, MAP.warehouseDoor.z) - 4, mz(MAP.warehouseDoor.x, MAP.warehouseDoor.z) - 1, 8, 2);
     }
+    if (MAP.cable) {
+      mctx.fillStyle = MAP.cable.on ? "#e8c060" : "#a08040";
+      mctx.fillRect(mx(MAP.cable.x, MAP.cable.z) - 3, mz(MAP.cable.x, MAP.cable.z) - 2, 6, 4);
+    }
+    if (MAP.yardDeck) {
+      mctx.fillStyle = "#c8a060";
+      mctx.fillRect(mx(MAP.yardDeck.x, MAP.yardDeck.z) - 3, mz(MAP.yardDeck.x, MAP.yardDeck.z) - 2, 6, 3);
+    }
     if (MAP.warehouseMezz) {
       mctx.fillStyle = "#e0c080";
       mctx.fillRect(mx(MAP.warehouseMezz.x, MAP.warehouseMezz.z) - 4, mz(MAP.warehouseMezz.x, MAP.warehouseMezz.z) - 1, 8, 2);
@@ -7726,6 +7766,8 @@ function drawCompass() {
   markLab(MAP.hangarDoor, player.navLock ? "#c0d8ff" : "#88a0c8", "HANG");
   if (MAP.warehouseDoor) markLab(MAP.warehouseDoor, "#d0b060", "WARE");
   if (MAP.warehouseMezz) markLab(MAP.warehouseMezz, "#e0c080", "MEZZ");
+  if (MAP.yardDeck) markLab(MAP.yardDeck, "#d0a060", "YARD");
+  if (MAP.cable) markLab(new THREE.Vector3(MAP.cable.x, 0, MAP.cable.z), "#e8c070", "CABLE");
   if (MAP.shedDoor) markLab(MAP.shedDoor, "#c07030", "SHED");
   if (MAP.lookout) markLab(MAP.lookout, "#c8a050", "LOOK");
   if (MAP.radioDoor) markLab(MAP.radioDoor, "#50b888", "RAD");
