@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, onMezz, onCable, onYard, onHighDeck, inAnnex, onAnnexBelt, onCrane, inDispatch, onCage, onDispatchLoft, MAP } from "./map.js";
+import { nearestCrate, collideXZ, hasLOS, peekCorners, inHangar, inWarehouse, inShed, inRadio, inShop, inHut, inMag, inCrush, inDock, inAssay, inWeigh, inGen, inComp, inLube, inWash, inTire, inPaint, inParts, inWeld, inBatt, inHoist, inMill, inKiln, inSort, inLab, inPow, inFuse, inSkip, inTip, inAdit, inWinze, inCross, inRaise, inVent, inBin, inTail, inThick, inLaunder, inBall, inCyc, inSpiral, inOverflow, inReturn, inPress, inFloat, inFroth, inFloatLaunder, inStack, onStackBoom, onHaul, inSlake, inMilk, inRope, onBucket, inSinter, onStrand, inSample, onSampleBoom, inReject, inPellet, onDisc, inChute, inClar, onBridge, inUnder, inSilo, onScrew, inJig, onJigDeck, inHutch, inCool, onCoolCar, inQuench, inFall, inBag, onBagRack, inFines, inDry, onDryShell, inExhaust, inLoco, onLoco, inSteam, inAgit, onRake, inSlurry, inScrub, onScrubTray, inLiquor, inEw, onCathode, inAcid, inCone, onMantle, inDischarge, inClas, onClasRake, inSands, inMags, onMagDrum, inConc, inRod, onRodCharge, inRodDisch, inSx, onSxMixer, inWeir, inCil, onCilBasket, inPulp, onCarbonScrew, inElu, onEluCage, inStrip, inMc, onMcLeaf, inBarren, inCcd, onCcdRake, inCcdUnder, inPox, onPoxShell, inPoxVent, inRet, onRetDrum, inFlue, inRev, onHearth, inSlag, inStamp, onMortar, inStampFines, inJaw, onApron, inJawRock, inSag, onSagShell, inSagDisch, inHeap, onHeapBoom, inPreg, inGall, onOreCar, inDump, inSluice, onBelt, inInterior, onMezz, onCable, onYard, onHighDeck, inAnnex, onAnnexBelt, onCrane, inDispatch, onCage, onDispatchLoft, inShip, onShipCart, MAP } from "./map.js";
 
 export function spawnBots(scene, n = 6) {
   const bots = [];
@@ -239,6 +239,7 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           : inSag(playerPos) || onSagShell(playerPos) || inSagDisch(playerPos) ? MAP.sagDoor
           : inJaw(playerPos) || onApron(playerPos) || inJawRock(playerPos) ? MAP.jawDoor
           : inElu(playerPos) || onEluCage(playerPos) || inStrip(playerPos) ? MAP.eluDoor
+          : inShip(playerPos) || onShipCart(playerPos) ? MAP.shipDoor
           : inDispatch(playerPos) || onCage(playerPos) ? MAP.dispatchDoor
           : inAnnex(playerPos) && MAP.annexDoor
           ? MAP.annexDoor
@@ -933,6 +934,12 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
       MAP.cage.on = true;
       b.pos.x += Math.sign(MAP.cage.x - b.pos.x) * Math.min(1.7 * dt, Math.abs(MAP.cage.x - b.pos.x));
       b.pos.z += Math.sign(MAP.cage.z - b.pos.z) * Math.min(1.7 * dt, Math.abs(MAP.cage.z - b.pos.z));
+    }
+    if (onShipCart(b.pos) && MAP.shipCart) b.pos.z += MAP.shipCart.dz || 0;
+    if (b.hp > 0 && MAP.shipCart && (inShip(playerPos) || onShipCart(playerPos)) && !onShipCart(b.pos) && b.pos.y < 2) {
+      MAP.shipCart.on = true;
+      b.pos.x += Math.sign(MAP.shipCart.x - b.pos.x) * Math.min(1.7 * dt, Math.abs(MAP.shipCart.x - b.pos.x));
+      b.pos.z += Math.sign(MAP.shipCart.z - b.pos.z) * Math.min(1.7 * dt, Math.abs(MAP.shipCart.z - b.pos.z));
     }
     if (onAnnexBelt(b.pos) && MAP.annexBelt && MAP.annexBelt.on) {
       b.pos.x += MAP.annexBelt.speed * dt;

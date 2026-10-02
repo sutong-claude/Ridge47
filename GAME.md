@@ -884,4 +884,10 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Dispatch loft ladder + cover; bots climb to the loft and drop when the player leaves
 - [x] Dispatch ammo tin
 - [x] Live loop ticks annex rollers/crane (they were only updating on the score card)
+- [x] South shipping office (door + racks + scale + motes + collision) off a second warehouse south cut
+- [x] Compass / minimap SHIP pip + indoor loc tag + CART pip
+- [x] Bot BREACH through the shipping door when the player camps SHIP or the dock cart
+- [x] Ship-door berms + cook-off drum + wrecked truck
+- [x] F dock cart shuttles player and bots through the cut; running cart curtains the cut (hitscan block)
+- [x] Shipping ammo tin
 - [ ] Next: owner topics or more juice

@@ -26,6 +26,16 @@ export function inDispatch(pos) {
   return pos.x > -26.3 && pos.x < -17.7 && pos.z > 31.15 && pos.z < 37.2 && pos.y < 3.4;
 }
 
+export function inShip(pos) {
+  return pos.x > -20.4 && pos.x < -14.6 && pos.z > 15.85 && pos.z < 21.35 && pos.y < 3.3;
+}
+
+export function onShipCart(pos) {
+  const c = MAP.shipCart;
+  if (!c || pos.y > 1.7) return false;
+  return Math.abs(pos.x - c.x) < 0.85 && Math.abs(pos.z - c.z) < 0.7;
+}
+
 export function onCage(pos) {
   const c = MAP.cage;
   if (!c || pos.y > 1.7) return false;
@@ -768,7 +778,7 @@ export function inJawRock(pos) {
 }
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inAnnex(pos) || inDispatch(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos) || inSag(pos) || inHeap(pos) || inGall(pos);
+  return inHangar(pos) || inWarehouse(pos) || inAnnex(pos) || inDispatch(pos) || inShip(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos) || inSag(pos) || inHeap(pos) || inGall(pos);
 }
 
 export function floorY(x, z) {
@@ -916,8 +926,10 @@ export function buildMap(scene) {
     return m;
   };
   whWall(-26.8, 22, 6.4, 1.15);
-  whWall(-17.2, 22, 6.4, 1.15);
+  whWall(-19.7, 22, 1.4, 1.15);
+  whWall(-15.15, 22, 2.3, 1.15);
   box(scene, -22, 6.15, 22, 3.4, 1.7, 1.15, steel); // lintel over door
+  box(scene, -17.65, 6.15, 22, 2.7, 1.7, 1.15, steel); // lintel over ship cut
   whWall(-26.55, 30, 6.9, 1.15);
   whWall(-17.45, 30, 6.9, 1.15);
   box(scene, -22, 6.15, 30, 2.5, 1.7, 1.15, steel); // lintel over dispatch cut
@@ -1324,6 +1336,106 @@ export function buildMap(scene) {
   });
   MAP.dispatchLoft = new THREE.Vector3(-22, 3.13, 35.9);
   MAP.dispatchLadder = { x: -18.7, z: 35.2, to: new THREE.Vector3(-20.2, 3.13, 35.85) };
+
+  // South shipping office — second cut in the warehouse south wall, dock cart curtains the gap.
+  const shWall2 = (x, z, sx, sz) => {
+    const m = box(scene, x, 2.05, z, sx, 4.1, sz, rust);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 4.1, sz });
+    return m;
+  };
+  shWall2(-20.35, 18.55, 0.7, 5.2);
+  shWall2(-14.75, 18.55, 0.7, 5.2);
+  shWall2(-19.3, 15.85, 1.9, 0.7);
+  shWall2(-15.85, 15.85, 1.9, 0.7);
+  box(scene, -17.55, 3.55, 15.85, 2.2, 1.15, 0.7, rust);
+  box(scene, -17.55, 4.25, 18.55, 5.4, 0.28, 5.3, rust);
+  const shipFloor = box(scene, -17.55, 0.04, 18.55, 5.2, 0.08, 5.0, concrete);
+  shipFloor.receiveShadow = true;
+  MAP.shipDoor = new THREE.Vector3(-17.55, 0, 15.55);
+  MAP.shipCut = new THREE.Vector3(-17.7, 0, 21.55);
+  const shipLamp = new THREE.PointLight(0xffb060, 0.85, 11);
+  shipLamp.position.set(-17.55, 3.4, 18.5);
+  scene.add(shipLamp);
+  MAP.shipLamp = shipLamp;
+  const shipRing = new THREE.Mesh(
+    new THREE.RingGeometry(1.05, 1.32, 16),
+    new THREE.MeshBasicMaterial({ color: 0xd0a050, side: THREE.DoubleSide, transparent: true, opacity: 0.72 })
+  );
+  shipRing.rotation.x = -Math.PI / 2;
+  shipRing.position.copy(MAP.shipDoor).setY(0.05);
+  scene.add(shipRing);
+  MAP.shipRing = shipRing;
+  const shipRacks = [
+    [-19.4, 0.7, 17.2, 1.15, 1.4, 0.9],
+    [-15.7, 0.55, 17.35, 1.2, 1.1, 1.0],
+    [-15.85, 0.42, 19.9, 1.15, 0.8, 0.7],
+  ];
+  for (const r of shipRacks) {
+    const m = box(scene, r[0], r[1], r[2], r[3], r[4], r[5], crateWood);
+    MAP.crates.push({ pos: new THREE.Vector3(r[0], 0, r[2]), mesh: m, sx: r[3], sy: r[4], sz: r[5] });
+  }
+  MAP.shipAmmo = new THREE.Vector3(-19.15, 0.4, 19.55);
+  box(scene, -19.15, 0.4, 19.55, 0.44, 0.3, 0.34, rust);
+  const shipMoteN = 22;
+  const shipGeo = new THREE.BufferGeometry();
+  const shipPos = new Float32Array(shipMoteN * 3);
+  const shipPhase = new Float32Array(shipMoteN);
+  for (let i = 0; i < shipMoteN; i++) {
+    shipPos[i * 3] = -19.8 + Math.random() * 4.6;
+    shipPos[i * 3 + 1] = 0.25 + Math.random() * 2.3;
+    shipPos[i * 3 + 2] = 16.4 + Math.random() * 4.4;
+    shipPhase[i] = Math.random() * Math.PI * 2;
+  }
+  shipGeo.setAttribute("position", new THREE.BufferAttribute(shipPos, 3));
+  const shipMotes = new THREE.Points(
+    shipGeo,
+    new THREE.PointsMaterial({ color: 0xe0b070, size: 0.042, transparent: true, opacity: 0.38, depthWrite: false })
+  );
+  scene.add(shipMotes);
+  MAP.shipMotes = shipMotes;
+  MAP.shipMotePhase = shipPhase;
+  const cartMesh = box(scene, -17.7, 0.55, 18.2, 1.4, 0.85, 1.15, night);
+  const cartCrate = { pos: new THREE.Vector3(-17.7, 0, 18.2), mesh: cartMesh, sx: 1.4, sy: 1.15, sz: 1.15, cart: true };
+  MAP.crates.push(cartCrate);
+  box(scene, -18.35, 0.16, 20.2, 0.08, 0.08, 6.6, steel);
+  box(scene, -17.05, 0.16, 20.2, 0.08, 0.08, 6.6, steel);
+  const shipCurtain = box(scene, -17.7, 1.15, 21.7, 1.9, 2.2, 0.42, night);
+  shipCurtain.material = new THREE.MeshBasicMaterial({ color: 0x8a6840, transparent: true, opacity: 0.06, depthWrite: false });
+  MAP.shipCurtain = {
+    mesh: shipCurtain,
+    crate: { pos: new THREE.Vector3(-17.7, 0, 21.7), mesh: shipCurtain, sx: 2.0, sy: 2.25, sz: 0.62, dead: true },
+  };
+  MAP.crates.push(MAP.shipCurtain.crate);
+  MAP.shipCart = {
+    x: -17.7,
+    z: 18.2,
+    dir: 1,
+    on: false,
+    dz: 0,
+    min: 17.35,
+    max: 24.35,
+    mesh: cartMesh,
+    crate: cartCrate,
+  };
+  MAP.shipHook = new THREE.Vector3(-17.7, 0, 17.7);
+  MAP.shipHookIn = new THREE.Vector3(-17.7, 0, 23.4);
+  const shipBerm = box(scene, -19.35, 0.42, 15.35, 1.05, 0.84, 0.5, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-19.35, 0, 15.35), mesh: shipBerm, sx: 1.05, sy: 0.84, sz: 0.5 });
+  const shipBerm2 = box(scene, -15.7, 0.42, 15.35, 1.05, 0.84, 0.5, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-15.7, 0, 15.35), mesh: shipBerm2, sx: 1.05, sy: 0.84, sz: 0.5 });
+  const shipDrum = box(scene, -15.35, 0.55, 16.55, 0.52, 1.05, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-15.35, 0, 16.55), mesh: shipDrum, sx: 0.52, sy: 1.05, sz: 0.52, drum: true });
+  const stx = -12.6;
+  const stz = 17.4;
+  box(scene, stx, 0.58, stz, 3.1, 0.48, 1.35, rust);
+  box(scene, stx + 0.85, 1.0, stz, 1.15, 0.9, 1.2, rust);
+  box(scene, stx - 1.2, 0.78, stz, 0.65, 0.75, 1.1, steel);
+  MAP.shipTruck = new THREE.Vector3(stx, 0, stz);
+  const shipHull = box(scene, stx, 0.68, stz, 3.1, 1.25, 1.35, rust);
+  MAP.crates.push({ pos: MAP.shipTruck.clone(), mesh: shipHull, sx: 3.1, sy: 1.25, sz: 1.35 });
+  const scale = box(scene, -16.15, 1.15, 18.7, 0.22, 1.7, 0.22, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(-16.15, 0, 18.7), mesh: scale, sx: 0.22, sy: 1.7, sz: 0.22 });
+
 
 
     // East pump shed — door gap on west wall at x≈23, z≈21
@@ -10647,6 +10759,35 @@ export function updateAnnex(dt) {
   }
 }
 
+
+export function updateShip(dt) {
+  const c = MAP.shipCart;
+  if (!c) return;
+  const prev = c.z;
+  if (c.on) {
+    c.z += c.dir * 2.05 * dt;
+    if (c.z <= c.min) { c.z = c.min; c.dir = 1; }
+    if (c.z >= c.max) { c.z = c.max; c.dir = -1; }
+  }
+  c.dz = c.z - prev;
+  if (c.mesh) c.mesh.position.z = c.z;
+  if (c.crate) c.crate.pos.z = c.z;
+  const crossing = c.on && c.z > 20.85 && c.z < 22.55;
+  if (MAP.shipCurtain) {
+    MAP.shipCurtain.crate.dead = !crossing;
+    if (MAP.shipCurtain.mesh.material) MAP.shipCurtain.mesh.material.opacity = crossing ? 0.42 : 0.05;
+  }
+  if (MAP.shipLamp) MAP.shipLamp.intensity = c.on ? 0.5 + Math.random() * 0.45 : 0.85;
+  if (MAP.shipMotes && MAP.shipMotePhase) {
+    const arr = MAP.shipMotes.geometry.attributes.position.array;
+    const ph = MAP.shipMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (c.on ? 1.5 : 0.18);
+      arr[i * 3 + 1] = 0.25 + ((Math.sin(ph[i]) + 1) * 0.5) * 2.2;
+    }
+    MAP.shipMotes.geometry.attributes.position.needsUpdate = true;
+  }
+}
 
 export function updateDispatch(dt) {
   const c = MAP.cage;
