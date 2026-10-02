@@ -832,4 +832,10 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Stamp-door berms + cook-off drums
 - [x] Wrecked stamp truck east of the mill
 - [x] Clutch (F) runs the stamps; drop blocks hitscan and shoves the mortar; fines shove south; door dust blocks hitscan; mill dust scalds
+- [x] Southeast jaw house (door gap + swinging jaw + collision + motes)
+- [x] Compass / minimap JAW pip + indoor loc tag + rock pip
+- [x] Bot BREACH through jaw door when player camps JAW, the apron, or the rock chute
+- [x] Jaw-door berms + cook-off drums
+- [x] Wrecked jaw truck north of the house
+- [x] Clutch (F) swings the jaws; closed jaws block hitscan and crush; apron carries north; rock chute shoves south; door dust blocks hitscan; jaw crush scalds
 - [ ] Next: owner topics or more juice

@@ -675,8 +675,22 @@ export function inStampFines(pos) {
   return Math.abs(pos.x - f.x) < f.hx && Math.abs(pos.z - f.z) < f.hz;
 }
 
+export function inJaw(pos) {
+  return pos.x > 34.4 && pos.x < 38.2 && pos.z > -40.6 && pos.z < -36.8;
+}
+export function onApron(pos) {
+  const a = MAP.apron;
+  if (!a || !MAP.jaw || !MAP.jaw.on) return false;
+  return Math.abs(pos.x - a.x) < 0.7 && Math.abs(pos.z - a.z) < 0.85 && pos.y < 1.45;
+}
+export function inJawRock(pos) {
+  const r = MAP.jawRock;
+  if (!r || !MAP.jaw || !MAP.jaw.on) return false;
+  return Math.abs(pos.x - r.x) < r.hx && Math.abs(pos.z - r.z) < r.hz;
+}
+
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos) || inJaw(pos);
 }
 
 export function floorY(x, z) {
@@ -7424,6 +7438,80 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.stampTruck.clone(), mesh: stTruck, sx: 1.3, sy: 1.15, sz: 1.4 });
   MAP.crates.push({ pos: new THREE.Vector3(-39.1, 0, stZ), mesh: stBed, sx: 1.15, sy: 0.55, sz: 1.15 });
 
+
+  // Southeast jaw house — door gap south, swinging jaw blocks hitscan, apron carries north, rock chute shoves south
+  const jwX = 36.3;
+  const jwZ = -38.7;
+  const jwMat = new THREE.MeshLambertMaterial({ color: 0x3a332c });
+  const jwWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, jwMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+  };
+  jwWall(jwX, -36.8, 3.8, 0.35);
+  jwWall(34.4, jwZ, 0.35, 3.8);
+  jwWall(38.2, jwZ, 0.35, 3.8);
+  jwWall(35.35, -40.6, 1.15, 0.35);
+  jwWall(37.25, -40.6, 1.15, 0.35);
+  box(scene, jwX, 2.9, -40.6, 1.4, 0.38, 0.35, jwMat);
+  box(scene, jwX, 3.05, jwZ, 3.6, 0.14, 3.6, rock);
+  const jwFloor = box(scene, jwX, 0.04, jwZ, 3.3, 0.08, 3.3, concrete);
+  jwFloor.receiveShadow = true;
+  const jawL = box(scene, jwX - 0.42, 1.35, jwZ + 0.15, 0.18, 1.35, 0.85, steel);
+  const jawR = box(scene, jwX + 0.42, 1.35, jwZ + 0.15, 0.18, 1.35, 0.85, steel);
+  MAP.jawMeshL = jawL;
+  MAP.jawMeshR = jawR;
+  MAP.jawHead = { x: jwX, z: jwZ + 0.15, phase: 0, closed: false };
+  MAP.jawBlock = { pos: new THREE.Vector3(jwX, 0, jwZ + 0.15), mesh: jawL, sx: 1.15, sy: 1.4, sz: 0.9, dead: true };
+  MAP.crates.push(MAP.jawBlock);
+  const apronMesh = box(scene, jwX, 0.32, jwZ - 0.85, 1.15, 0.16, 1.35, rust);
+  MAP.apronMesh = apronMesh;
+  MAP.apron = { x: jwX, z: jwZ - 0.85, vz: 1.85 };
+  MAP.crates.push({ pos: new THREE.Vector3(jwX, 0, jwZ - 0.85), mesh: apronMesh, sx: 1.15, sy: 0.16, sz: 1.35, walkOn: true });
+  MAP.jawDoor = new THREE.Vector3(jwX, 0, -40.6);
+  MAP.jaw = { on: false, x: jwX - 1.15, z: jwZ + 0.9 };
+  const jwLamp = new THREE.PointLight(0xe0b070, 0.32, 7, 2);
+  jwLamp.position.set(jwX, 2.6, jwZ);
+  scene.add(jwLamp);
+  MAP.jawLamp = jwLamp;
+  MAP.jawRing = box(scene, jwX, 0.05, -40.6, 1.35, 0.04, 0.3, amber);
+  MAP.jawLever = box(scene, MAP.jaw.x, 1.05, MAP.jaw.z, 0.12, 0.55, 0.12, amber);
+  const jwDust = box(scene, jwX, 1.2, -40.6, 1.35, 2.15, 0.22, sand);
+  jwDust.material = new THREE.MeshLambertMaterial({ color: 0xd0b890, transparent: true, opacity: 0.04 });
+  MAP.jawDust = jwDust;
+  MAP.jawDustCrate = { pos: new THREE.Vector3(jwX, 0, -40.6), mesh: jwDust, sx: 1.35, sy: 2.15, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.jawDustCrate);
+  const rockMesh = box(scene, jwX, 0.1, -42.3, 0.7, 0.1, 1.5, oil);
+  rockMesh.material = new THREE.MeshLambertMaterial({ color: 0xa08058, transparent: true, opacity: 0.16 });
+  MAP.jawRockMesh = rockMesh;
+  MAP.jawRock = { x: jwX, z: -42.3, hx: 0.42, hz: 0.8, vz: -2.2 };
+  const jwMotesGeo = new THREE.BufferGeometry();
+  const jwN = 10;
+  const jwPos = new Float32Array(jwN * 3);
+  const jwPhase = [];
+  for (let i = 0; i < jwN; i++) {
+    jwPos[i * 3] = jwX + (Math.random() - 0.5) * 2.2;
+    jwPos[i * 3 + 1] = 0.3 + Math.random() * 1.4;
+    jwPos[i * 3 + 2] = jwZ + (Math.random() - 0.5) * 2.2;
+    jwPhase.push(Math.random() * 6.2);
+  }
+  jwMotesGeo.setAttribute("position", new THREE.BufferAttribute(jwPos, 3));
+  MAP.jawMotes = new THREE.Points(jwMotesGeo, new THREE.PointsMaterial({ color: 0xe0c090, size: 0.055 }));
+  scene.add(MAP.jawMotes);
+  MAP.jawMotePhase = jwPhase;
+  const jwBerm = box(scene, 35.15, 0.45, -41.35, 1.15, 0.85, 0.45, rock);
+  const jwBerm2 = box(scene, 37.45, 0.45, -41.35, 1.15, 0.85, 0.45, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(35.15, 0, -41.35), mesh: jwBerm, sx: 1.15, sy: 0.85, sz: 0.45 });
+  MAP.crates.push({ pos: new THREE.Vector3(37.45, 0, -41.35), mesh: jwBerm2, sx: 1.15, sy: 0.85, sz: 0.45 });
+  const jwDrum = box(scene, 34.85, 0.55, -41.7, 0.5, 1.05, 0.5, rust);
+  const jwDrum2 = box(scene, 37.75, 0.55, -41.7, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(34.85, 0, -41.7), mesh: jwDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(37.75, 0, -41.7), mesh: jwDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const jwTruck = box(scene, jwX, 0.65, -35.4, 1.4, 1.15, 1.3, rust);
+  const jwBed = box(scene, jwX, 0.4, -34.2, 1.15, 0.55, 1.15, steel);
+  MAP.jawTruck = new THREE.Vector3(jwX, 0, -35.4);
+  MAP.crates.push({ pos: MAP.jawTruck.clone(), mesh: jwTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(jwX, 0, -34.2), mesh: jwBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
 export function updateBirds(dt, spookAt = null) {
   if (!MAP.birds) return;
   for (const b of MAP.birds) {
@@ -9707,6 +9795,35 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
       arr[i * 3 + 1] = 0.2 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.3;
     }
     MAP.stampMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+
+  if (MAP.jawHead) {
+    const on = MAP.jaw && MAP.jaw.on;
+    MAP.jawHead.phase += dt * (on ? 2.1 : 0.12);
+    const swing = on ? Math.sin(MAP.jawHead.phase) : 0.15;
+    const closed = on && swing > 0.35;
+    if (closed && !MAP.jawHead.wasClosed) MAP.jawClack = true;
+    MAP.jawHead.wasClosed = closed;
+    MAP.jawHead.closed = closed;
+    if (MAP.jawMeshL) MAP.jawMeshL.rotation.y = swing * 0.55;
+    if (MAP.jawMeshR) MAP.jawMeshR.rotation.y = -swing * 0.55;
+    if (MAP.jawBlock) MAP.jawBlock.dead = !closed;
+    if (MAP.jawLever) MAP.jawLever.rotation.z = on ? -0.7 : 0.2;
+    if (MAP.jawLamp) MAP.jawLamp.intensity = on ? 1.1 : 0.12;
+    if (MAP.jawDust) MAP.jawDust.material.opacity = on ? 0.46 : 0.04;
+    if (MAP.jawDustCrate) MAP.jawDustCrate.dead = !on;
+    if (MAP.jawRockMesh) MAP.jawRockMesh.material.opacity = on ? 0.48 : 0.12;
+    if (MAP.apronMesh) MAP.apronMesh.position.z = (MAP.apron ? MAP.apron.z : -39.55) + (on ? Math.sin(MAP.jawHead.phase * 2) * 0.08 : 0);
+  }
+  if (MAP.jawMotes && MAP.jawMotePhase) {
+    const arr = MAP.jawMotes.geometry.attributes.position.array;
+    const ph = MAP.jawMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.jaw && MAP.jaw.on ? 1.7 : 0.08);
+      arr[i * 3 + 1] = 0.2 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.3;
+    }
+    MAP.jawMotes.geometry.attributes.position.needsUpdate = true;
   }
 
   if (MAP.face) {
