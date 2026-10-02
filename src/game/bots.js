@@ -893,9 +893,9 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
     if ((campingExtract || campingInterior || flushCover) && b.nadeCd <= 0 && onNade && !pinned) {
       b.nadeCd = 7 + Math.random() * 5;
       const lead = playerPos.clone();
-      lead.y = 1.2;
-      lead.x += (Math.random() - 0.5) * 1.6;
-      lead.z += (Math.random() - 0.5) * 1.6;
+      lead.y = Math.max(1.15, playerPos.y + 0.35);
+      lead.x += (Math.random() - 0.5) * (playerPos.y > 2.4 ? 0.7 : 1.6);
+      lead.z += (Math.random() - 0.5) * (playerPos.y > 2.4 ? 0.7 : 1.6);
       onNade(b, lead);
     }
 

@@ -854,4 +854,9 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Wrecked heap truck east of the house
 - [x] Clutch (F) spins the boom; player and bots ride; preg ditch shoves south; door mist blocks hitscan; liquor scalds
 - [x] Corrugated sheet punch: one thin wall does not stop a rifle round (55% damage, spark, bots can shoot through)
+- [x] Warehouse mezzanine (ladder + walkable north catwalk + crate cover + MEZZ loc/minimap/compass)
+- [x] Bot nades loft to mezz height and cook short when the player is close
+- [x] Grenades bounce off crate faces (reflect, separate, distance slap) instead of reversing in place
+- [x] Carbine punches one corrugated sheet; scatter and sidearm stop on the sheet
+- [x] Per-gun viewmodel rest (scatter low and left, sidearm high and in)
 - [ ] Next: owner topics or more juice

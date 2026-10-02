@@ -18,6 +18,10 @@ export function inWarehouse(pos) {
   return pos.x > -30.4 && pos.x < -13.6 && pos.z > 21.4 && pos.z < 30.6;
 }
 
+export function onMezz(pos) {
+  return pos.y > 2.55 && Math.abs(pos.x + 22) < 5.7 && Math.abs(pos.z - 28.65) < 1.05;
+}
+
 export function inShed(pos) {
   return pos.x > 22.6 && pos.x < 31.4 && pos.z > 16.6 && pos.z < 25.4;
 }
@@ -901,6 +905,28 @@ export function buildMap(scene) {
   scene.add(whMotes);
   MAP.warehouseMotes = whMotes;
   MAP.warehouseMotePhase = whPhase;
+
+  // Warehouse mezzanine — ladder off the floor, walkable north catwalk
+  const mzX = -22;
+  const mzZ = 28.65;
+  const mez = box(scene, mzX, 3.18, mzZ, 11.6, 0.16, 2.15, rust);
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push({ x: mzX, z: mzZ, sx: 11.2, sz: 1.95, top: 3.26 });
+  MAP.crates.push({ pos: new THREE.Vector3(mzX, 0, mzZ), mesh: mez, sx: 11.6, sy: 3.26, sz: 2.15, walkOn: true });
+  box(scene, mzX, 4.05, 27.62, 11.4, 0.08, 0.08, steel);
+  const mezCover = box(scene, -18.4, 3.85, 28.7, 1.4, 0.9, 0.55, crateWood);
+  MAP.crates.push({ pos: new THREE.Vector3(-18.4, 0, 28.7), mesh: mezCover, sx: 1.4, sy: 4.3, sz: 0.55 });
+  const whLad = box(scene, -25.6, 1.6, 26.85, 0.48, 3.2, 0.16, steel);
+  MAP.crates.push({
+    pos: new THREE.Vector3(-25.6, 0, 26.85),
+    mesh: whLad,
+    sx: 0.48,
+    sy: 3.2,
+    sz: 0.16,
+    climb: true,
+    climbTo: new THREE.Vector3(-25.2, 0, 28.45),
+  });
+  MAP.warehouseMezz = new THREE.Vector3(mzX, 3.26, mzZ);
 
   // East pump shed — door gap on west wall at x≈23, z≈21
   const shWall = (x, z, sx, sz) => {

@@ -130,11 +130,13 @@ export function updateViewmodel(vm, dt, moving, shooting, inspecting, ads = fals
   const bob = moving && !ads ? Math.sin(t) * (sprint ? 0.02 : 0.012) : 0;
   const adsDrop = ads ? -0.04 : 0;
   const sprintDrop = sprint ? -0.06 : 0;
-  const restX = vm.gun === 2 ? 0.03 : vm.gun === 1 ? 0.015 : 0;
+  const restX = vm.gun === 2 ? 0.05 : vm.gun === 1 ? -0.02 : 0.01;
+  const restY = vm.gun === 2 ? -0.02 : vm.gun === 1 ? -0.035 : 0;
+  const restZ = vm.gun === 2 ? 0.04 : vm.gun === 1 ? 0.02 : 0;
   vm.group.position.set(
     restX + 0.02 * vm.inspect + yawVel * 0.015,
-    bob - vm.kick * 0.04 + adsDrop + sprintDrop + (melee ? 0.04 : 0),
-    vm.kick * 0.05 + (ads ? 0.06 : 0) + (jam ? 0.02 : 0)
+    bob - vm.kick * 0.04 + adsDrop + sprintDrop + restY + (melee ? 0.04 : 0),
+    vm.kick * 0.05 + (ads ? 0.06 : 0) + restZ + (jam ? 0.02 : 0)
   );
   vm.group.rotation.set(
     -vm.kick * (vm.gun === 1 ? 0.4 : 0.25) + vm.inspect * 0.6 + pitchVel * 0.02,
