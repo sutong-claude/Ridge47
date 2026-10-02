@@ -648,9 +648,35 @@ export function inFlue(pos) {
   if (!f || !MAP.ret || !MAP.ret.on) return false;
   return Math.abs(pos.x - f.x) < f.hx && Math.abs(pos.z - f.z) < f.hz;
 }
+export function inRev(pos) {
+  return pos.x > 42.4 && pos.x < 46.2 && pos.z > 40.8 && pos.z < 44.4;
+}
+export function onHearth(pos) {
+  const h = MAP.hearth;
+  if (!h || !MAP.rev || !MAP.rev.on) return false;
+  return Math.abs(pos.x - h.x) < 0.75 && Math.abs(pos.z - h.z) < 0.55 && pos.y < h.y + 1.35;
+}
+export function inSlag(pos) {
+  const s = MAP.slag;
+  if (!s || !MAP.rev || !MAP.rev.on) return false;
+  return Math.abs(pos.x - s.x) < s.hx && Math.abs(pos.z - s.z) < s.hz;
+}
+export function inStamp(pos) {
+  return pos.x > -46.2 && pos.x < -42.4 && pos.z > -45.4 && pos.z < -41.8;
+}
+export function onMortar(pos) {
+  const m = MAP.mortar;
+  if (!m || !MAP.stamp || !MAP.stamp.on) return false;
+  return Math.abs(pos.x - m.x) < 0.7 && Math.abs(pos.z - m.z) < 0.55 && pos.y < 1.4;
+}
+export function inStampFines(pos) {
+  const f = MAP.stampFines;
+  if (!f || !MAP.stamp || !MAP.stamp.on) return false;
+  return Math.abs(pos.x - f.x) < f.hx && Math.abs(pos.z - f.z) < f.hz;
+}
 
 export function inInterior(pos) {
-  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos);
+  return inHangar(pos) || inWarehouse(pos) || inShed(pos) || inRadio(pos) || inShop(pos) || inHut(pos) || inMag(pos) || inCrush(pos) || inDock(pos) || inAssay(pos) || inWeigh(pos) || inGen(pos) || inComp(pos) || inLube(pos) || inWash(pos) || inTire(pos) || inPaint(pos) || inParts(pos) || inWeld(pos) || inBatt(pos) || inHoist(pos) || inMill(pos) || inKiln(pos) || inSort(pos) || inLab(pos) || inPow(pos) || inFuse(pos) || inSkip(pos) || inTip(pos) || inAdit(pos) || inWinze(pos) || inCross(pos) || inRaise(pos) || inVent(pos) || inBin(pos) || inThick(pos) || inBall(pos) || inCyc(pos) || inSpiral(pos) || inPress(pos) || inFloat(pos) || inStack(pos) || inSlake(pos) || inRope(pos) || inSinter(pos) || inSample(pos) || inPellet(pos) || inClar(pos) || inSilo(pos) || inJig(pos) || inCool(pos) || inBag(pos) || inDry(pos) || inLoco(pos) || inAgit(pos) || inScrub(pos) || inEw(pos) || inCone(pos) || inClas(pos) || inMags(pos) || inRod(pos) || inSx(pos) || inCil(pos) || inElu(pos) || inMc(pos) || inCcd(pos) || inPox(pos) || inRet(pos) || inRev(pos) || inStamp(pos);
 }
 
 export function floorY(x, z) {
@@ -7255,6 +7281,149 @@ export function buildMap(scene) {
   MAP.crates.push({ pos: MAP.retTruck.clone(), mesh: retTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
   MAP.crates.push({ pos: new THREE.Vector3(retX, 0, -39.4), mesh: retBed, sx: 1.15, sy: 0.55, sz: 1.15 });
 
+
+  // Northeast reverberatory — door gap south, rideable hearth, slag launder shove west
+  const revX = 44.3;
+  const revZ = 42.6;
+  const revMat = new THREE.MeshLambertMaterial({ color: 0x4a3428 });
+  const revWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, revMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+  };
+  revWall(42.4, revZ, 0.35, 3.6);
+  revWall(46.2, revZ, 0.35, 3.6);
+  revWall(revX, 44.4, 3.6, 0.35);
+  revWall(43.15, 40.8, 1.05, 0.35);
+  revWall(45.45, 40.8, 1.05, 0.35);
+  box(scene, revX, 2.9, 40.8, 1.4, 0.38, 0.35, revMat);
+  box(scene, revX, 3.05, revZ, 3.5, 0.14, 3.4, rock);
+  const revFloor = box(scene, revX, 0.04, revZ, 3.2, 0.08, 3.2, concrete);
+  revFloor.receiveShadow = true;
+  const hearthMesh = box(scene, revX, 0.52, revZ + 0.1, 1.5, 0.62, 0.72, rust);
+  MAP.hearthMesh = hearthMesh;
+  MAP.hearth = { x: revX, z: revZ + 0.1, y: 0.52, t: 0, dir: 1, dx: 0, dz: 0 };
+  MAP.crates.push({ pos: new THREE.Vector3(revX, 0, revZ + 0.1), mesh: hearthMesh, sx: 1.5, sy: 0.62, sz: 0.72, walkOn: true });
+  MAP.hearthCrate = MAP.crates[MAP.crates.length - 1];
+  MAP.hearthPlat = { x: revX, z: revZ + 0.1, sx: 1.35, sz: 0.66, top: 0.86 };
+  MAP.platforms.push(MAP.hearthPlat);
+  MAP.revDoor = new THREE.Vector3(revX, 0, 40.8);
+  MAP.rev = { on: false, x: revX - 1.15, z: revZ + 0.15 };
+  const revLamp = new THREE.PointLight(0xff6828, 0.4, 8, 2);
+  revLamp.position.set(revX, 2.4, revZ);
+  scene.add(revLamp);
+  MAP.revLamp = revLamp;
+  MAP.revRing = box(scene, revX, 0.05, 40.8, 1.35, 0.04, 0.3, amber);
+  MAP.revLever = box(scene, MAP.rev.x, 1.05, MAP.rev.z, 0.12, 0.55, 0.12, amber);
+  const revHeat = box(scene, revX, 1.2, 40.8, 1.35, 2.15, 0.22, sand);
+  revHeat.material = new THREE.MeshLambertMaterial({ color: 0xffb080, transparent: true, opacity: 0.04 });
+  MAP.revHeat = revHeat;
+  MAP.revHeatCrate = { pos: new THREE.Vector3(revX, 0, 40.8), mesh: revHeat, sx: 1.35, sy: 2.15, sz: 0.26, dead: true };
+  MAP.crates.push(MAP.revHeatCrate);
+  const slagMesh = box(scene, 40.2, 0.1, revZ, 2.4, 0.1, 0.7, oil);
+  slagMesh.material = new THREE.MeshLambertMaterial({ color: 0xc06030, transparent: true, opacity: 0.16 });
+  MAP.slagMesh = slagMesh;
+  MAP.slag = { x: 40.2, z: revZ, hx: 1.25, hz: 0.4, vx: -2.3 };
+  const revMotesGeo = new THREE.BufferGeometry();
+  const revN = 10;
+  const revPos = new Float32Array(revN * 3);
+  const revPhase = [];
+  for (let i = 0; i < revN; i++) {
+    revPos[i * 3] = revX + (Math.random() - 0.5) * 2.4;
+    revPos[i * 3 + 1] = 0.3 + Math.random() * 1.4;
+    revPos[i * 3 + 2] = revZ + (Math.random() - 0.5) * 2.2;
+    revPhase.push(Math.random() * 6.2);
+  }
+  revMotesGeo.setAttribute("position", new THREE.BufferAttribute(revPos, 3));
+  MAP.revMotes = new THREE.Points(revMotesGeo, new THREE.PointsMaterial({ color: 0xff8844, size: 0.06 }));
+  scene.add(MAP.revMotes);
+  MAP.revMotePhase = revPhase;
+  const revBerm = box(scene, 43.15, 0.45, 39.7, 1.15, 0.85, 0.45, rock);
+  const revBerm2 = box(scene, 45.45, 0.45, 39.7, 1.15, 0.85, 0.45, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(43.15, 0, 39.7), mesh: revBerm, sx: 1.15, sy: 0.85, sz: 0.45 });
+  MAP.crates.push({ pos: new THREE.Vector3(45.45, 0, 39.7), mesh: revBerm2, sx: 1.15, sy: 0.85, sz: 0.45 });
+  const revDrum = box(scene, 42.7, 0.55, 39.95, 0.5, 1.05, 0.5, rust);
+  const revDrum2 = box(scene, 45.9, 0.55, 39.95, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(42.7, 0, 39.95), mesh: revDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(45.9, 0, 39.95), mesh: revDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const revTruck = box(scene, revX, 0.65, 39.15, 1.4, 1.15, 1.3, rust);
+  const revBed = box(scene, revX, 0.4, 38.15, 1.15, 0.55, 1.15, steel);
+  MAP.revTruck = new THREE.Vector3(revX, 0, 39.15);
+  MAP.crates.push({ pos: MAP.revTruck.clone(), mesh: revTruck, sx: 1.4, sy: 1.15, sz: 1.3 });
+  MAP.crates.push({ pos: new THREE.Vector3(revX, 0, 38.15), mesh: revBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
+  // Southwest stamp mill — door gap east, dropping stamp cover, fines shove south
+  const stX = -44.3;
+  const stZ = -43.6;
+  const stMat = new THREE.MeshLambertMaterial({ color: 0x3c342c });
+  const stWall = (x, z, sx, sz) => {
+    const m = box(scene, x, 1.55, z, sx, 3.1, sz, stMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: 3.1, sz });
+  };
+  stWall(stX, -45.4, 3.6, 0.35);
+  stWall(stX, -41.8, 3.6, 0.35);
+  stWall(-46.2, stZ, 0.35, 3.6);
+  stWall(-42.4, -44.45, 0.35, 1.05);
+  stWall(-42.4, -42.75, 0.35, 1.05);
+  box(scene, -42.4, 2.9, stZ, 0.35, 0.38, 1.4, stMat);
+  box(scene, stX, 3.05, stZ, 3.4, 0.14, 3.5, rock);
+  const stFloor = box(scene, stX, 0.04, stZ, 3.2, 0.08, 3.2, concrete);
+  stFloor.receiveShadow = true;
+  const stampMesh = box(scene, stX, 1.55, stZ + 0.05, 0.42, 1.15, 0.42, steel);
+  const stampMesh2 = box(scene, stX - 0.7, 1.55, stZ + 0.05, 0.38, 1.05, 0.38, steel);
+  MAP.stampMesh = stampMesh;
+  MAP.stampMesh2 = stampMesh2;
+  MAP.stampHead = { x: stX, z: stZ + 0.05, y: 1.55, phase: 0 };
+  box(scene, stX - 0.35, 2.55, stZ + 0.05, 1.5, 0.12, 0.16, steel);
+  MAP.mortarMesh = box(scene, stX, 0.28, stZ + 0.05, 1.15, 0.36, 0.7, rust);
+  MAP.mortar = { x: stX, z: stZ + 0.05 };
+  MAP.crates.push({ pos: new THREE.Vector3(stX, 0, stZ + 0.05), mesh: MAP.mortarMesh, sx: 1.15, sy: 0.36, sz: 0.7, walkOn: true });
+  MAP.stampBlock = { pos: new THREE.Vector3(stX, 0, stZ + 0.05), mesh: stampMesh, sx: 0.5, sy: 1.2, sz: 0.5, dead: true };
+  MAP.crates.push(MAP.stampBlock);
+  MAP.stampDoor = new THREE.Vector3(-42.4, 0, stZ);
+  MAP.stamp = { on: false, x: stX + 0.15, z: stZ - 1.15 };
+  const stLamp = new THREE.PointLight(0xd8c080, 0.34, 7, 2);
+  stLamp.position.set(stX, 2.4, stZ);
+  scene.add(stLamp);
+  MAP.stampLamp = stLamp;
+  MAP.stampRing = box(scene, -42.4, 0.05, stZ, 0.3, 0.04, 1.35, amber);
+  MAP.stampLever = box(scene, MAP.stamp.x, 1.05, MAP.stamp.z, 0.12, 0.55, 0.12, amber);
+  const stDust = box(scene, -42.4, 1.2, stZ, 0.22, 2.15, 1.35, sand);
+  stDust.material = new THREE.MeshLambertMaterial({ color: 0xd8c8a0, transparent: true, opacity: 0.04 });
+  MAP.stampDust = stDust;
+  MAP.stampDustCrate = { pos: new THREE.Vector3(-42.4, 0, stZ), mesh: stDust, sx: 0.26, sy: 2.15, sz: 1.35, dead: true };
+  MAP.crates.push(MAP.stampDustCrate);
+  const finesMesh = box(scene, stX, 0.1, -46.6, 0.7, 0.1, 1.4, oil);
+  finesMesh.material = new THREE.MeshLambertMaterial({ color: 0xb09060, transparent: true, opacity: 0.16 });
+  MAP.stampFinesMesh = finesMesh;
+  MAP.stampFines = { x: stX, z: -46.6, hx: 0.4, hz: 0.75, vz: -2.15 };
+  const stMotesGeo = new THREE.BufferGeometry();
+  const stN = 10;
+  const stPos = new Float32Array(stN * 3);
+  const stPhase = [];
+  for (let i = 0; i < stN; i++) {
+    stPos[i * 3] = stX + (Math.random() - 0.5) * 2.2;
+    stPos[i * 3 + 1] = 0.3 + Math.random() * 1.4;
+    stPos[i * 3 + 2] = stZ + (Math.random() - 0.5) * 2.2;
+    stPhase.push(Math.random() * 6.2);
+  }
+  stMotesGeo.setAttribute("position", new THREE.BufferAttribute(stPos, 3));
+  MAP.stampMotes = new THREE.Points(stMotesGeo, new THREE.PointsMaterial({ color: 0xd8c090, size: 0.055 }));
+  scene.add(MAP.stampMotes);
+  MAP.stampMotePhase = stPhase;
+  const stBerm = box(scene, -41.45, 0.45, -44.45, 0.45, 0.85, 1.15, rock);
+  const stBerm2 = box(scene, -41.45, 0.45, -42.75, 0.45, 0.85, 1.15, rock);
+  MAP.crates.push({ pos: new THREE.Vector3(-41.45, 0, -44.45), mesh: stBerm, sx: 0.45, sy: 0.85, sz: 1.15 });
+  MAP.crates.push({ pos: new THREE.Vector3(-41.45, 0, -42.75), mesh: stBerm2, sx: 0.45, sy: 0.85, sz: 1.15 });
+  const stDrum = box(scene, -41.7, 0.55, -44.9, 0.5, 1.05, 0.5, rust);
+  const stDrum2 = box(scene, -41.7, 0.55, -42.3, 0.5, 1.05, 0.5, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-41.7, 0, -44.9), mesh: stDrum, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  MAP.crates.push({ pos: new THREE.Vector3(-41.7, 0, -42.3), mesh: stDrum2, sx: 0.5, sy: 1.05, sz: 0.5, drum: true });
+  const stTruck = box(scene, -40.2, 0.65, stZ, 1.3, 1.15, 1.4, rust);
+  const stBed = box(scene, -39.1, 0.4, stZ, 1.15, 0.55, 1.15, steel);
+  MAP.stampTruck = new THREE.Vector3(-40.2, 0, stZ);
+  MAP.crates.push({ pos: MAP.stampTruck.clone(), mesh: stTruck, sx: 1.3, sy: 1.15, sz: 1.4 });
+  MAP.crates.push({ pos: new THREE.Vector3(-39.1, 0, stZ), mesh: stBed, sx: 1.15, sy: 0.55, sz: 1.15 });
+
 export function updateBirds(dt, spookAt = null) {
   if (!MAP.birds) return;
   for (const b of MAP.birds) {
@@ -9482,6 +9651,62 @@ export function updateHangarFx(dt, doorOpenAmt = 0) {
       arr[i * 3 + 1] = 0.24 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.45;
     }
     MAP.retMotes.geometry.attributes.position.needsUpdate = true;
+  }
+
+
+  if (MAP.hearth) {
+    const prevX = MAP.hearth.x;
+    const spd = MAP.rev && MAP.rev.on ? 0.32 : 0.02;
+    MAP.hearth.t += dt * spd * MAP.hearth.dir;
+    if (MAP.hearth.t > 1) { MAP.hearth.t = 1; MAP.hearth.dir = -1; MAP.revBell = true; }
+    else if (MAP.hearth.t < 0) { MAP.hearth.t = 0; MAP.hearth.dir = 1; MAP.revBell = true; }
+    MAP.hearth.x = 44.3 + (MAP.hearth.t - 0.5) * (MAP.rev && MAP.rev.on ? 1.15 : 0.06);
+    MAP.hearth.dx = MAP.hearth.x - prevX;
+    MAP.hearth.dz = 0;
+    if (MAP.hearthMesh) MAP.hearthMesh.position.x = MAP.hearth.x;
+    if (MAP.hearthCrate) MAP.hearthCrate.pos.x = MAP.hearth.x;
+    if (MAP.hearthPlat) MAP.hearthPlat.x = MAP.hearth.x;
+    if (MAP.revLever) MAP.revLever.rotation.z = MAP.rev && MAP.rev.on ? -0.62 : 0.22;
+    if (MAP.revLamp) MAP.revLamp.intensity = MAP.rev && MAP.rev.on ? 1.5 : 0.14;
+    if (MAP.revHeat) MAP.revHeat.material.opacity = MAP.rev && MAP.rev.on ? 0.5 : 0.04;
+    if (MAP.revHeatCrate) MAP.revHeatCrate.dead = !(MAP.rev && MAP.rev.on);
+    if (MAP.slagMesh) MAP.slagMesh.material.opacity = MAP.rev && MAP.rev.on ? 0.5 : 0.12;
+  }
+  if (MAP.revMotes && MAP.revMotePhase) {
+    const arr = MAP.revMotes.geometry.attributes.position.array;
+    const ph = MAP.revMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.rev && MAP.rev.on ? 1.7 : 0.1);
+      arr[i * 3 + 1] = 0.24 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.4;
+    }
+    MAP.revMotes.geometry.attributes.position.needsUpdate = true;
+  }
+  if (MAP.stampHead) {
+    const on = MAP.stamp && MAP.stamp.on;
+    MAP.stampHead.phase += dt * (on ? 2.4 : 0.15);
+    const drop = on ? (Math.sin(MAP.stampHead.phase) * 0.5 + 0.5) : 0.15;
+    const y = 1.7 - drop * 1.15;
+    MAP.stampHead.y = y;
+    if (MAP.stampMesh) MAP.stampMesh.position.y = y;
+    if (MAP.stampMesh2) MAP.stampMesh2.position.y = 1.55 - (on ? (Math.sin(MAP.stampHead.phase + 1.6) * 0.5 + 0.5) : 0.15) * 1.05;
+    const down = on && drop > 0.82;
+    if (down && !MAP.stampHead.wasDown) MAP.stampBell = true;
+    MAP.stampHead.wasDown = down;
+    if (MAP.stampBlock) MAP.stampBlock.dead = !down;
+    if (MAP.stampLever) MAP.stampLever.rotation.z = on ? -0.7 : 0.2;
+    if (MAP.stampLamp) MAP.stampLamp.intensity = on ? 1.15 : 0.12;
+    if (MAP.stampDust) MAP.stampDust.material.opacity = on ? 0.46 : 0.04;
+    if (MAP.stampDustCrate) MAP.stampDustCrate.dead = !on;
+    if (MAP.stampFinesMesh) MAP.stampFinesMesh.material.opacity = on ? 0.48 : 0.12;
+  }
+  if (MAP.stampMotes && MAP.stampMotePhase) {
+    const arr = MAP.stampMotes.geometry.attributes.position.array;
+    const ph = MAP.stampMotePhase;
+    for (let i = 0; i < ph.length; i++) {
+      ph[i] += dt * (MAP.stamp && MAP.stamp.on ? 1.8 : 0.08);
+      arr[i * 3 + 1] = 0.2 + ((Math.sin(ph[i]) + 1) * 0.5) * 1.3;
+    }
+    MAP.stampMotes.geometry.attributes.position.needsUpdate = true;
   }
 
   if (MAP.face) {

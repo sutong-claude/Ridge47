@@ -820,4 +820,16 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Retort-door berms + cook-off drums
 - [x] Wrecked retort truck north of the house
 - [x] Clutch (F) rolls the drum; player and bots ride; flue shoves east; door steam blocks hitscan; retort heat scalds
+- [x] Northeast reverberatory (door gap + rideable hearth + collision + motes)
+- [x] Compass / minimap REV pip + indoor loc tag + slag pip
+- [x] Bot BREACH through reverberatory door when player camps REV, the hearth, or the slag
+- [x] Reverb-door berms + cook-off drums
+- [x] Wrecked reverberatory truck south of the house
+- [x] Clutch (F) fires the hearth; player and bots ride; slag launder shoves west; door heat blocks hitscan; hearth scalds
+- [x] Southwest stamp mill (door gap + dropping stamp + collision + motes)
+- [x] Compass / minimap STAMP pip + indoor loc tag + fines pip
+- [x] Bot BREACH through stamp door when player camps STAMP, the mortar, or the fines
+- [x] Stamp-door berms + cook-off drums
+- [x] Wrecked stamp truck east of the mill
+- [x] Clutch (F) runs the stamps; drop blocks hitscan and shoves the mortar; fines shove south; door dust blocks hitscan; mill dust scalds
 - [ ] Next: owner topics or more juice
