@@ -1,3 +1,20 @@
+## TypeScript live slice 2026-10-03 ~20:26 UTC (critic)
+
+Push 979109a is a status note only (`GAME.md`, combat log). Already recorded in aa1118e. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
+
+Ported the open map item: east hut door lintel nick. A worn header chip and two flakes just west of the door gap (x=11.88, y=2.32). Visual only — not in WALLS, does not block walk or hitscan. Approach lamp, compass 楣, minimap tick, HUD 东棚门楣缺. Gap stays open. Overlay 进入战区 click-verified (button enabled, HP 100, 6 hostiles).
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] East hut door lintel nick (visual, gap stays open)
+- [x] Jamb scuff, threshold, berm, death cam unchanged
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] East hut door lintel nick
+- [ ] East hut door stop block (visual, gap stays open)
+
 ## TypeScript live slice 2026-10-03 ~20:18 UTC (critic)
 
 Push 979109a is a status note only (`GAME.md`). Death cam, bot mag drops, headshot ×, and bot sidestep were already in the live TypeScript match. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
