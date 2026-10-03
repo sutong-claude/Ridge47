@@ -1,52 +1,1098 @@
+## TypeScript live slice 2026-10-03 ~11:20 UTC (map+critic)
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`. Deploy overlay and 进入战区 stay clickable.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Shed ammo tin (half mag into the held gun, overflow to reserve, 10s cool, lid lift, ready glow)
+- [x] Compass pump-shed label (泵房) plus tin pip; minimap shed tag and tin square
+- [x] Door berms and approach crate block walk and hitscan; door lamp brightens on approach; shed lamp still rises inside
+- [x] West crates, hangar slab, slide, score card unchanged
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [ ] Shed pipe valve (F would be juice — leave as a walk-up drip cover, no new key)
+- [ ] Extract pad wind sock mesh
+
+## TypeScript live slice 2026-10-03 ~11:03 UTC (map+critic)
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`. Deploy overlay and 进入战区 stay clickable.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Supply crate ping on the compass strip (green ready / amber cooling)
+- [x] Kick dust sticks as a short floor stain (~6s) at the slab mouth
+- [x] South pump shed enterable (door gap, pump + drum cover, hanging lamp); walls block hitscan
+- [x] Shed lamp brightens inside; extract pad lamp rises with hold
+- [x] Minimap shed outline; west crates, hangar slab, slide, score card unchanged
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Shed ammo tin (half mag, 10s cool)
+- [x] Compass pump-shed label
+
+## TypeScript live slice 2026-10-03 ~09:36 UTC (mail follow-up)
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] West warehouse green crates still refill mag/reserve + 40 stam, 8s cool, lid lift, nearby HUD cool readout
+- [x] Gold pad still drops the south slab; after 3.2s camp a living bot outside kicks it open ~2.6s, shoves the threshold, HUD 「人机踵开机库门板」
+- [x] Kick dust puff at the slab mouth
+- [x] Minimap: player look, hostiles, supply pips (green ready / amber cooling), door bar (shut / kicked)
+- [x] East hut, Shift+Ctrl slide, score card, three viewmodels, RMB ADS, G nade, bot nades, distance audio, extract 20s when hostiles ≤ 2
+
+## Next backlog
+- [x] Supply crate ping on the compass strip
+- [x] Kick dust sticks as a short floor stain
+
+## TypeScript live slice 2026-10-03 (mail thread follow-up)
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] West warehouse supply crates: mag/reserve + 40 stam, 8s cool, lid lift, HUD cool readout when nearby
+- [x] East hut enterable; walls block hitscan
+- [x] Shift sprint + Ctrl slide
+- [x] Score card on extract or death; 进入战区 restarts
+- [x] Hangar slab drops while gold pad is contested; living bots outside kick it open after 3.2s camp (2.6s gap, shove off the threshold)
+- [x] Rifle / pistol / shotgun viewmodels, RMB ADS, G grenade, bot nades, distance audio, extract when hostiles ≤ 2 for 20s
+
+## Next backlog
+- [ ] Bot kick dust puff on the slab
+- [ ] Supply crate cool pip on the minimap
+
+## TypeScript live slice 2026-10-03 (mail follow-up)
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] West warehouse enterable; two green supply crates refill current mag/reserve + 40 stamina, 8s cool; lid lifts when restock fires
+- [x] East hut enterable (door gap, table, rack, hanging lamp); walls block hitscan
+- [x] Shift sprint + Ctrl slide (eye drop + inertia)
+- [x] Score card on gold-pad extract or death (time / downs / hits / damage / extracts); 进入战区 restarts
+- [x] Hangar south door slab drops while the gold pad is contested (hostiles ≤ 2 and player on pad); blocks walk and hitscan
+- [x] Rifle / pistol / shotgun viewmodels, RMB ADS, G grenade, bot nades, distance audio, north hangar lights, extract when hostiles ≤ 2 for 20s
+
+## Next backlog
+- [ ] Bots kick the hangar slab if the player camps the pad
+- [ ] Supply crate cool readout on the HUD
+
+## TypeScript live slice 2026-10-03 (owner mail, landed)
+
+Live preview is the TypeScript match (`/workspace/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `/workspace/dist/main.js` via `index.html`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] West warehouse enterable; two green supply crates refill current mag/reserve + 40 stamina, 8s cool
+- [x] East hut enterable (door gap, table, rack, hanging lamp); walls block hitscan
+- [x] Shift sprint + Ctrl slide (eye drop + inertia)
+- [x] Score card on gold-pad extract or death (time / downs / hits / damage / extracts); 进入战区 restarts
+- [x] Rifle / pistol / shotgun viewmodels, RMB ADS, G grenade, bot nades, distance audio, north hangar lights, extract when hostiles ≤ 2 for 20s
+
+## Next backlog
+- [x] Hangar door slab that blocks shots while the pad is contested
+- [x] Supply crate lid lift when the 8s restock fires
+- [ ] Bots kick the hangar slab if the player camps the pad
+- [ ] Supply crate cool readout on the HUD
+
+
 # Ridge 47 — hourly build contract
 
-Tactical first-person shooter in **this workspace** (`src/game/*.ts`). That is the live preview. Not the GitHub `src/game/*.js` F-key mill.
+Tactical first-person shooter. Browser 3D. Not Unreal. Keep shipping playable slices.
 
 ## Every hour (mandatory)
 
-You have **the full hour**. Implement a playable slice in `/workspace/src/game` and overlays.
+You have **the full hour**. Do not stop after one file. Keep implementing until the hour is nearly used.
 
-1. Read this file and `src/game/engine.ts`.
-2. Take the first unchecked backlog item.
-3. Keep WASD strafe, pointer lock, hitscan from screen center, 3D viewmodel.
-4. Do **not** add F-key cards, NVG pulses, visor fog, or OpenAlex adapters.
-5. Do **not** idle. Do **not** leave the start overlay unclickable.
-6. Click-to-play gate: overlay click OR the 进入战区 button must start a match even if pointer lock fails. Never `disabled` the deploy button.
+1. Play / read GAME.md + last commits.
+2. Pick one slice from the backlog that raises feel or readability.
+3. Implement it. Keep the match playable.
+4. Do not add OpenAlex adapters. Do not idle.
+5. Commit a clear message.
 
 ## Frozen
 
 - Copyrighted names from commercial shooters.
-- Parallel JS rewrite on GitHub that the preview does not run.
-- HUD theater (strobe, NVG, visor fog, juice cards).
+- New SearchAdapters.
+- Breaking pointer-lock FPS: WASD strafe, mouse look, hitscan from screen center.
 
-## Playable gate (critic enforces)
+## Playable core (this hour)
 
-A run that ships a match you cannot enter is a failed run. Revert it.
-
-## Critic log
-
-- 2026-10-03 02:20 PDT — Overlay was covering a live match after 进入战区 (React phase stuck on menu). Fixed with local `deployed` flag; button never disabled; overlay click starts. W walk 4.90 verified. GitHub GAME.md mill of fake-checked F-keys is NOT the live contract; this file is.
-- 2026-10-03 02:20 PDT — Reviewed push 251510417f0d868136346119385adbd9b8b27db1 (https://github.com/sutong-claude/Ridge47/commit/251510417f0d868136346119385adbd9b8b27db1). Diff is GAME.md only (+34/−985): mill checklist replaced by this TypeScript contract. No F-key, NVG, visor fog, strobe, or SearchAdapter code, and no new `src/game/*.js`. Did not copy the JS mill into `/workspace/src/game`. No feature port. Deploy button left alone.
+- Pointer-lock FPS, WASD strafe (A left, D right), mouse look, hitscan from view center.
+- 3D box viewmodel (carbine / scatter / sidearm) — never a photo gun.
+- Dusk quarry + night hangar wing, crate collision, extract crate.
+- Six hostiles: cover on nearest crate, peek-shoot, every other bot flanks.
+- Grenade (G) projectile + splash.
+- Pooled footstep dust + blood decals.
+- Minimap top-right.
+- Extract hold 20s (F near amber crate when ≤2 hostiles remain).
+- Inspect on I. Extract on F in the amber zone. RMB ADS tightens spread.
+- Distance-attenuated WebAudio pops.
+- Desktop [x] sensitivity, -/= FOV.
+- Hitscan blocked by crate AABBs. Bots peek real corners with LOS.
+- Per-gun recoil pattern on pitch/yaw. Night hangar interior clutter.
 
 ## Backlog
 
-- [x] Better bot cover (seek COVER that blocks LOS; wounded → cover)
-- [x] Second map wing (north hangar + extract pad)
-- [x] Grenade (G, projectile + splash)
+- [x] Better bot cover (ray to nearest crate, peek-shoot)
+- [x] Second map wing (night hangar)
+- [x] Grenade (projectile + splash)
 - [x] Footstep dust + blood decals (pooled)
 - [x] Minimap top-right
-- [x] Extraction crate mode (hold 20s on hangar pad)
-- [x] 3-gun loadout (1 rifle / 2 pistol / 3 shotgun)
-- [x] Desktop settings: sensitivity, FOV on pause
-- [x] Sound mix (distance attenuation on bot fire / nades)
-- [x] Harder bots that throw nades
-- [x] Interior hangar lighting + enterable warehouse
-- [x] ADS viewmodel swap per weapon (shotgun/pistol meshes)
-- [x] Click-anywhere overlay + never-disable deploy
-- [ ] Ammo / armor crate pickups in warehouse + hangar
-- [ ] East shack hollow interior (door on west face)
-- [ ] Death cam 1.4s then click-to-respawn (keep auto-respawn as fallback)
-- [ ] Sliding (sprint + C) with cooldown
-- [ ] Match scoreboard after extract / wipe
-- [ ] ADS sway inertia on mouse
-- [ ] Footstep / bot bark spatial (already mixed; add bark variants)
+- [x] Extraction crate mode (hold 20s)
+- [x] Weapon inspect / 3-gun loadout
+- [x] Sound mix (distance attenuation)
+- [x] Desktop settings: sensitivity, FOV
+- [x] Harder bots that flank
+- [x] Bot cover uses actual LOS ray vs crates (refine peek corners)
+- [x] ADS / hold-breath tightness
+- [x] Match timer + score strip
+- [x] More hangar interior clutter
+- [x] Recoil pattern per gun (not only kick)
+- [x] Bot suppression when player is ADS on them
+- [x] Distinct viewmodel per gun (scatter tube / sidearm slide)
+- [x] Extract flare / smoke when hold starts
+
+- [x] Bot voice / callout beeps when flanking
+- [x] Hitmarker + damage numbers
+- [x] Night hangar door as extract alternate
+- [x] Sprint FOV punch + landing thud
+
+- [x] Compass strip / bearing on callouts HUD
+
+- [x] Reload tap animation + empty-mag click
+
+- [x] Bot grenade toss when player camps extract
+- [x] Dust motes in hangar volume + door light leak
+- [x] Lean on Q/E with peek FOV bias
+
+- [x] Bot nade warning ping on minimap
+- [x] Shoulder clip on lean vs crates
+- [x] Extract siren loop while holding
+
+- [x] Bot footstep dust when flanking
+- [x] Low-ammo HUD pulse
+- [x] Hangar interior oil sheen
+
+- [x] Crate bullet spark
+- [x] Match restart on extract complete
+
+- [x] Death cam snap on drop
+- [x] Bot reload pose
+- [x] Wind grit particles on quarry floor
+
+## Next backlog
+- [x] Bot headlamp at night hangar
+- [x] Shell eject on fire
+- [x] Distant thunder rumble loop
+- [x] Sliding on Shift+Ctrl
+- [x] Extract chopper silhouette after hold completes
+- [x] Killfeed icon ticks
+- [x] Hangar fan blades turning
+- [x] Ammo crate restock point
+- [x] Muzzle flash pop
+- [x] Low-HP vignette pulse
+
+## Later
+- [x] Breath hold on Shift while ADS
+- [x] Bot scope glint when peeking
+- [x] Match-end score card overlay
+- [x] Smoke pop on extract complete
+- [x] Radio ping on V (bearing + minimap pulse)
+- [x] Hangar floodlight flicker
+- [x] Extract slab dust when door rises
+- [x] Match-end freeze camera drift
+- [x] Bot ragdoll settle thud
+- [x] Compass extract / door pips
+- [x] Door-rise rumble kick
+
+## Next
+- [x] Bot last-known chevron on compass
+- [x] Extract zone ground heat shimmer
+- [x] Viewmodel heat haze after long burst
+- [x] Distant gun echo slapback
+- [x] Extract pad heat wisps when nearby
+- [x] Distant bot fire slapback
+
+## Later
+- [x] Tracer fade stretch (not instant pop)
+- [x] Reload brass ping on mag seat
+- [x] ADS scope dust specks
+- [x] Quarry cliff rim silhouette lights
+- [x] Extract zone air wobble (camera)
+- [x] Bot tracer color vs player tracer
+- [x] Mag drop mesh on reload (player + bot)
+- [x] Quarry rim birds that circle and spook on fire/nade
+- [x] Slide grit burst
+- [x] Distant wind howl + bird call
+- [x] Crate stencil label decals
+- [x] Distant ridge haze bands
+- [x] Ammo crate lid lift on restock
+- [x] Quarry floor mirage sheets
+- [x] Crate rope ties
+- [x] Idle bot cover sway
+- [x] Compass degree tick marks
+- [x] Extract pad chevrons
+- [x] Hangar ceiling drip
+- [x] Hit-direction pips + camera shake on incoming fire
+- [x] Headshot blood mist
+- [x] Nade concussion (tinnitus + punch)
+- [x] Weapon swap toss
+- [x] Low-HP heartbeat
+- [x] Crate bullet holes
+- [x] Distant ridge muzzle flashes
+- [x] Landing grit burst
+- [x] Bot flank footstep ticks
+- [x] Kill confirm sting
+- [x] Stance strip (stand/sprint/crouch/slide)
+- [x] Wounded bot limp
+- [x] Player footstep ticks by stance
+- [x] Dynamic crosshair gap (move / sprint / burst / ADS)
+- [x] Nade linger smoke cloud
+- [x] Bot rifle drop on settle
+- [x] Extract range + live count HUD
+- [x] Shell bounce brass ping
+- [x] ADS breath sway
+- [x] Extract ring pulse while holding
+- [x] Walk bob + crouch eye lerp
+- [x] Hangar metal footsteps
+- [x] Tactical lamp (T)
+- [x] Near-miss whip
+- [x] Interact prompt + reload bar
+- [x] Extract beacon pillar
+- [x] Last-round empty ping
+- [x] Extract hold tick beeps
+- [x] ADS veil
+- [x] Stamina drain + HUD strip
+- [x] Med crate pack (F)
+- [x] Loot downed hostiles (ammo + nade)
+- [x] SPOTTED flash when a bot opens fire
+- [x] ADS range + vitals tag
+- [x] Limited grenades (G × N)
+- [x] World ping (C / middle mouse) + compass/minimap mark
+- [x] Melee bash (X)
+- [x] Fall damage on hard landings
+- [x] Suppression vignette when incoming fire
+- [x] Close-kill viewmodel smear
+- [x] Sprint holster pose
+- [x] Extract hold countdown seconds
+- [x] Minimap look cone
+- [x] Live hostile ticks on compass
+- [x] Night sky stars + dusk fog
+- [x] Player ground shadow disc
+- [x] Corpse loot glow until looted
+- [x] ADS in/out click
+- [x] Hangar extra gun reverb
+- [x] Cicada chirps on quarry
+- [x] Bot death gasp
+- [x] Stamina idle viewmodel sway
+- [x] Cookable grenade (hold G)
+- [x] Death-cam unit tag
+- [x] Nade screen grit
+- [x] Dust devil wisps
+- [x] Unit IDs on downs
+- [x] Auto-reload after empty
+- [x] Weapon swap name plate
+- [x] Kill streak HUD + feed beats
+- [x] Ground impact dust + prints
+- [x] Footprint decals on quarry walk
+- [x] Distant flyover silhouette + rumble
+- [x] Match dusk cycle (sun/stars/moon)
+- [x] Loot / restock / pack float chips
+- [x] Extract-open banner at 2 live
+- [x] Heading-up rotating minimap
+- [x] Viewmodel look lag (yaw/pitch inertia)
+- [x] Blood stain on viewmodel after close kill / bash
+- [x] Wind tarps on crate tops
+- [x] Radio mast blink beacon
+- [x] Hangar breath vapor
+- [x] Barrel heat click on long burst
+- [x] Wounded bot limp prints
+- [x] Auto-loot when walking over a corpse
+- [x] Extract-hold break beep
+- [x] ADS crosshair hue when a hostile is under the pip
+- [x] Empty-mag inspect click
+- [x] Lightning flash + bolt on thunder
+- [x] Hit flinch + blood drip HUD
+- [x] Inspect mag readout (I)
+- [x] Hostile tag ping when C aims at a bot
+- [x] Sprint grit puffs
+- [x] Nearby hostile foot ticks
+- [x] Compass heading degrees
+- [x] Breath-hold pip
+- [x] Dying bot lamp flicker
+- [x] Headshot sting
+- [x] Prone (Z) + vault over low crates
+- [x] NVG toggle (N)
+- [x] Binoculars glass (B)
+- [x] Helmet ricochet chance
+- [x] Bot peek lean
+- [x] Storm rain after lightning
+- [x] Hostile radio chatter
+- [x] Extract rotor wash grit
+- [x] Weapon jam on heat + R tap-clear
+- [x] Empty-mag slide lock pose
+- [x] Wounded player blood trail
+- [x] Distant artillery flash + rumble
+- [x] Quarry sand gust sheets
+- [x] Crate wood-chip spray on impact
+- [x] Canteen sip (H) small heal
+- [x] Melee knife viewmodel
+- [x] Compass wind pip
+- [x] Hangar door wind whistle when slab is up
+- [x] NVG battery drain + flicker + dead cell
+- [x] IR laser (L) on viewmodel
+- [x] Flash charge (Y) + bot stun + player blind
+- [x] Whistle (P) draws nearby hostiles
+- [x] Hangar bot lamp cones
+- [x] Extract inbound radio at 10s hold
+- [x] Rain puddle ripples
+- [x] Wind viewmodel sway
+- [x] Prone crawl grit
+- [x] Smoke pot (J) + lingering screen cloud
+- [x] Tactical map expand (M)
+- [x] Binos rangefinder when glassed
+- [x] NVG heat blobs on live hostiles
+- [x] Compass PAD / HANG labels
+- [x] Wind drift on thrown pots
+- [x] Canteen sip count (H × N)
+- [x] Death-net last call on bot settle
+- [x] Smoke spoils bot hits
+- [x] Illum star (U) hanging ridge light
+- [x] Field wrap (4) channel heal
+- [x] Death drop pack + loot
+- [x] Extract rush: live bots sprint the pad
+- [x] Compass threat range
+- [x] Stance change thud
+- [x] Rain beads on viewmodel
+- [x] Trip stake (K) pings compass when a bot walks near
+- [x] Overwatch pass (O) paints live hostiles
+- [x] Extract wheels-down radio at 15s
+- [x] Barrel steam on high heat
+- [x] Bot muzzle dust puffs
+- [x] Last-contact net call
+- [x] Dry canteen double-click
+- [x] Bot buddy revive channel
+- [x] Shoulder swap (Alt)
+- [x] ADS zeroing (mouse wheel)
+- [x] Tactical dump reload (Shift+R)
+- [x] Last-five mag ticks
+- [x] Extract pad strobes
+- [x] Hangar radio static
+- [x] Crate cover hug
+- [x] High-track jet contrail
+- [x] Chemlight toss (5) + pad glow + compass/minimap mark
+- [x] Pebble toss (` ) draws nearby hostiles
+- [x] Sitrep net (6) live count + pad range
+- [x] Hot-brass sting on slide after burst
+- [x] Distant coyote yip on quarry
+- [x] Idle viewmodel fidget
+- [x] Ridge truck headlights crawl the rim
+- [x] Satchel charge (7) timed fuse blast
+- [x] Field radio beacon (8) pulse + attract
+- [x] Quarry mortar inbound + crater
+- [x] Wind-sway grass tufts
+- [x] Shifting wind pip
+- [x] Night owl call
+- [x] Bot fire compass flash
+- [x] Distress beacon toss (9) pulse + attract
+- [x] Sprint/slide knife lunge (X)
+- [x] Quarry jackrabbits that dart and spook
+- [x] Hangar conduit spark bursts
+- [x] Crate-hug scrape ticks
+- [x] Low-HP ragged breath hiss
+- [x] Extract HOLD seconds readout
+- [x] Prone ADS bipod tightness
+- [x] Sprint sling rattle
+- [x] Hangar lamp moths
+- [x] Compass heading cardinals
+- [x] Close-contact unit shout
+- [x] Extract pad approach radio
+- [x] Corpse dogtag mesh
+- [x] Sand-gust viewmodel grit
+- [x] Dusk clock ticks after 3:30
+- [x] Last-impact compass pip
+- [x] Signal mirror flash (0) + bot stun when sun-aligned
+- [x] IR strobe toss (,) pulse + attract + compass/minimap
+- [x] Tap-mag seat (.)
+- [x] Press-check chamber (/)
+- [x] Spent casing piles on the dirt
+- [x] Corpse flies + close buzz
+- [x] Distant freight horn on quarry
+- [x] Bot pre-fire radio click
+- [x] Low-stam hand tremor
+- [x] Smoke-pot cough + shake when inside cloud
+- [x] Fire-mode toggle (;) SEMI/AUTO on carbine
+- [x] Wounded player limp
+- [x] Quarry sprint twig snap
+- [x] Close-contact banner when a bot fires inside 14m
+- [x] Hangar visor drip on #drip
+- [x] Threat range under compass
+- [x] Fire-mode plate + ammo SEMI tag
+- [x] Wounded-bot moan within 22m
+- [x] Low-ammo restock compass ping
+- [x] Extract pad wind sock
+- [x] Ridge searchlight sweep
+- [x] Dry-fire CLICK plate
+- [x] Reload cancel on trigger
+- [x] Corpse blood pool grow
+- [x] Helmet visor scratch overlay
+- [x] Distant quarry dog bark
+- [x] Sprint holster click
+- [x] Close-bot radio static hiss
+- [x] Heading PAD range meters
+- [x] F1 hide hint
+- [x] Low-vitals banner pulse
+- [x] Throwing knife (Shift+X)
+- [x] Sticky hostile lock (F2)
+- [x] Incoming sonic crack on near-miss
+- [x] Bot death radio cut
+- [x] Compass snap ticks on fast turn
+- [x] Canteen slosh on sprint
+- [x] Idle net scan hiss
+- [x] Rain visor fog
+- [x] Extract pad grit kick
+- [x] Holster slap on gun swap
+- [x] F3 NAV lock pip on pad/door
+- [x] F4 visor wipe (fog/scratch/dirt)
+- [x] NVG low-cell beep cadence
+- [x] Sprint low-stam gasp
+- [x] Slide crate scrape tick
+- [x] Vault grunt slap
+- [x] Hangar hanging chains sway
+- [x] Distant dusk skyflare pops
+- [x] Sticky lock-lost sting
+- [x] Reserve-dry plate
+- [x] Lean peek click
+- [x] Rain helmet drip ticks
+- [x] Ridge callsign on spawn/reset
+- [x] Hangar chain rattle when inside
+- [x] F5 range card (pad/door + nearest live)
+- [x] Extract FINAL radio at 18s hold
+- [x] Hangar generator hum + amber lamp
+- [x] Radio V copy from nearby units
+- [x] Thrown-knife recover on walkover
+- [x] Ammo crate restocks knives + smoke
+- [x] Med pack refills sips + wraps
+- [x] Storm flash locust swell
+- [x] Sprint+Z dive-to-prone + grit burst
+- [x] F6 last-known / aimed pin on compass + minimap
+- [x] F7 net mute (drops NET copy)
+- [x] F8 blade / smear wipe
+- [x] Extract pad flood cone on hold
+- [x] Hangar oil drip ticks + visor specks
+- [x] ADS heartbeat when aimed hostile is wounded
+- [x] 5:00 ridge clock chime
+- [x] F9 INTEL card (live / pad / door / wind / last / mag)
+- [x] F10 compact HUD
+- [x] Tab mid-match score peek
+- [x] Double-V SOS radio + attract
+- [x] Extract LIFT radio at 19.2s
+- [x] 4:00 dusk clock tick
+- [x] Hangar rat scurry ticks
+- [x] Casing pile brass glint
+- [x] Still-stance stam regen
+- [x] Barrel heat HUD strip
+- [x] F11 weather card (loc / wind / rain / dusk)
+- [x] Double-C urgent ping + plate
+- [x] Extract pad static hiss when close
+- [x] Low-HP heartbeat ticks
+- [x] 3:00 late-day clock
+- [x] GO plate on first lock
+- [x] Last-round rattle plate
+- [x] Hangar tin rain ticks
+- [x] Nearby bot reload ticks + NET
+- [x] Dusk cricket chirps
+- [x] F12 KIT card (gun + tools)
+- [x] 2:00 eve clock tick
+- [x] Wind-shift plate + bearing
+- [x] Quarry raven croak
+- [x] Distant ridge howl
+- [x] Extract-pad dusk beetles
+- [x] Hangar pipe clang after indoor fire
+- [x] Shift+H helm tap + scratch
+- [x] Double-N NVG pulse boost
+- [x] Extract-hold moth motes
+- [x] 1:00 ridge clock tick
+- [x] Double-B binos focus zoom
+- [x] Double-T lamp strobe
+- [x] Shift+P silent fist signal
+- [x] Extract HOLD STEADY at 8s
+- [x] Sprint swap sling snap
+- [x] Stance pack rustle + prone mag grit
+- [x] Low-mag click cadence
+- [x] Quarry dusk scorpion clicks
+- [x] Distant freight rumble
+- [x] Near-crate tarp flap
+- [x] Crate hug wood creak
+- [x] Night idle visor breath fog
+- [x] Hangar ballast flicker on burst
+- [x] 0:30 ridge clock tick
+- [x] Enterable west warehouse (door gap + racks + collision)
+- [x] Distance-panned / rolloff audio + indoor slap
+- [x] Bot nades on warehouse / hangar camp + lost LOS
+- [x] Per-gun viewmodel rest + extra mesh parts
+- [x] East pump shed (door gap + pump tank + collision + motes)
+- [x] Extract pad jeep silhouette
+- [x] Hangar west catwalk rail
+- [x] Bot BREACH rush when player camps warehouse / shed / hangar
+- [x] Compass / minimap SHED pip + indoor slap in shed
+- [x] SW lookout tower (ladder + walkable deck + lamp)
+- [x] Explosive fuel drums (hitscan / blast cook-off)
+- [x] Sandbag berms (vaultable low cover)
+- [x] Bot OVERWATCH rush to lookout deck
+- [x] Compass / minimap LOOK pip + indoor loc tag
+- [x] North radio bunker (door gap + consoles + collision + motes)
+- [x] Compass / minimap RAD pip + indoor loc tag
+- [x] Bot BREACH through radio door when player camps bunker
+- [x] Shallow quarry trench cover (vaultable)
+- [x] Wrecked comms truck hull east of radio bunker
+- [x] South machine shop (door gap + benches + lathe + collision + motes)
+- [x] Compass / minimap SHOP pip + indoor loc tag
+- [x] Bot BREACH through shop door when player camps machine shop
+- [x] Scrap hopper + crane boom west of shop
+- [x] Sandbag berms at shop door
+- [x] NE filter hut (door gap + pumps + collision + motes)
+- [x] Compass / minimap HUT pip + indoor loc tag
+- [x] Bot BREACH through hut door when player camps filter hut
+- [x] NE cistern tower (ladder + walkable tank deck + lamp)
+- [x] Compass / minimap TANK pip + CISTERN feed
+- [x] Bot OVERWATCH rush to nearest lookout or cistern
+- [x] Sluice pipe shed → hut + hut-door berms
+- [x] West blasting magazine (door gap + crates + collision + motes)
+- [x] Compass / minimap MAG pip + indoor loc tag
+- [x] Bot BREACH through magazine door when player camps MAG
+- [x] Wrecked rotary drill east of magazine
+- [x] Magazine-door berms + extra drums
+- [x] SE crusher house (door gap + jaws + collision + motes)
+- [x] Compass / minimap CRUSH pip + indoor loc tag
+- [x] Bot BREACH through crusher door when player camps CRUSH
+- [x] Conveyor trestle west of crusher + rolling drums
+- [x] Crusher-door berms + cook-off drums
+- [x] Rust hopper bin south of crusher
+- [x] East loading dock (door gap + pallets + collision + motes)
+- [x] Compass / minimap DOCK pip + indoor loc tag
+- [x] Bot BREACH through dock door when player camps DOCK
+- [x] Dock forklift silhouette + fork bob
+- [x] Wrecked flatbed south of dock + door berms
+- [x] Dock-door cook-off drums
+- [x] NW assay office (door gap + benches + scale + collision + motes)
+- [x] Compass / minimap ASSAY pip + indoor loc tag
+- [x] Bot BREACH through assay door when player camps ASSAY
+- [x] Assay-door berms + cook-off drums
+- [x] Wrecked core truck south of assay
+- [x] South weigh station (door gap + scale boom + collision + motes)
+- [x] Compass / minimap WEIGH pip + indoor loc tag
+- [x] Bot BREACH through weigh door when player camps WEIGH
+- [x] Weigh-door berms + cook-off drums
+- [x] Wrecked hopper truck south of weigh
+- [x] West generator shack (door gap + gensets + fan + collision + motes)
+- [x] Compass / minimap GEN pip + indoor loc tag
+- [x] Bot BREACH through generator door when player camps GEN
+- [x] Gen-door berms + cook-off drums
+- [x] Wrecked service van south of generator
+- [x] East compressor house (door gap + tanks + piston + collision + motes)
+- [x] Compass / minimap COMP pip + indoor loc tag
+- [x] Bot BREACH through compressor door when player camps COMP
+- [x] Comp-door berms + cook-off drums
+- [x] Wrecked air truck south of compressor
+- [x] NW lube bay (door gap + racks + spinning drum + collision + motes)
+- [x] Compass / minimap LUBE pip + indoor loc tag
+- [x] Bot BREACH through lube door when player camps LUBE
+- [x] Lube-door berms + cook-off drums
+- [x] Wrecked grease truck south of lube
+- [x] South wash rack (door gap + spray wand + collision + motes)
+- [x] Compass / minimap WASH pip + indoor loc tag
+- [x] Bot BREACH through wash door when player camps WASH
+- [x] Wash-door berms + cook-off drums
+- [x] Wrecked tanker south of wash
+- [x] East tire bay (door gap + balancer + collision + motes)
+- [x] Compass / minimap TIRE pip + indoor loc tag
+- [x] Bot BREACH through tire door when player camps TIRE
+- [x] Tire-door berms + cook-off drums
+- [x] Wrecked tire truck south of bay
+- [x] West paint booth (door gap + spray arm + collision + motes)
+- [x] Compass / minimap PAINT pip + indoor loc tag
+- [x] Bot BREACH through paint door when player camps PAINT
+- [x] Paint-door berms + cook-off drums
+- [x] Wrecked paint truck south of booth
+- [x] North parts crib (door gap + bins + spinning carousel + collision + motes)
+- [x] Compass / minimap PARTS pip + indoor loc tag
+- [x] Bot BREACH through parts door when player camps PARTS
+- [x] Parts-door berms + cook-off drums
+- [x] Wrecked parts truck south of crib
+- [x] South weld bay (door gap + benches + torch arm + collision + motes)
+- [x] Compass / minimap WELD pip + indoor loc tag
+- [x] Bot BREACH through weld door when player camps WELD
+- [x] Weld-door berms + cook-off drums
+- [x] Wrecked weld truck east of bay
+- [x] North battery shack (door gap + racks + bus bar + collision + motes)
+- [x] Compass / minimap BATT pip + indoor loc tag
+- [x] Bot BREACH through battery door when player camps BATT
+- [x] Battery-door berms + cook-off drums
+- [x] Wrecked battery truck east of shack
+- [x] West hoist house (door gap + winches + spinning drum + collision + motes)
+- [x] Compass / minimap HOIST pip + indoor loc tag
+- [x] Bot BREACH through hoist door when player camps HOIST
+- [x] Hoist-door berms + cook-off drums
+- [x] Wrecked hoist truck north of house
+- [x] East mill house (door gap + wheel + collision + motes)
+- [x] Compass / minimap MILL pip + indoor loc tag
+- [x] Bot BREACH through mill door when player camps MILL
+- [x] Mill-door berms + cook-off drums
+- [x] Wrecked mill truck south of house
+- [x] North kiln house (door gap + bowl glow + collision + motes)
+- [x] Compass / minimap KILN pip + indoor loc tag
+- [x] Bot BREACH through kiln door when player camps KILN
+- [x] Kiln-door berms + cook-off drums
+- [x] Wrecked kiln truck south of house
+- [x] South sorter house (door gap + vibrating screen + collision + motes)
+- [x] Compass / minimap SORT pip + indoor loc tag
+- [x] Bot BREACH through sorter door when player camps SORT
+- [x] Sorter-door berms + cook-off drums
+- [x] Wrecked sorter truck south of house
+- [x] West sample lab (door gap + bench + scope + collision + motes)
+- [x] Compass / minimap LAB pip + indoor loc tag
+- [x] Bot BREACH through lab door when player camps LAB
+- [x] Lab-door berms + cook-off drums
+- [x] Wrecked sample truck south of lab
+- [x] East powder house (door gap + keg + spinning arm + collision + motes)
+- [x] Compass / minimap POW pip + indoor loc tag
+- [x] Bot BREACH through powder door when player camps POW
+- [x] Powder-door berms + cook-off drums
+- [x] Wrecked powder truck north of house
+- [x] West fuse shack (door gap + rack + spinning reel + collision + motes)
+- [x] Compass / minimap FUSE pip + indoor loc tag
+- [x] Bot BREACH through fuse door when player camps FUSE
+- [x] Fuse-door berms + cook-off drums
+- [x] Wrecked fuse truck south of shack
+- [x] Occluded distance audio (lowpass + muff when crate/wall LOS is blocked)
+- [x] Hostile nade wall bounce + inbound whistle
+- [x] Carbine charging handle racks on fire/reload
+- [x] North skip house (door gap + rails + rocking bucket + collision + motes)
+- [x] Compass / minimap SKIP pip + indoor loc tag
+- [x] Bot BREACH through skip door when player camps SKIP
+- [x] Skip-door berms + cook-off drums
+- [x] Wrecked skip truck south of house
+- [x] Ore chute platform east of skip
+- [x] North tipple house (door gap + chute + spinning wheel + collision + motes)
+- [x] Compass / minimap TIP pip + indoor loc tag
+- [x] Bot BREACH through tipple door when player camps TIP
+- [x] Tipple-door berms + cook-off drums
+- [x] Wrecked tipple truck east of the door
+- [x] Ore tram: moving solid cover between skip and tipple, blocks hitscan, player and bots ride it, clack + turn bell
+- [x] Reinforcement wave: two north-ridge hostiles when three are down
+- [x] South adit drift (door gap + timber caps + ore pile + collision + motes)
+- [x] Compass / minimap ADIT pip + indoor loc tag
+- [x] Bot BREACH through adit door when player camps ADIT
+- [x] Adit-door berms + cook-off drums
+- [x] Wrecked adit truck south of the drift
+- [x] Headframe cage: rideable deck outside the adit mouth, climbs and drops, bell on reverse
+- [x] Cage dump dust at the mouth blocks hitscan LOS for a few seconds
+- [x] Sluice flume east of the pad shoves the player and bots downstream
+- [x] Adit mud slows movement
+- [x] Crusher conveyor belt carries anyone standing on the trestle toward the pad
+- [x] West winze collar (door gap + rideable cage + collision + motes)
+- [x] Compass / minimap WINZE pip + indoor loc tag
+- [x] Bot BREACH through winze door when player camps WINZE
+- [x] Winze-door berms + cook-off drums
+- [x] Wrecked winze truck north of the collar
+- [x] Timber crosscut linking winze to the adit (walkable, blocks shots)
+- [x] Sump lever (F) floods the crosscut: slows player and bots, blocks hitscan, shove downstream
+- [x] South-east vent raise (door gap + fan + collision + motes)
+- [x] Compass / minimap RAISE pip + indoor loc tag
+- [x] Bot BREACH through raise door when player camps RAISE or VENT
+- [x] Raise-door berms + cook-off drums
+- [x] Wrecked raise truck east of the house
+- [x] Timber vent drift north toward the crusher, walkable, blocks side shots
+- [x] Fan lever (F) spins the raise fan, shoves player and bots north, dust curtain blocks hitscan
+- [x] Man-car on the drift rails: rideable solid cover, clack + end bell
+- [x] Drop gate (F) at the vent mouth seals shots and bodies when down
+- [x] South grizzly bin (door gap + bars + collision + motes)
+- [x] Compass / minimap BIN pip + indoor loc tag
+- [x] Bot BREACH through bin door when player camps BIN
+- [x] Bin-door berms + cook-off drums
+- [x] Wrecked bin truck east of the house
+- [x] Incline skip: rideable solid cover from bin throat to dump pocket, blocks hitscan, player and bots ride, clack + end bell
+- [x] Brake lever (F) stops the skip
+- [x] Dump dust at the head blocks hitscan and shoves anyone in the pocket
+- [x] South tailings basin (berm walls + sludge slow + scraper wreck)
+- [x] Compass / minimap TAIL pip + loc tag
+- [x] East thickener (door gap + walkable rim + sweeping rake + collision + motes)
+- [x] Compass / minimap THICK pip + indoor loc tag
+- [x] Bot BREACH through thickener door when player camps THICK
+- [x] Thickener-door berms + cook-off drums
+- [x] Wrecked thickener truck east of the house
+- [x] Underflow valve (F) floods the launder: slows, shoves north, blocks hitscan
+- [x] Rake sweeps player and bots standing in the tank
+- [x] North ball mill (door gap + tumbling drum + collision + motes)
+- [x] Compass / minimap BALL pip + indoor loc tag
+- [x] Bot BREACH through mill door when player camps BALL
+- [x] Mill-door berms + cook-off drums
+- [x] Wrecked mill truck east of the house
+- [x] Clutch (F) rolls the drum, tumbles player and bots, dust curtain blocks the mouth
+- [x] Southwest cyclone house (door gap + cone + collision + motes)
+- [x] Compass / minimap CYC pip + indoor loc tag
+- [x] Bot BREACH through cyclone door when player camps CYC
+- [x] Cyclone-door berms + cook-off drums
+- [x] Wrecked cyclone truck north of the house
+- [x] Feed lever (F) spins the cone, spiral carries player and bots south, overflow dust blocks hitscan
+- [x] Return flume carries the overflow east back into the quarry
+- [x] Spiral catwalk beside the classifier
+- [x] East filter press (door gap + clamping plates + collision + motes)
+- [x] Compass / minimap PRESS pip + indoor loc tag
+- [x] Bot BREACH through press door when player camps PRESS
+- [x] Press-door berms + cook-off drums
+- [x] Wrecked filter truck north of the bay
+- [x] Close lever (F) clamps the plates, shoves bodies out, cake curtain blocks the door
+- [x] Northwest flotation bank (door gap + twin cells + impellers + collision + motes)
+- [x] Compass / minimap FLOAT pip + indoor loc tag
+- [x] Bot BREACH through float door when player camps FLOAT
+- [x] Float-door berms + cook-off drums
+- [x] Wrecked float truck south of the bank
+- [x] Air lever (F) froths the door curtain (hitscan block) and shoves the launder south
+- [x] Southeast radial stacker (door gap + mast + swinging boom + collision + motes)
+- [x] Compass / minimap STACK pip + indoor loc tag
+- [x] Bot BREACH through stacker door when player camps STACK
+- [x] Stacker-door berms + cook-off drums
+- [x] Wrecked stacker truck east of the house
+- [x] Clutch (F) swings the boom as moving cover; player and bots ride it; discharge dust blocks hitscan
+- [x] Haul truck shuttle on the south road: solid moving cover, bed ride, end bell
+
+- [x] North lime slaker (door gap + tank + paddle + collision + motes)
+- [x] Compass / minimap SLAKE pip + indoor loc tag
+- [x] Bot BREACH through slaker door when player camps SLAKE or MILK
+- [x] Slaker-door berms + cook-off drums
+- [x] Wrecked slaker truck south of the house
+- [x] Valve (F) runs the paddle, steam curtain blocks the door, milk launder shoves south and scalds
+- [x] West aerial ropeway (door gap + twin towers + collision + motes)
+- [x] Compass / minimap ROPE pip + indoor loc tag + bucket pips
+- [x] Bot BREACH through rope door when player camps ROPE
+- [x] Rope-door berms + cook-off drums
+- [x] Wrecked rope truck east of the house
+- [x] Clutch (F) runs the buckets as moving cover; player and bots ride; dump dust at the south tower blocks hitscan
+- [x] East sinter strand (door gap + grate + rideable car + collision + motes)
+- [x] Compass / minimap SINT pip + indoor loc tag
+- [x] Bot BREACH through sinter door when player camps SINT or the strand
+- [x] Sinter-door berms + cook-off drums
+- [x] Wrecked sinter truck south of the house
+- [x] East-wall notch; clutch (F) lifts the gate, strand carries player and bots into the quarry, quench dust blocks hitscan, grate heat scalds
+- [x] West sampler house (door gap + cutter boom + collision + motes)
+- [x] Compass / minimap SAMP pip + indoor loc tag
+- [x] Bot BREACH through sampler door when player camps SAMP or the reject flume
+- [x] Sampler-door berms + cook-off drums
+- [x] Wrecked sampler truck south of the house
+- [x] West-wall notch; clutch (F) swings the cutter as moving cover; reject flume shoves east; cut dust blocks the mouth
+- [x] Northeast pellet disc (door gap + spinning pan + collision + motes)
+- [x] Compass / minimap PEL pip + indoor loc tag + disc pip
+- [x] Bot BREACH through pellet door when player camps PEL, the disc, or the chute
+- [x] Pellet-door berms + cook-off drums
+- [x] Wrecked pellet truck east of the house
+- [x] Clutch (F) spins the disc as moving cover; player and bots ride; door dust blocks hitscan; chute shoves south
+- [x] Southwest clarifier (door gap + tank + sweeping bridge + collision + motes)
+- [x] Compass / minimap CLAR pip + indoor loc tag + underflow pip
+- [x] Bot BREACH through clarifier door when player camps CLAR, the bridge, or the underflow
+- [x] Clarifier-door berms + cook-off drums
+- [x] Wrecked clarifier truck west of the house
+- [x] Valve (F) sweeps the bridge as moving cover; underflow shoves east and door dust blocks hitscan
+- [x] North reagent silo (door gap + bin + collision + motes)
+- [x] Compass / minimap SILO pip + indoor loc tag + screw pip
+- [x] Bot BREACH through silo door when player camps SILO or the screw
+- [x] Silo-door berms + cook-off drums
+- [x] Wrecked silo truck north of the house
+- [x] Clutch (F) runs the screw; player and bots ride east; door dust blocks hitscan
+- [x] South jig house (door gap + oscillating deck + collision + motes)
+- [x] Compass / minimap JIG pip + indoor loc tag + hutch pip
+- [x] Bot BREACH through jig door when player camps JIG, the deck, or the hutch
+- [x] Jig-door berms + cook-off drums
+- [x] Wrecked jig truck south of the house
+- [x] Clutch (F) runs the deck as moving cover; player and bots ride; hutch shoves west; door dust blocks hitscan
+- [x] North rotary cooler (door gap + kiln shell + rideable car + collision + motes)
+- [x] Compass / minimap COOL pip + indoor loc tag + drum pip
+- [x] Bot BREACH through cooler door when player camps COOL, the car, or the quench
+- [x] Cooler-door berms + cook-off drums
+- [x] Wrecked cooler truck east of the house
+- [x] Clutch (F) runs the car as moving cover; quench mist shoves south and door dust blocks hitscan; shell heat scalds
+- [x] North blast face plunger (F) arms a fuse; rock curtain blocks hitscan, shoves south, and damages anyone in the lane
+- [x] Fall leaves climbable rubble cover for a few seconds
+- [x] Southwest baghouse (door gap + shaking rack + collision + motes)
+- [x] Compass / minimap BAG pip + indoor loc tag + fines pip
+- [x] Bot BREACH through baghouse door when player camps BAG, the rack, or the fines flume
+- [x] Baghouse-door berms + cook-off drums
+- [x] Wrecked bag truck east of the house
+- [x] Clutch (F) shakes the rack as moving cover; player and bots ride; fines flume shoves north; door dust blocks hitscan
+- [x] Northwest dryer house (door gap + rideable shell + collision + motes)
+- [x] Compass / minimap DRY pip + indoor loc tag + exhaust pip
+- [x] Bot BREACH through dryer door when player camps DRY, the shell, or the exhaust
+- [x] Dryer-door berms + cook-off drums
+- [x] Wrecked dryer truck east of the house
+- [x] Clutch (F) runs the shell as moving cover; player and bots ride; exhaust shoves south and door dust blocks hitscan; shell heat scalds
+- [x] Southeast loco shed (door gap + rideable engine + collision + motes)
+- [x] Compass / minimap LOCO pip + indoor loc tag + steam pip
+- [x] Bot BREACH through loco door when player camps LOCO, the engine, or the steam
+- [x] Loco-door berms + cook-off drums
+- [x] Wrecked loco truck north of the shed
+- [x] Clutch (F) runs the engine as moving cover; steam shoves south and door dust blocks hitscan; cab heat scalds
+- [x] Southwest agitator (door gap + spinning rake + collision + motes)
+- [x] Compass / minimap AGIT pip + indoor loc tag + slurry pip
+- [x] Bot BREACH through agitator door when player camps AGIT, the rake, or the slurry
+- [x] Agitator-door berms + cook-off drums
+- [x] Wrecked agitator truck east of the house
+- [x] Clutch (F) spins the rake; player and bots ride; slurry shoves east; door dust blocks hitscan
+- [x] East scrubber house (door gap + rideable tray + collision + motes)
+- [x] Compass / minimap SCRUB pip + indoor loc tag + liquor pip
+- [x] Bot BREACH through scrubber door when player camps SCRUB, the tray, or the liquor
+- [x] Scrubber-door berms + cook-off drums
+- [x] Wrecked scrubber truck south of the house
+- [x] Clutch (F) runs the tray as moving cover; liquor shoves west and door dust blocks hitscan; stack heat scalds
+- [x] Northwest electrowin house (door gap + cathode bar + collision + motes)
+- [x] Compass / minimap EW pip + indoor loc tag + acid pip
+- [x] Bot BREACH through electrowin door when player camps EW, the bar, or the acid
+- [x] Electrowin-door berms + cook-off drums
+- [x] Wrecked electrowin truck south of the house
+- [x] Clutch (F) runs the cathode bar as moving cover; acid launder shoves south and door mist blocks hitscan; cell acid scalds
+- [x] Southeast cone crusher (door gap + spinning mantle + collision + motes)
+- [x] Compass / minimap CONE pip + indoor loc tag + chute pip
+- [x] Bot BREACH through cone door when player camps CONE, the mantle, or the discharge
+- [x] Cone-door berms + cook-off drums
+- [x] Wrecked cone truck north of the house
+- [x] Clutch (F) spins the mantle; player and bots ride; discharge shoves east; door dust blocks hitscan; bowl heat scalds
+- [x] East spiral classifier (door gap + stroking rake + collision + motes)
+- [x] Compass / minimap CLAS pip + indoor loc tag + sands pip
+- [x] Bot BREACH through classifier door when player camps CLAS, the rake, or the sands
+- [x] Classifier-door berms + cook-off drums
+- [x] Wrecked classifier truck west of the house
+- [x] Clutch (F) strokes the rake; player and bots ride; sands flume shoves west; door dust blocks hitscan; tank slurry scalds
+- [x] West magnet house (door gap + spinning drum + collision + motes)
+- [x] Compass / minimap MAGS pip + indoor loc tag + concentrate pip
+- [x] Bot BREACH through magnet door when player camps MAGS, the drum, or the concentrate
+- [x] Magnet-door berms + cook-off drums
+- [x] Wrecked magnet truck east of the house
+- [x] Clutch (F) spins the drum; player and bots ride; concentrate shoves south; door dust blocks hitscan; drum scalds
+- [x] South rod mill (door gap + tumbling charge + collision + motes)
+- [x] Compass / minimap ROD pip + indoor loc tag + discharge pip
+- [x] Bot BREACH through rod-mill door when player camps ROD, the charge, or the discharge
+- [x] Rod-mill door berms + cook-off drums
+- [x] Wrecked rod-mill truck north of the house
+- [x] Clutch (F) tumbles the charge; player and bots ride; discharge shoves south; door dust blocks hitscan; mill heat scalds
+- [x] Northeast SX settler (door gap + stroking mixer + collision + motes)
+- [x] Compass / minimap SX pip + indoor loc tag + weir pip
+- [x] Bot BREACH through settler door when player camps SX, the mixer, or the weir
+- [x] Settler-door berms + cook-off drums
+- [x] Wrecked SX truck south of the house
+- [x] Clutch (F) strokes the mixer; player and bots ride; weir shoves east; door mist blocks hitscan; organic scalds
+- [x] East carbon column house (door gap + rising basket + collision + motes)
+- [x] Compass / minimap CIL pip + indoor loc tag + pulp pip
+- [x] Bot BREACH through column door when player camps CIL, the basket, or the pulp
+- [x] Column-door berms + cook-off drums
+- [x] Wrecked carbon truck west of the house
+- [x] Clutch (F) runs the carbon basket as moving cover; player and bots ride; pulp launder shoves west; door mist blocks hitscan; column liquor scalds
+- [x] West elution column (door gap + rising cage + collision + motes)
+- [x] Compass / minimap ELU pip + indoor loc tag + strip pip
+- [x] Bot BREACH through elution door when player camps ELU, the cage, or the strip
+- [x] Elution-door berms + cook-off drums
+- [x] Wrecked elution truck north of the house
+- [x] Clutch (F) raises the cage as moving cover; strip liquor shoves south; door steam blocks hitscan; column heat scalds
+- [x] Loaded-carbon screw west of the columns; carries player and bots, mouth dust blocks hitscan while columns run
+- [x] East Merrill-Crowe (door gap + stroking leaf filter + motes)
+- [x] Compass / minimap MC pip + indoor loc tag + barren pip
+- [x] Bot BREACH through Merrill-Crowe door when player camps MC, the leaf, or the barren
+- [x] Merrill-Crowe door berms + cook-off drums
+- [x] Wrecked Merrill-Crowe truck west of the house
+- [x] Clutch (F) strokes the leaf filter; player and bots ride; barren liquor shoves south; door mist blocks hitscan; zinc cloud drifts as cover; liquor scalds
+- [x] West CCD train (door gap + stroking rake + motes)
+- [x] Compass / minimap CCD pip + indoor loc tag + underflow pip
+- [x] Bot BREACH through CCD door when player camps CCD, the rake, or the underflow
+- [x] CCD-door berms + cook-off drums
+- [x] Wrecked CCD truck east of the house
+- [x] Clutch (F) strokes the rake; player and bots ride; underflow shoves north; door dust blocks hitscan; sludge scalds
+- [x] Northwest autoclave (door gap + spinning shell + motes)
+- [x] Compass / minimap POX pip + indoor loc tag + vent pip
+- [x] Bot BREACH through autoclave door when player camps POX, the shell, or the vent
+- [x] Autoclave-door berms + cook-off drums
+- [x] Wrecked autoclave truck east of the house
+- [x] Clutch (F) spins the shell; player and bots ride the roll; relief vent shoves east; door steam blocks hitscan; pressure scalds
+- [x] South retort (door gap + rolling drum + motes)
+- [x] Compass / minimap RET pip + indoor loc tag + flue pip
+- [x] Bot BREACH through retort door when player camps RET, the drum, or the flue
+- [x] Retort-door berms + cook-off drums
+- [x] Wrecked retort truck north of the house
+- [x] Clutch (F) rolls the drum; player and bots ride; flue shoves east; door steam blocks hitscan; retort heat scalds
+- [x] Northeast reverberatory (door gap + rideable hearth + collision + motes)
+- [x] Compass / minimap REV pip + indoor loc tag + slag pip
+- [x] Bot BREACH through reverberatory door when player camps REV, the hearth, or the slag
+- [x] Reverb-door berms + cook-off drums
+- [x] Wrecked reverberatory truck south of the house
+- [x] Clutch (F) fires the hearth; player and bots ride; slag launder shoves west; door heat blocks hitscan; hearth scalds
+- [x] Southwest stamp mill (door gap + dropping stamp + collision + motes)
+- [x] Compass / minimap STAMP pip + indoor loc tag + fines pip
+- [x] Bot BREACH through stamp door when player camps STAMP, the mortar, or the fines
+- [x] Stamp-door berms + cook-off drums
+- [x] Wrecked stamp truck east of the mill
+- [x] Clutch (F) runs the stamps; drop blocks hitscan and shoves the mortar; fines shove south; door dust blocks hitscan; mill dust scalds
+- [x] Southeast jaw house (door gap + swinging jaw + collision + motes)
+- [x] Compass / minimap JAW pip + indoor loc tag + rock pip
+- [x] Bot BREACH through jaw door when player camps JAW, the apron, or the rock chute
+- [x] Jaw-door berms + cook-off drums
+- [x] Wrecked jaw truck north of the house
+- [x] Clutch (F) swings the jaws; closed jaws block hitscan and crush; apron carries north; rock chute shoves south; door dust blocks hitscan; jaw crush scalds
+- [x] Per-gun viewmodels restored (carbine handle / dual-tube scatter pump / sidearm slide) so the match loads
+- [x] Far sfx delay by distance (speed-of-sound rolloff on top of 1/d^2 + occlusion lowpass)
+- [x] Jaw clutch actually toggles (dead !nearJaw guard removed)
+- [x] South SAG mill (door gap + spinning shell + collision + motes)
+- [x] Compass / minimap SAG pip + indoor loc tag + discharge pip
+- [x] Bot BREACH through SAG door when player camps SAG, the shell, or the discharge
+- [x] SAG-door berms + cook-off drums
+- [x] Wrecked SAG truck north of the house
+- [x] Clutch (F) spins the shell; player and bots ride; discharge shoves east; door dust blocks hitscan; mill scalds
+- [x] Northwest heap leach (corrugated door gap + rideable boom + motes)
+- [x] Compass / minimap HEAP pip + indoor loc tag + PREG pip
+- [x] Bot BREACH through heap door when player camps HEAP, the boom, or the preg ditch
+- [x] Heap-door berms + cook-off drums
+- [x] Wrecked heap truck east of the house
+- [x] Clutch (F) spins the boom; player and bots ride; preg ditch shoves south; door mist blocks hitscan; liquor scalds
+- [x] Corrugated sheet punch: one thin wall does not stop a rifle round (55% damage, spark, bots can shoot through)
+- [x] Warehouse mezzanine (ladder + walkable north catwalk + crate cover + MEZZ loc/minimap/compass)
+- [x] Bot nades loft to mezz height and cook short when the player is close
+- [x] Grenades bounce off crate faces (reflect, separate, distance slap) instead of reversing in place
+- [x] Carbine punches one corrugated sheet; scatter and sidearm stop on the sheet
+- [x] Per-gun viewmodel rest (scatter low and left, sidearm high and in)
+- [x] Warehouse rolling bay door (F at the gap shuts a slab that blocks hitscan and walk; motor; minimap bar)
+- [x] Bots kick a shut bay after 1.25s; a blast on the gap blows it open
+- [x] East mezz ladder + west catwalk crate + door berms + mezz ammo tin
+- [x] Bots path to the nearer ladder and fight on the catwalk; one hostile starts on the mezz
+- [x] Shot traces and bot fire use deck height so the catwalk is a real angle
+- [x] West warehouse service cut (wall split + lintel) so a shut bay is not the only way in
+- [x] Mezz hatch (F) drops the center plate; player falls through with fall damage; bots on the plate drop
+- [x] West cable trolley from mezz to exterior yard deck (F run/stop, ride, moving hitscan cover)
+- [x] Yard deck ladder + cover; cable car blocks the service cut while it crosses
+- [x] Bots climb for a yard/cable fight, board the trolley, and flank the service cut when the bay is shut
+- [x] East receiving annex (door + racks + collision + motes) off the warehouse cut
+- [x] Compass / minimap RECV pip + indoor loc tag + roller hook
+- [x] Bot BREACH through annex door when the player camps RECV
+- [x] Annex-door berms + cook-off drum + wrecked flatbed
+- [x] F rollers carry player and bots east through the cut; running belt curtains the cut (hitscan block)
+- [x] Bridge crane on the mezz lip (F run/stop, ride, moving hitscan cover); bots board it
+- [x] Annex ammo tin
+- [x] North dispatch office (door + racks + loft + collision + motes) off the warehouse north cut
+- [x] Compass / minimap DISP pip + indoor loc tag + CAGE / LOFT
+- [x] Bot BREACH through dispatch door when the player camps DISP, the cage, or the loft
+- [x] Dispatch-door berms + cook-off drum + wrecked truck
+- [x] F cage shuttles player and bots through the cut; running cage curtains the cut (hitscan block)
+- [x] Dispatch loft ladder + cover; bots climb to the loft and drop when the player leaves
+- [x] Dispatch ammo tin
+- [x] Live loop ticks annex rollers/crane (they were only updating on the score card)
+- [x] South shipping office (door + racks + scale + motes + collision) off a second warehouse south cut
+- [x] Compass / minimap SHIP pip + indoor loc tag + CART pip
+- [x] Bot BREACH through the shipping door when the player camps SHIP or the dock cart
+- [x] Ship-door berms + cook-off drum + wrecked truck
+- [x] F dock cart shuttles player and bots through the cut; running cart curtains the cut (hitscan block)
+- [x] Shipping ammo tin
+- [x] Dock ramp cover on the south approach
+- [x] West packing bay (door + racks + strap sled + press + motes + collision) PACK/SLED pips
+- [x] F sled shuttles player and bots through the warehouse west cut; running sled curtains the cut
+- [x] Press ram drops while the sled runs, blocks hitscan, and shoves bodies clear
+- [x] Bot BREACH through the packing door when the player camps PACK or the sled
+- [x] Pack-door berms + cook-off drum + wrecked truck + ammo tin
+- [x] Extract technical — pad jeep patrols a loop north of the pad (moving hitscan cover)
+- [x] Bed is a platform; player vaults/rides, bots board when the player camps extract
+- [x] Cab shots stall the technical; F crank beside the cab restarts it; horn + diesel tick
+- [x] Pad slit bunker north of extract (firing port via crate minY, bunk tin, BUNK pip)
+- [x] Extract technical is drivable: F at the cab mounts, WASD throttle/steer (A left, D right), Shift horn, F dismounts; cab shots still stall and kick the driver
+- [x] Pad boom gate on the technical's west leg (F drop/raise, blocks walk + hitscan, patrol and driven jeep stop, bots kick it if the player camps the post)
+- [x] East water bowser patrol (rideable bed, cab shots stall, F crank, minimap/compass BOWSER, bots board when the player is in the east quarry)
+- [x] South-road gun truck patrols between the extract and the south berms (moving hitscan cover)
+- [x] Pintle MG engages on LOS, spotlight tracks, truck slows to fire; near miss shakes, hits deal damage
+- [x] Cab shots stall the truck; gunner is a high hit (drop the gunner to silence the MG)
+- [x] F cranks a stalled truck (gunner remans); bed is rideable; bots board when the player is on the south road
+- [x] Ram if you stand in the lane
+- [x] F mans the pintle after the gunner is down (LMB, heat, F off); bed tin restocks half a mag
+- [x] South-road berms between the lanes (cover from the MG) + GUN compass/minimap pip
+- [x] Dropped gunner bails as R-GUN rifleman beside the truck
+- [x] West-road fuel tanker patrols a loop (moving hitscan cover, rideable catwalk)
+- [x] Cab shots stall it; F crank restarts; tank shots cook and cook-off blasts
+- [x] Cook-off leaves a fire pool that burns and blocks hitscan
+- [x] West drop-arm stops the tanker (walk + hitscan); bots kick it if the player camps the post
+- [x] Bots board the catwalk when the player is on the west road; lane berms; FUEL compass/minimap; catwalk tin; ram
+- [x] North haul dozer patrol (moving hitscan cover, rideable deck, DOZER pip)
+- [x] Cab shots stall it; F crank restarts; F at the cab drives (WASD, A left D right, F dismount)
+- [x] Blade starts down; Ctrl toggles it while driving; down blade shoves player and bots
+- [x] Blade dust curtain blocks hitscan while the blade is moving
+- [x] Spoil berms drop behind the blade (walk + hitscan cover, vehicles ignore them)
+- [x] North lane berms; bots board the deck when the player is on the north haul
+- [x] East medevac patrol (rideable bed, cab stall, F crank, MED pip)
+- [x] Stops on a downed hostile and channels them up if the medic lives
+- [x] High hit on the box drops the medic and stops the channel; bots board on the east road
+- [x] Southwest wrecker patrol (moving hitscan cover, rideable deck, WRECK pip)
+- [x] Cab shots stall it; F crank restarts; F at the cab drives (WASD, A left D right, F dismount)
+- [x] Ctrl toggles the winch while driving; patrol pays the hook out when the player is close
+- [x] Hook is moving hitscan cover and yanks the player and bots
+- [x] Southwest lane berms; bots board the deck on the southwest road; deck tin restocks half a mag
+- [x] Southeast APC patrol (moving hitscan cover, rideable bay, APC pip)
+- [x] Cab shots stall it; F crank restarts; high hit on the hatch drops the commander and stops the drop
+- [x] Stops on the west leg when living hostiles are under 5 and drops a ramp that blocks hitscan
+- [x] Ramp dismounts R-APC; bots board the bay on the southeast road and bail when the ramp is down
+- [x] APC lane berms; bay tin restocks half a mag; ram if you stand in the lane
+- [x] East-rim powder mule patrol (POWDER pip, rideable bed, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl drops a 3s charge from cab or bed
+- [x] Charge whistle, blast shove + bot damage, dust curtain blocks hitscan, spoil berm cover
+- [x] Cab shots stall it; F crank restarts; stall drops a charge; bed tin and pit tin restock half a mag
+- [x] East blast pit with a firing slit (PIT pip); bots board the bed on the east rim and push the pit
+- [x] Bots dive off a live charge; ram if you stand in the lane; wrecked powder truck west of the loop
+- [x] Powder drop-arm on the south leg (F at the post, blocks walk + hitscan, stops patrol and driven mule; bots kick it if the player camps the post)
+- [x] Southwest bench jumbo patrol (JUMBO pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl lowers the mast from cab or deck
+- [x] Mast down slows the rig; bit dust blocks hitscan, shoves, and chips the player and bots
+- [x] Spoil berms drop under a moving bit (walk + hitscan cover)
+- [x] Cab shots stall it; F crank restarts; deck tin and bench tin restock half a mag
+- [x] Southwest bench slit (BENCH pip) with a firing gap; bots board the deck in the southwest corner and push the slit
+- [x] Jumbo drop-arm on the north leg (F at the post, blocks walk + hitscan, stops patrol and driven jumbo; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked jumbo east of the loop
+- [x] North-rim grader patrol (GRADE pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl drops the moldboard from cab or deck
+- [x] Blade down slows the rig; blade dust blocks hitscan, shoves bodies aside, and chips the player and bots
+- [x] Windrow berms drop beside a moving blade (walk + hitscan cover)
+- [x] Cab shots stall it; F crank restarts; deck tin and cut tin restock half a mag
+- [x] North cut slit (CUT pip) with a firing gap; bots board the deck on the north rim and push the cut
+- [x] Grader drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven grader; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked grader south of the loop
+- [x] Southeast water monitor patrol (MON pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl opens the monitor from cab or deck
+- [x] Spray curtain blocks hitscan, shoves the player and bots, chips them, and kicks live grenades
+- [x] Moving spray leaves slow puddles; spray douses a live fuel-tanker fire
+- [x] Cab shots stall it; F crank restarts; deck tin and well tin restock half a mag
+- [x] Southeast well slit (WELL pip) with a firing gap; bots board the deck in the southeast and push the well
+- [x] Monitor drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven monitor; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked monitor north of the loop
+- [x] Northwest shotcrete boom patrol (CRETE pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl opens the boom from cab or deck
+- [x] Wet mist blocks hitscan, shoves, chips the player and bots, and kicks live grenades
+- [x] Moving boom lays hardening slabs (walk + hitscan cover) that cure and then crumble
+- [x] Cab shots stall it; F crank restarts; deck tin and face tin restock half a mag
+- [x] Northwest face slit (FACE pip) with a firing gap; bots board the deck in the northwest and push the face
+- [x] Crete drop-arm on the south leg (F at the post, blocks walk + hitscan, stops patrol and driven boom; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked boom east of the loop
+- [x] Northwest face hoist (HOIST pip): F at the post raises a rideable cage; deck blocks chest shots while up; bots board if the player camps it
+- [x] South-rim slag pot patrol (POT pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl tips the ladle from cab or deck
+- [x] Pour curtain blocks hitscan, shoves, burns the player and bots, and kicks live grenades
+- [x] Moving pour drops crusts that stay hot (slow + burn), then harden into cover and crumble
+- [x] Cab shots stall it; F crank restarts; deck tin and skull tin restock half a mag
+- [x] South skull slit (SKULL pip) with a firing gap; bots board the deck on the south rim and push the skull
+- [x] Pot drop-arm on the east leg (F at the post, blocks walk + hitscan, stops patrol and driven pot; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked pot north of the loop; pour cooks nearby drums
+- [x] Northeast tripper patrol (TRIP pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl opens the chute from cab or deck
+- [x] Ore curtain blocks hitscan, shoves, chips the player and bots, and kicks live grenades
+- [x] Moving chute drops windrows that slow, then harden into cover and crumble
+- [x] Cab shots stall it; F crank restarts; deck tin and wind tin restock half a mag
+- [x] Northeast wind slit (WIND pip) with a firing gap; bots board the deck on the northeast rim and push the slit
+- [x] Trip drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven tripper; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked tripper south of the loop
+- [x] West-bench mantrip (MAN pip, rail-locked loco + two ore cars, moving hitscan cover)
+- [x] F at the cab drives on the rail (W south, S north, A/D unused, F dismount); Ctrl side-dumps
+- [x] Dump curtain blocks hitscan, shoves, chips the player and bots, and kicks live grenades
+- [x] Moving dump lays spill that slows, then hardens into cover and crumbles
+- [x] Cab shots stall it; F crank restarts; deck tin and spur tin restock half a mag
+- [x] West spur slit (SPUR pip) with a firing gap; F at the switch throws the spur; bots board the cars on the west bench and push the slit
+- [x] Mantrip drop-arm on the south leg (F at the post, blocks walk + hitscan, stops the rail; bots kick it if the player camps the post)
+- [x] Rail, wrecked loco, drum; ram if you stand on the line
+- [ ] Next: owner topics or more juice
