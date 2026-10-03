@@ -958,4 +958,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] North cut slit (CUT pip) with a firing gap; bots board the deck on the north rim and push the cut
 - [x] Grader drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven grader; bots kick it if the player camps the post)
 - [x] Lane berms; ram if you stand in the lane; wrecked grader south of the loop
+- [x] Southeast water monitor patrol (MON pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl opens the monitor from cab or deck
+- [x] Spray curtain blocks hitscan, shoves the player and bots, chips them, and kicks live grenades
+- [x] Moving spray leaves slow puddles; spray douses a live fuel-tanker fire
+- [x] Cab shots stall it; F crank restarts; deck tin and well tin restock half a mag
+- [x] Southeast well slit (WELL pip) with a firing gap; bots board the deck in the southeast and push the well
+- [x] Monitor drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven monitor; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked monitor north of the loop
 - [ ] Next: owner topics or more juice

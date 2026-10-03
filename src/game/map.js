@@ -2541,6 +2541,97 @@ export function buildMap(scene) {
   MAP.graderCut = new THREE.Vector3(cutX, 0, cutZ);
   MAP.graderCutAmmo = new THREE.Vector3(cutX, 0, cutZ + 0.35);
 
+  // Southeast water monitor — driveable. Ctrl opens the monitor; spray curtain blocks hitscan, shoves, and leaves slow puddles.
+  const monitor = new THREE.Group();
+  const monTank = box(scene, 0, 0, 0, 1.7, 0.72, 1.05, new THREE.MeshStandardMaterial({ color: 0x2f6f8c, roughness: 0.45, metalness: 0.25 }));
+  monTank.position.set(0.35, 0.92, 0);
+  const monCab = box(scene, 0, 0, 0, 0.78, 0.7, 1.02, rust);
+  monCab.position.set(-0.85, 1.02, 0);
+  const monDeck = box(scene, 0, 0, 0, 2.35, 0.22, 1.15, steel);
+  monDeck.position.set(0.05, 0.62, 0);
+  const monNozzle = box(scene, 0, 0, 0, 0.55, 0.12, 0.12, steel);
+  monNozzle.position.set(1.45, 1.15, 0);
+  monitor.add(monTank, monCab, monDeck, monNozzle);
+  const monitorPath = [
+    new THREE.Vector3(18, 0, -40),
+    new THREE.Vector3(38, 0, -40),
+    new THREE.Vector3(38, 0, -33),
+    new THREE.Vector3(18, 0, -33),
+  ];
+  MAP.monitorPath = monitorPath;
+  MAP.monitorT = 0.2;
+  MAP.monitor = { hp: 64, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, spray: 0, puddleCd: 0 };
+  MAP.monitorMesh = monitor;
+  MAP.monitorNozzle = monNozzle;
+  monitor.position.copy(monitorPath[0]);
+  scene.add(monitor);
+  const monitorCrate = { pos: monitorPath[0].clone(), mesh: monitor, sx: 2.5, sy: 1.45, sz: 1.3, monitor: true, climb: true };
+  MAP.crates.push(monitorCrate);
+  MAP.monitorCrate = monitorCrate;
+  MAP.monitorDx = 0;
+  MAP.monitorDz = 0;
+  MAP.monitorPlat = { x: 18, z: -40, sx: 1.1, sz: 0.85, top: 0.98 };
+  monitorCrate.climbTo = MAP.monitorPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.monitorPlat);
+  const monitorSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.18, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.4 })
+  );
+  monitorSmoke.position.set(-1.05, 1.32, 0);
+  monitorSmoke.visible = false;
+  monitor.add(monitorSmoke);
+  MAP.monitorSmoke = monitorSmoke;
+  const monitorTin = box(scene, 0, 0, 0, 0.26, 0.14, 0.2, rust);
+  monitorTin.position.set(0.2, 0.86, 0.34);
+  monitor.add(monitorTin);
+  MAP.monitorTin = monitorTin;
+  const sprayMat = new THREE.MeshBasicMaterial({ color: 0x9ec8e8, transparent: true, opacity: 0.28 });
+  const monitorSpray = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.7, 2.3), sprayMat);
+  monitorSpray.visible = false;
+  scene.add(monitorSpray);
+  const monitorSprayCrate = { pos: new THREE.Vector3(20, 0, -40), mesh: monitorSpray, sx: 0.7, sy: 1.7, sz: 2.4, dead: true, dust: true, spray: true };
+  MAP.crates.push(monitorSprayCrate);
+  MAP.monitorSpray = monitorSpray;
+  MAP.monitorSprayCrate = monitorSprayCrate;
+  MAP.monitorPuddles = [];
+  const puddleMat = new THREE.MeshBasicMaterial({ color: 0x6a90a8, transparent: true, opacity: 0.35 });
+  for (let i = 0; i < 5; i++) {
+    const pm = new THREE.Mesh(new THREE.CircleGeometry(1.15, 8), puddleMat.clone());
+    pm.rotation.x = -Math.PI / 2;
+    pm.position.y = 0.04;
+    pm.visible = false;
+    scene.add(pm);
+    MAP.monitorPuddles.push({ mesh: pm, x: 0, z: 0, live: false });
+  }
+  MAP.monitorPuddleI = 0;
+  const monArm = box(scene, 18, 0.62, -36.5, 0.16, 0.16, 2.3, steel);
+  const monArmCrate = { pos: new THREE.Vector3(18, 0, -36.5), mesh: monArm, sx: 0.22, sy: 1.4, sz: 2.3, dead: true, monitorArm: true };
+  MAP.crates.push(monArmCrate);
+  MAP.monitorArm = monArm;
+  MAP.monitorArmCrate = monArmCrate;
+  MAP.monitorGate = { x: 18, z: -36.5, open: 1, target: 1 };
+  MAP.monitorGatePost = new THREE.Vector3(16.4, 0, -36.5);
+  const wellX = 28;
+  const wellZ = -44.2;
+  const wellMat = new THREE.MeshStandardMaterial({ color: 0x6a6258, roughness: 0.9 });
+  const wL = box(scene, wellX - 1.15, 0.7, wellZ, 0.8, 1.3, 0.26, wellMat);
+  const wR = box(scene, wellX + 1.15, 0.7, wellZ, 0.8, 1.3, 0.26, wellMat);
+  const wBack = box(scene, wellX, 0.7, wellZ - 0.8, 2.5, 1.3, 0.26, wellMat);
+  MAP.crates.push({ pos: new THREE.Vector3(wellX - 1.15, 0, wellZ), mesh: wL, sx: 0.8, sy: 1.3, sz: 0.26 });
+  MAP.crates.push({ pos: new THREE.Vector3(wellX + 1.15, 0, wellZ), mesh: wR, sx: 0.8, sy: 1.3, sz: 0.26 });
+  MAP.crates.push({ pos: new THREE.Vector3(wellX, 0, wellZ - 0.8), mesh: wBack, sx: 2.5, sy: 1.3, sz: 0.26 });
+  box(scene, wellX, 1.4, wellZ, 2.5, 0.2, 1.4, wellMat);
+  MAP.monitorWell = new THREE.Vector3(wellX, 0, wellZ);
+  MAP.monitorWellAmmo = new THREE.Vector3(wellX, 0, wellZ - 0.3);
+  const laneA = box(scene, 28, 0.55, -36.6, 1.4, 1.05, 0.45, wellMat);
+  const laneB = box(scene, 28, 0.55, -42.2, 1.4, 1.05, 0.45, wellMat);
+  MAP.crates.push({ pos: new THREE.Vector3(28, 0, -36.6), mesh: laneA, sx: 1.4, sy: 1.05, sz: 0.45 });
+  MAP.crates.push({ pos: new THREE.Vector3(28, 0, -42.2), mesh: laneB, sx: 1.4, sy: 1.05, sz: 0.45 });
+  const wreckMon = box(scene, 33.5, 0.55, -29.4, 2.2, 0.7, 1.15, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(33.5, 0, -29.4), mesh: wreckMon, sx: 2.2, sy: 0.9, sz: 1.15 });
+
+
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
   const rz = 33;
@@ -11802,7 +11893,7 @@ function vehicleBlocked(nx, nz, self) {
   const h = MAP.half || 48;
   if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
   for (const c of MAP.crates) {
-    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.wreck || c.apc || c.hook || c.apcRamp || c.blade || c.dust || c.spoil) continue;
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.wreck || c.apc || c.hook || c.apcRamp || c.blade || c.dust || c.spoil || c.monitor || c.spray) continue;
     if (c.sy && c.sy < 0.45) continue;
     const hx = (c.sx || 0.6) * 0.5 + 1.15;
     const hz = (c.sz || 0.6) * 0.5 + 0.7;
@@ -13053,6 +13144,162 @@ export function updateGrader(dt) {
   if (MAP.graderSmoke) MAP.graderSmoke.visible = !!MAP.grader.stalled;
 }
 
+
+export function onMonitor(pos) {
+  const c = MAP.monitorCrate;
+  if (!c || !pos) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.25 && Math.abs(pos.z - c.pos.z) < 1.05 && pos.y < 2.3 && pos.y > 0.35;
+}
+export function monitorCab(pos) {
+  const c = MAP.monitorCrate;
+  if (!c || !MAP.monitor || !pos) return false;
+  const yaw = MAP.monitor.yaw || 0;
+  const dx = pos.x - c.pos.x;
+  const dz = pos.z - c.pos.z;
+  const fwd = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+  return Math.hypot(dx, dz) < 2.1 && fwd < -0.25 && pos.y < 2.2;
+}
+export function inMonitorWell(pos) {
+  const p = MAP.monitorWell;
+  if (!p || !pos) return false;
+  return Math.abs(pos.x - p.x) < 1.15 && Math.abs(pos.z - p.z) < 0.85 && pos.y < 2.2;
+}
+export function inMonitorPuddle(pos) {
+  if (!pos || !MAP.monitorPuddles) return false;
+  for (const pud of MAP.monitorPuddles) {
+    if (!pud.live) continue;
+    if (Math.hypot(pos.x - pud.x, pos.z - pud.z) < 1.2 && pos.y < 1.6) return true;
+  }
+  return false;
+}
+export function updateMonitor(dt) {
+  const path = MAP.monitorPath;
+  const c = MAP.monitorCrate;
+  if (!path || !c || !MAP.monitorMesh || !MAP.monitor) return;
+  MAP.monitorDx = 0;
+  MAP.monitorDz = 0;
+  const yaw0 = MAP.monitor.yaw || 0;
+  const sprayTarget = MAP.monitor.spray > 0.5 ? 1 : 0;
+  MAP.monitor.spray += (sprayTarget - MAP.monitor.spray) * Math.min(1, dt * 4);
+  if (MAP.monitor.driven && !MAP.monitor.stalled) {
+    const yaw = yaw0 + (MAP.monitor.steer || 0) * dt * 1.1;
+    MAP.monitor.yaw = yaw;
+    const sp = (MAP.monitor.throttle || 0) * (MAP.monitor.spray > 0.45 ? 2.4 : 4.2);
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.monitorDx = nx - c.pos.x;
+    MAP.monitorDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.monitorMesh.position.set(nx, 0, nz);
+    MAP.monitorMesh.rotation.y = yaw;
+    if (MAP.monitorPlat) {
+      MAP.monitorPlat.x = nx + Math.cos(yaw) * 0.15;
+      MAP.monitorPlat.z = nz - Math.sin(yaw) * 0.15;
+      c.climbTo = MAP.monitorPlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.monitor.stalled ? 0 : (MAP.monitor.spray > 0.45 ? 1.6 : 3.1);
+    if (speed > 0) {
+      const nextT = (MAP.monitorT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      if (!vehicleBlocked(nx, nz, c)) {
+        MAP.monitorT = nextT;
+        MAP.monitor.yaw = yaw;
+        MAP.monitorDx = nx - c.pos.x;
+        MAP.monitorDz = nz - c.pos.z;
+        c.pos.set(nx, 0, nz);
+        MAP.monitorMesh.position.set(nx, 0, nz);
+        MAP.monitorMesh.rotation.y = yaw;
+        if (MAP.monitorPlat) {
+          MAP.monitorPlat.x = nx + Math.cos(yaw) * 0.15;
+          MAP.monitorPlat.z = nz - Math.sin(yaw) * 0.15;
+          c.climbTo = MAP.monitorPlat;
+        }
+      }
+    }
+  }
+  const yaw = MAP.monitor.yaw || 0;
+  const spraying = MAP.monitor.spray > 0.4 && !MAP.monitor.stalled;
+  const sx = c.pos.x + Math.cos(yaw) * 2.35;
+  const sz = c.pos.z - Math.sin(yaw) * 2.35;
+  MAP.monitorJet = spraying ? { x: sx, z: sz, yaw } : null;
+  if (MAP.monitorNozzle) MAP.monitorNozzle.rotation.z = spraying ? -0.35 : 0.15;
+  if (MAP.monitorSpray && MAP.monitorSprayCrate) {
+    MAP.monitorSpray.visible = spraying;
+    MAP.monitorSpray.position.set(sx, 0.9, sz);
+    MAP.monitorSpray.rotation.y = yaw;
+    MAP.monitorSprayCrate.dead = !spraying;
+    MAP.monitorSprayCrate.pos.set(sx, 0, sz);
+    if (spraying) MAP.monitorSpray.material.opacity = 0.22 + Math.sin(performance.now() * 0.02) * 0.08;
+  }
+  if (spraying && Math.hypot(MAP.monitorDx, MAP.monitorDz) > 0.002) {
+    MAP.monitor.puddleCd = (MAP.monitor.puddleCd || 0) - dt;
+    if (MAP.monitor.puddleCd <= 0) {
+      MAP.monitor.puddleCd = 1.6;
+      const puds = MAP.monitorPuddles || [];
+      if (puds.length) {
+        const pud = puds[MAP.monitorPuddleI % puds.length];
+        MAP.monitorPuddleI = (MAP.monitorPuddleI + 1) % puds.length;
+        pud.live = true;
+        pud.x = sx;
+        pud.z = sz;
+        pud.mesh.visible = true;
+        pud.mesh.position.set(sx, 0.04, sz);
+      }
+    }
+  }
+  if (MAP.monitorGate) {
+    MAP.monitorGate.open += (MAP.monitorGate.target - MAP.monitorGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.monitorGate.open < 0.45;
+    if (MAP.monitorArm) {
+      MAP.monitorArm.rotation.x = down ? 0 : -1.15;
+      MAP.monitorArm.position.y = down ? 0.55 : 1.15;
+    }
+    if (MAP.monitorArmCrate) MAP.monitorArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.x - 18) < 1.6 && c.pos.z < -33.2 && c.pos.z > -39.6) {
+      c.pos.x -= MAP.monitorDx;
+      c.pos.z -= MAP.monitorDz;
+      MAP.monitorMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.monitorDx = 0;
+      MAP.monitorDz = 0;
+    }
+  }
+  if (MAP.monitorSmoke) MAP.monitorSmoke.visible = !!MAP.monitor.stalled;
+  if (spraying && MAP.fuel && MAP.fuel.burn > 0 && MAP.fuelFireCrate) {
+    const f = MAP.fuelFireCrate.pos;
+    if (Math.hypot(f.x - sx, f.z - sz) < 2.4) MAP.fuel.burn = Math.max(0, MAP.fuel.burn - dt * 1.4);
+  }
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -13087,6 +13334,7 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.powder && pos.y > 1.15) continue;
     if (c.jumbo && pos.y > 1.15) continue;
     if (c.grader && pos.y > 1.05) continue;
+    if (c.monitor && pos.y > 1.05) continue;
     if (c.dust) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;

@@ -658,6 +658,46 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           }
         }
       }
+      if (MAP.monitorCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.monitorCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._monRide)) {
+          b.pos.x += MAP.monitorDx || 0;
+          b.pos.z += MAP.monitorDz || 0;
+          b.mesh.position.y = 1.05;
+          b._monRide = true;
+        }
+        const want = playerPos && playerPos.x > 12 && playerPos.z < -24 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.monitor && MAP.monitor.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._monRide = true;
+        } else if (!onBed && b._monRide) {
+          b.mesh.position.y = 0;
+          b._monRide = false;
+        }
+        if (MAP.monitorGate && MAP.monitorGate.open < 0.4 && MAP.monitorGatePost && playerPos && playerPos.distanceTo(MAP.monitorGatePost) < 7 && b.pos.distanceTo(MAP.monitorGatePost) < 2.2) {
+          b._monKick = (b._monKick || 0) + dt;
+          if (b._monKick > 0.8) {
+            MAP.monitorGate.target = 1;
+            b._monKick = 0;
+          }
+        }
+        const well = MAP.monitorWell;
+        if (well && playerPos && Math.abs(playerPos.x - well.x) < 2.4 && Math.abs(playerPos.z - well.z) < 2.2 && b.pos.distanceTo(well) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(well.x - b.pos.x) * Math.min(1.8 * dt, Math.abs(well.x - b.pos.x));
+          b.pos.z += Math.sign(well.z - b.pos.z) * Math.min(1.8 * dt, Math.abs(well.z - b.pos.z));
+        }
+        if (MAP.monitorJet && Math.hypot(b.pos.x - MAP.monitorJet.x, b.pos.z - MAP.monitorJet.z) < 1.35 && b.pos.y < 1.8) {
+          b.hp -= 6 * dt;
+          b.pos.x += Math.cos(MAP.monitorJet.yaw) * 2.4 * dt;
+          b.pos.z -= Math.sin(MAP.monitorJet.yaw) * 2.4 * dt;
+          b._monRide = false;
+          b.mesh.position.y = 0;
+        }
+      }
       if (MAP.graderCrate && b.hp > 0 && b.state !== "down") {
         const c = MAP.graderCrate;
         const dx = b.pos.x - c.pos.x;
