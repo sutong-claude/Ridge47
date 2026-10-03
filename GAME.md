@@ -966,4 +966,21 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Southeast well slit (WELL pip) with a firing gap; bots board the deck in the southeast and push the well
 - [x] Monitor drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven monitor; bots kick it if the player camps the post)
 - [x] Lane berms; ram if you stand in the lane; wrecked monitor north of the loop
+- [x] Northwest shotcrete boom patrol (CRETE pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl opens the boom from cab or deck
+- [x] Wet mist blocks hitscan, shoves, chips the player and bots, and kicks live grenades
+- [x] Moving boom lays hardening slabs (walk + hitscan cover) that cure and then crumble
+- [x] Cab shots stall it; F crank restarts; deck tin and face tin restock half a mag
+- [x] Northwest face slit (FACE pip) with a firing gap; bots board the deck in the northwest and push the face
+- [x] Crete drop-arm on the south leg (F at the post, blocks walk + hitscan, stops patrol and driven boom; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked boom east of the loop
+- [x] Northwest face hoist (HOIST pip): F at the post raises a rideable cage; deck blocks chest shots while up; bots board if the player camps it
+- [x] South-rim slag pot patrol (POT pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl tips the ladle from cab or deck
+- [x] Pour curtain blocks hitscan, shoves, burns the player and bots, and kicks live grenades
+- [x] Moving pour drops crusts that stay hot (slow + burn), then harden into cover and crumble
+- [x] Cab shots stall it; F crank restarts; deck tin and skull tin restock half a mag
+- [x] South skull slit (SKULL pip) with a firing gap; bots board the deck on the south rim and push the skull
+- [x] Pot drop-arm on the east leg (F at the post, blocks walk + hitscan, stops patrol and driven pot; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked pot north of the loop; pour cooks nearby drums
 - [ ] Next: owner topics or more juice

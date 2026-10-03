@@ -2631,6 +2631,109 @@ export function buildMap(scene) {
   const wreckMon = box(scene, 33.5, 0.55, -29.4, 2.2, 0.7, 1.15, rust);
   MAP.crates.push({ pos: new THREE.Vector3(33.5, 0, -29.4), mesh: wreckMon, sx: 2.2, sy: 0.9, sz: 1.15 });
 
+  // Northwest shotcrete boom — driveable. Ctrl opens the boom; wet mist blocks shots, and a moving boom lays hardening slabs.
+  const crete = new THREE.Group();
+  const crTank = box(scene, 0, 0, 0, 1.65, 0.78, 1.08, new THREE.MeshStandardMaterial({ color: 0xb7b2a4, roughness: 0.72, metalness: 0.08 }));
+  crTank.position.set(0.32, 0.96, 0);
+  const crCab = box(scene, 0, 0, 0, 0.76, 0.68, 1.0, rust);
+  crCab.position.set(-0.82, 1.02, 0);
+  const crDeck = box(scene, 0, 0, 0, 2.3, 0.2, 1.12, steel);
+  crDeck.position.set(0.08, 0.6, 0);
+  const crBoom = box(scene, 0, 0, 0, 0.85, 0.1, 0.1, steel);
+  crBoom.position.set(1.42, 1.18, 0);
+  crete.add(crTank, crCab, crDeck, crBoom);
+  const cretePath = [
+    new THREE.Vector3(-40, 0, 34),
+    new THREE.Vector3(-28, 0, 34),
+    new THREE.Vector3(-28, 0, 26),
+    new THREE.Vector3(-40, 0, 26),
+  ];
+  MAP.cretePath = cretePath;
+  MAP.creteT = 0.15;
+  MAP.crete = { hp: 68, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, spray: 0, slabCd: 0 };
+  MAP.creteMesh = crete;
+  MAP.creteBoom = crBoom;
+  crete.position.copy(cretePath[0]);
+  scene.add(crete);
+  const creteCrate = { pos: cretePath[0].clone(), mesh: crete, sx: 2.45, sy: 1.45, sz: 1.28, crete: true, climb: true };
+  MAP.crates.push(creteCrate);
+  MAP.creteCrate = creteCrate;
+  MAP.creteDx = 0;
+  MAP.creteDz = 0;
+  MAP.cretePlat = { x: -40, z: 34, sx: 1.1, sz: 0.85, top: 0.96 };
+  creteCrate.climbTo = MAP.cretePlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.cretePlat);
+  const creteSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.16, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.4 })
+  );
+  creteSmoke.position.set(-1.02, 1.32, 0);
+  creteSmoke.visible = false;
+  crete.add(creteSmoke);
+  MAP.creteSmoke = creteSmoke;
+  const creteTin = box(scene, 0, 0, 0, 0.26, 0.14, 0.2, rust);
+  creteTin.position.set(0.18, 0.84, 0.32);
+  crete.add(creteTin);
+  MAP.creteTin = creteTin;
+  const mistMat = new THREE.MeshBasicMaterial({ color: 0xd8d2c4, transparent: true, opacity: 0.32 });
+  const creteMist = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.55, 2.15), mistMat);
+  creteMist.visible = false;
+  scene.add(creteMist);
+  const creteMistCrate = { pos: new THREE.Vector3(-40, 0, 34), mesh: creteMist, sx: 0.85, sy: 1.55, sz: 2.2, dead: true, dust: true, creteMist: true };
+  MAP.crates.push(creteMistCrate);
+  MAP.creteMist = creteMist;
+  MAP.creteMistCrate = creteMistCrate;
+  MAP.creteSlabs = [];
+  const slabMat = new THREE.MeshLambertMaterial({ color: 0xc8c2b2 });
+  for (let i = 0; i < 4; i++) {
+    const sm = box(scene, -60, 0.35, -60, 1.35, 0.7, 0.42, slabMat);
+    sm.visible = false;
+    const sc = { pos: new THREE.Vector3(-60, 0, -60), mesh: sm, sx: 1.35, sy: 0.7, sz: 0.42, dead: true, creteSlab: true };
+    MAP.crates.push(sc);
+    MAP.creteSlabs.push({ live: false, life: 0, hard: 0, mesh: sm, crate: sc });
+  }
+  MAP.creteSlabI = 0;
+  const crArm = box(scene, -34, 0.58, 26, 0.16, 0.16, 2.2, steel);
+  const crArmCrate = { pos: new THREE.Vector3(-34, 0, 26), mesh: crArm, sx: 0.22, sy: 1.35, sz: 2.2, dead: true, creteArm: true };
+  MAP.crates.push(crArmCrate);
+  MAP.creteArm = crArm;
+  MAP.creteArmCrate = crArmCrate;
+  MAP.creteGate = { x: -34, z: 26, open: 1, target: 1 };
+  MAP.creteGatePost = new THREE.Vector3(-36.2, 0, 26);
+  const faceX = -45.4;
+  const faceZ = 30;
+  const faceMat = new THREE.MeshStandardMaterial({ color: 0x7a7264, roughness: 0.9 });
+  const fL = box(scene, faceX, 0.7, faceZ - 1.15, 0.28, 1.35, 0.85, faceMat);
+  const fR = box(scene, faceX, 0.7, faceZ + 1.15, 0.28, 1.35, 0.85, faceMat);
+  const fBack = box(scene, faceX - 0.7, 0.7, faceZ, 0.28, 1.35, 2.4, faceMat);
+  MAP.crates.push({ pos: new THREE.Vector3(faceX, 0, faceZ - 1.15), mesh: fL, sx: 0.28, sy: 1.35, sz: 0.85 });
+  MAP.crates.push({ pos: new THREE.Vector3(faceX, 0, faceZ + 1.15), mesh: fR, sx: 0.28, sy: 1.35, sz: 0.85 });
+  MAP.crates.push({ pos: new THREE.Vector3(faceX - 0.7, 0, faceZ), mesh: fBack, sx: 0.28, sy: 1.35, sz: 2.4, minY: 0 });
+  box(scene, faceX - 0.2, 1.45, faceZ, 1.1, 0.18, 2.5, faceMat);
+  MAP.creteFace = new THREE.Vector3(faceX + 0.15, 0, faceZ);
+  MAP.creteFaceAmmo = new THREE.Vector3(faceX - 0.15, 0, faceZ);
+  const laneC = box(scene, -34, 0.5, 37.2, 1.5, 0.95, 0.42, faceMat);
+  const laneD = box(scene, -34, 0.5, 22.6, 1.5, 0.95, 0.42, faceMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-34, 0, 37.2), mesh: laneC, sx: 1.5, sy: 0.95, sz: 0.42 });
+  MAP.crates.push({ pos: new THREE.Vector3(-34, 0, 22.6), mesh: laneD, sx: 1.5, sy: 0.95, sz: 0.42 });
+  const wreckCr = box(scene, -22.4, 0.5, 37.6, 2.2, 0.7, 1.15, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-22.4, 0, 37.6), mesh: wreckCr, sx: 2.2, sy: 0.9, sz: 1.15 });
+
+  // Northwest face hoist — F raises a rideable cage; the deck blocks chest shots while it is up.
+  const hoistBase = box(scene, -43.2, 0.35, 22.4, 1.15, 0.55, 1.15, steel);
+  MAP.crates.push({ pos: new THREE.Vector3(-43.2, 0, 22.4), mesh: hoistBase, sx: 1.15, sy: 0.7, sz: 1.15 });
+  const hoistMast = box(scene, -43.2, 1.7, 21.55, 0.12, 3.1, 0.12, rust);
+  const hoistDeck = box(scene, -43.2, 0.72, 22.4, 1.35, 0.12, 1.2, steel);
+  const hoistRail = box(scene, -43.2, 1.15, 21.85, 1.3, 0.55, 0.08, rust);
+  MAP.hoistDeck = hoistDeck;
+  MAP.hoistRail = hoistRail;
+  const hoistCrate = { pos: new THREE.Vector3(-43.2, 0, 22.4), mesh: hoistDeck, sx: 1.35, sy: 0.85, sz: 1.2, dead: true, hoist: true, minY: 0.6 };
+  MAP.crates.push(hoistCrate);
+  MAP.hoistCrate = hoistCrate;
+  MAP.hoist = { h: 0, target: 0 };
+  MAP.hoistPost = new THREE.Vector3(-43.2, 0, 21.2);
+
 
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
@@ -7223,6 +7326,101 @@ export function buildMap(scene) {
   MAP.sampleTruck = new THREE.Vector3(-45.2, 0, 11.4);
   MAP.crates.push({ pos: MAP.sampleTruck.clone(), mesh: saTruck, sx: 1.45, sy: 1.2, sz: 1.35 });
   MAP.crates.push({ pos: new THREE.Vector3(-45.2, 0, 9.9), mesh: saBed, sx: 1.4, sy: 0.62, sz: 1.2 });
+
+
+  // South-rim slag pot — driveable. Ctrl tips the ladle; pour blocks hitscan, burns, and drops crusts that harden then crumble.
+  const pot = new THREE.Group();
+  const potBody = box(scene, 0, 0, 0, 1.55, 0.72, 1.12, new THREE.MeshStandardMaterial({ color: 0x6a4030, roughness: 0.62, metalness: 0.22 }));
+  potBody.position.set(0.28, 0.98, 0);
+  const potCab = box(scene, 0, 0, 0, 0.72, 0.66, 0.98, rust);
+  potCab.position.set(-0.86, 1.0, 0);
+  const potDeck = box(scene, 0, 0, 0, 2.25, 0.2, 1.1, steel);
+  potDeck.position.set(0.06, 0.58, 0);
+  const potLadle = box(scene, 0, 0, 0, 0.7, 0.42, 0.7, new THREE.MeshStandardMaterial({ color: 0xc45a28, roughness: 0.45, metalness: 0.35 }));
+  potLadle.position.set(1.15, 1.22, 0);
+  pot.add(potBody, potCab, potDeck, potLadle);
+  const potPath = [
+    new THREE.Vector3(-14, 0, -43.2),
+    new THREE.Vector3(6, 0, -43.2),
+    new THREE.Vector3(6, 0, -37.4),
+    new THREE.Vector3(-14, 0, -37.4),
+  ];
+  MAP.potPath = potPath;
+  MAP.potT = 0.22;
+  MAP.pot = { hp: 66, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, pour: 0, crustCd: 0 };
+  MAP.potMesh = pot;
+  MAP.potLadle = potLadle;
+  pot.position.copy(potPath[0]);
+  scene.add(pot);
+  const potCrate = { pos: potPath[0].clone(), mesh: pot, sx: 2.4, sy: 1.45, sz: 1.26, pot: true, climb: true };
+  MAP.crates.push(potCrate);
+  MAP.potCrate = potCrate;
+  MAP.potDx = 0;
+  MAP.potDz = 0;
+  MAP.potPlat = { x: -14, z: -43.2, sx: 1.05, sz: 0.82, top: 0.94 };
+  potCrate.climbTo = MAP.potPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.potPlat);
+  const potSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.16, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x504840, transparent: true, opacity: 0.4 })
+  );
+  potSmoke.position.set(-1.02, 1.28, 0);
+  potSmoke.visible = false;
+  pot.add(potSmoke);
+  MAP.potSmoke = potSmoke;
+  const potTin = box(scene, 0, 0, 0, 0.26, 0.14, 0.2, rust);
+  potTin.position.set(0.16, 0.82, 0.3);
+  pot.add(potTin);
+  MAP.potTin = potTin;
+  const pourMat = new THREE.MeshBasicMaterial({ color: 0xff6a28, transparent: true, opacity: 0.42 });
+  const potPour = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.45, 1.9), pourMat);
+  potPour.visible = false;
+  scene.add(potPour);
+  const potPourCrate = { pos: new THREE.Vector3(-14, 0, -43.2), mesh: potPour, sx: 0.8, sy: 1.45, sz: 1.95, dead: true, dust: true, potPour: true };
+  MAP.crates.push(potPourCrate);
+  MAP.potPour = potPour;
+  MAP.potPourCrate = potPourCrate;
+  MAP.potCrusts = [];
+  const crustMat = new THREE.MeshLambertMaterial({ color: 0xc45a28 });
+  for (let i = 0; i < 4; i++) {
+    const sm = box(scene, -60, 0.28, -60, 1.25, 0.55, 0.4, crustMat);
+    sm.visible = false;
+    const sc = { pos: new THREE.Vector3(-60, 0, -60), mesh: sm, sx: 1.25, sy: 0.55, sz: 0.4, dead: true, potCrust: true };
+    MAP.crates.push(sc);
+    MAP.potCrusts.push({ live: false, life: 0, hard: 0, mesh: sm, crate: sc });
+  }
+  MAP.potCrustI = 0;
+  const potArm = box(scene, 6, 0.58, -40.3, 0.16, 0.16, 2.15, steel);
+  const potArmCrate = { pos: new THREE.Vector3(6, 0, -40.3), mesh: potArm, sx: 0.22, sy: 1.35, sz: 2.15, dead: true, potArm: true };
+  MAP.crates.push(potArmCrate);
+  MAP.potArm = potArm;
+  MAP.potArmCrate = potArmCrate;
+  MAP.potGate = { x: 6, z: -40.3, open: 1, target: 1 };
+  MAP.potGatePost = new THREE.Vector3(7.7, 0, -40.3);
+  const skullX = -18.4;
+  const skullZ = -40.2;
+  const skullMat = new THREE.MeshStandardMaterial({ color: 0x5a4638, roughness: 0.9 });
+  const skL = box(scene, skullX, 0.7, skullZ - 1.15, 0.28, 1.35, 0.85, skullMat);
+  const skR = box(scene, skullX, 0.7, skullZ + 1.15, 0.28, 1.35, 0.85, skullMat);
+  const skBack = box(scene, skullX - 0.7, 0.7, skullZ, 0.28, 1.35, 2.4, skullMat);
+  MAP.crates.push({ pos: new THREE.Vector3(skullX, 0, skullZ - 1.15), mesh: skL, sx: 0.28, sy: 1.35, sz: 0.85 });
+  MAP.crates.push({ pos: new THREE.Vector3(skullX, 0, skullZ + 1.15), mesh: skR, sx: 0.28, sy: 1.35, sz: 0.85 });
+  MAP.crates.push({ pos: new THREE.Vector3(skullX - 0.7, 0, skullZ), mesh: skBack, sx: 0.28, sy: 1.35, sz: 2.4, minY: 0 });
+  box(scene, skullX - 0.2, 1.45, skullZ, 1.1, 0.18, 2.5, skullMat);
+  MAP.potSkull = new THREE.Vector3(skullX + 0.15, 0, skullZ);
+  MAP.potSkullAmmo = new THREE.Vector3(skullX - 0.15, 0, skullZ);
+  const laneP = box(scene, -4, 0.5, -45.5, 1.45, 0.95, 0.42, skullMat);
+  const laneQ = box(scene, -4, 0.5, -35.2, 1.45, 0.95, 0.42, skullMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-4, 0, -45.5), mesh: laneP, sx: 1.45, sy: 0.95, sz: 0.42 });
+  MAP.crates.push({ pos: new THREE.Vector3(-4, 0, -35.2), mesh: laneQ, sx: 1.45, sy: 0.95, sz: 0.42 });
+  const potWreck = box(scene, 11.2, 0.55, -34.2, 2.15, 0.7, 1.12, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(11.2, 0, -34.2), mesh: potWreck, sx: 2.15, sy: 0.9, sz: 1.12 });
+  MAP.potWreck = new THREE.Vector3(11.2, 0, -34.2);
+  const potDrum = box(scene, -16.6, 0.55, -42.6, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-16.6, 0, -42.6), mesh: potDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const potDrum2 = box(scene, -16.5, 0.55, -37.8, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-16.5, 0, -37.8), mesh: potDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
 
   return MAP;
 }
@@ -13300,6 +13498,186 @@ export function updateMonitor(dt) {
   }
 }
 
+
+export function onCrete(pos) {
+  const c = MAP.creteCrate;
+  if (!c || !pos) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.25 && Math.abs(pos.z - c.pos.z) < 1.05 && pos.y < 2.3 && pos.y > 0.35;
+}
+export function creteCab(pos) {
+  const c = MAP.creteCrate;
+  if (!c || !MAP.crete || !pos) return false;
+  const yaw = MAP.crete.yaw || 0;
+  const dx = pos.x - c.pos.x;
+  const dz = pos.z - c.pos.z;
+  const fwd = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+  return Math.hypot(dx, dz) < 2.1 && fwd < -0.25 && pos.y < 2.2;
+}
+export function inCreteFace(pos) {
+  const p = MAP.creteFace;
+  if (!p || !pos) return false;
+  return Math.abs(pos.x - p.x) < 1.05 && Math.abs(pos.z - p.z) < 0.85 && pos.y < 2.2;
+}
+export function onHoist(pos) {
+  const c = MAP.hoistCrate;
+  if (!c || !pos || !MAP.hoist) return false;
+  return Math.abs(pos.x - c.pos.x) < 0.7 && Math.abs(pos.z - c.pos.z) < 0.62 && pos.y > 0.35;
+}
+export function updateCrete(dt) {
+  const path = MAP.cretePath;
+  const c = MAP.creteCrate;
+  if (!path || !c || !MAP.creteMesh || !MAP.crete) return;
+  MAP.creteDx = 0;
+  MAP.creteDz = 0;
+  const yaw0 = MAP.crete.yaw || 0;
+  const sprayTarget = MAP.crete.spray > 0.5 ? 1 : 0;
+  MAP.crete.spray += (sprayTarget - MAP.crete.spray) * Math.min(1, dt * 3.4);
+  if (MAP.crete.driven && !MAP.crete.stalled) {
+    const yaw = yaw0 + (MAP.crete.steer || 0) * dt * 1.05;
+    MAP.crete.yaw = yaw;
+    const sp = (MAP.crete.throttle || 0) * (MAP.crete.spray > 0.45 ? 2.2 : 4.0);
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.creteDx = nx - c.pos.x;
+    MAP.creteDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.creteMesh.position.set(nx, 0, nz);
+    MAP.creteMesh.rotation.y = yaw;
+    if (MAP.cretePlat) {
+      MAP.cretePlat.x = nx + Math.cos(yaw) * 0.12;
+      MAP.cretePlat.z = nz - Math.sin(yaw) * 0.12;
+      c.climbTo = MAP.cretePlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.crete.stalled ? 0 : (MAP.crete.spray > 0.45 ? 1.45 : 2.9);
+    if (speed > 0) {
+      const nextT = (MAP.creteT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      if (!vehicleBlocked(nx, nz, c)) {
+        MAP.creteT = nextT;
+        MAP.crete.yaw = yaw;
+        MAP.creteDx = nx - c.pos.x;
+        MAP.creteDz = nz - c.pos.z;
+        c.pos.set(nx, 0, nz);
+        MAP.creteMesh.position.set(nx, 0, nz);
+        MAP.creteMesh.rotation.y = yaw;
+        if (MAP.cretePlat) {
+          MAP.cretePlat.x = nx + Math.cos(yaw) * 0.12;
+          MAP.cretePlat.z = nz - Math.sin(yaw) * 0.12;
+          c.climbTo = MAP.cretePlat;
+        }
+      }
+    }
+  }
+  const yaw = MAP.crete.yaw || 0;
+  const spraying = MAP.crete.spray > 0.35 && !MAP.crete.stalled;
+  const sx = c.pos.x + Math.cos(yaw) * 2.15;
+  const sz = c.pos.z - Math.sin(yaw) * 2.15;
+  MAP.creteJet = spraying ? { x: sx, z: sz, yaw } : null;
+  if (MAP.creteMist && MAP.creteMistCrate) {
+    MAP.creteMist.visible = spraying;
+    MAP.creteMist.position.set(sx, 0.85, sz);
+    MAP.creteMist.rotation.y = yaw;
+    MAP.creteMistCrate.dead = !spraying;
+    MAP.creteMistCrate.pos.set(sx, 0, sz);
+    if (spraying) MAP.creteMist.material.opacity = 0.24 + Math.sin(performance.now() * 0.018) * 0.08;
+  }
+  if (MAP.creteBoom) MAP.creteBoom.rotation.z = spraying ? -0.35 : 0.05;
+  if (spraying && Math.hypot(MAP.creteDx, MAP.creteDz) > 0.002) {
+    MAP.crete.slabCd = (MAP.crete.slabCd || 0) - dt;
+    if (MAP.crete.slabCd <= 0) {
+      MAP.crete.slabCd = 1.7;
+      const slabs = MAP.creteSlabs || [];
+      if (slabs.length) {
+        const sl = slabs[MAP.creteSlabI % slabs.length];
+        MAP.creteSlabI = (MAP.creteSlabI + 1) % slabs.length;
+        sl.live = true;
+        sl.life = 16;
+        sl.hard = 0.15;
+        sl.crate.dead = false;
+        sl.crate.pos.set(sx, 0, sz);
+        sl.mesh.visible = true;
+        sl.mesh.position.set(sx, 0.2, sz);
+        sl.mesh.rotation.y = yaw;
+        sl.mesh.scale.y = 0.35;
+      }
+    }
+  }
+  for (const sl of MAP.creteSlabs || []) {
+    if (!sl.live) continue;
+    sl.life -= dt;
+    sl.hard = Math.min(1, sl.hard + dt * 0.55);
+    const sy = 0.28 + sl.hard * 0.62;
+    sl.crate.sy = sy;
+    sl.mesh.scale.y = 0.35 + sl.hard * 0.85;
+    sl.mesh.position.y = sy * 0.45;
+    if (sl.mesh.material) sl.mesh.material.color && sl.mesh.material.color.setHex(sl.hard > 0.7 ? 0xb7b1a2 : 0xd5d0c4);
+    if (sl.life <= 0) {
+      sl.live = false;
+      sl.crate.dead = true;
+      sl.mesh.visible = false;
+    }
+  }
+  if (MAP.creteGate) {
+    MAP.creteGate.open += (MAP.creteGate.target - MAP.creteGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.creteGate.open < 0.45;
+    if (MAP.creteArm) {
+      MAP.creteArm.rotation.x = down ? 0 : -1.15;
+      MAP.creteArm.position.y = down ? 0.55 : 1.15;
+    }
+    if (MAP.creteArmCrate) MAP.creteArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.z - 26) < 1.5 && c.pos.x < -28.2 && c.pos.x > -39.6) {
+      c.pos.x -= MAP.creteDx;
+      c.pos.z -= MAP.creteDz;
+      MAP.creteMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.creteDx = 0;
+      MAP.creteDz = 0;
+    }
+  }
+  if (MAP.creteSmoke) MAP.creteSmoke.visible = !!MAP.crete.stalled;
+  if (MAP.hoist && MAP.hoistDeck) {
+    const tgt = MAP.hoist.target > 0.5 ? 2.6 : 0;
+    MAP.hoist.h += (tgt - MAP.hoist.h) * Math.min(1, dt * 1.6);
+    const y = 0.72 + MAP.hoist.h;
+    MAP.hoistDeck.position.y = y;
+    if (MAP.hoistRail) MAP.hoistRail.position.y = y + 0.42;
+    if (MAP.hoistCrate) {
+      MAP.hoistCrate.minY = y - 0.08;
+      MAP.hoistCrate.sy = y + 0.55;
+      MAP.hoistCrate.dead = MAP.hoist.h < 0.35;
+    }
+  }
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -13335,6 +13713,10 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.jumbo && pos.y > 1.15) continue;
     if (c.grader && pos.y > 1.05) continue;
     if (c.monitor && pos.y > 1.05) continue;
+    if (c.crete && pos.y > 1.05) continue;
+    if (c.pot && pos.y > 1.05) continue;
+    if (c.potCrust && pos.y > (c.sy || 0.55) + 0.15) continue;
+    if (c.creteSlab && pos.y > (c.sy || 0.7) + 0.15) continue;
     if (c.dust) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;
@@ -13347,3 +13729,179 @@ export function collideXZ(pos, radius = 0.45) {
     }
   }
 }
+
+export function onPot(pos) {
+  const c = MAP.potCrate;
+  if (!c || !pos) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.2 && Math.abs(pos.z - c.pos.z) < 1.02 && pos.y < 2.3 && pos.y > 0.35;
+}
+export function potCab(pos) {
+  const c = MAP.potCrate;
+  if (!c || !MAP.pot || !pos) return false;
+  const yaw = MAP.pot.yaw || 0;
+  const dx = pos.x - c.pos.x;
+  const dz = pos.z - c.pos.z;
+  const fwd = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+  return Math.hypot(dx, dz) < 2.1 && fwd < -0.25 && pos.y < 2.2;
+}
+export function inPotSkull(pos) {
+  const p = MAP.potSkull;
+  if (!p || !pos) return false;
+  return Math.abs(pos.x - p.x) < 1.05 && Math.abs(pos.z - p.z) < 0.85 && pos.y < 2.2;
+}
+export function inPotCrust(pos) {
+  if (!pos) return false;
+  for (const sl of MAP.potCrusts || []) {
+    if (!sl.live || sl.hard > 0.72) continue;
+    if (Math.abs(pos.x - sl.crate.pos.x) < 0.85 && Math.abs(pos.z - sl.crate.pos.z) < 0.55 && pos.y < 1.4) return true;
+  }
+  return false;
+}
+export function updatePot(dt) {
+  const path = MAP.potPath;
+  const c = MAP.potCrate;
+  if (!path || !c || !MAP.potMesh || !MAP.pot) return;
+  MAP.potDx = 0;
+  MAP.potDz = 0;
+  const yaw0 = MAP.pot.yaw || 0;
+  const pourTarget = MAP.pot.pour > 0.5 ? 1 : 0;
+  MAP.pot.pour += (pourTarget - MAP.pot.pour) * Math.min(1, dt * 3.2);
+  if (MAP.pot.driven && !MAP.pot.stalled) {
+    const yaw = yaw0 + (MAP.pot.steer || 0) * dt * 1.02;
+    MAP.pot.yaw = yaw;
+    const sp = (MAP.pot.throttle || 0) * (MAP.pot.pour > 0.45 ? 2.0 : 3.8);
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.potDx = nx - c.pos.x;
+    MAP.potDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.potMesh.position.set(nx, 0, nz);
+    MAP.potMesh.rotation.y = yaw;
+    if (MAP.potPlat) {
+      MAP.potPlat.x = nx + Math.cos(yaw) * 0.1;
+      MAP.potPlat.z = nz - Math.sin(yaw) * 0.1;
+      c.climbTo = MAP.potPlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.pot.stalled ? 0 : (MAP.pot.pour > 0.45 ? 1.3 : 2.7);
+    if (speed > 0) {
+      const nextT = (MAP.potT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      if (!vehicleBlocked(nx, nz, c)) {
+        MAP.potT = nextT;
+        MAP.pot.yaw = yaw;
+        MAP.potDx = nx - c.pos.x;
+        MAP.potDz = nz - c.pos.z;
+        c.pos.set(nx, 0, nz);
+        MAP.potMesh.position.set(nx, 0, nz);
+        MAP.potMesh.rotation.y = yaw;
+        if (MAP.potPlat) {
+          MAP.potPlat.x = nx + Math.cos(yaw) * 0.1;
+          MAP.potPlat.z = nz - Math.sin(yaw) * 0.1;
+          c.climbTo = MAP.potPlat;
+        }
+      }
+    }
+  }
+  const yaw = MAP.pot.yaw || 0;
+  const pouring = MAP.pot.pour > 0.35 && !MAP.pot.stalled;
+  const sx = c.pos.x + Math.cos(yaw) * 2.05;
+  const sz = c.pos.z - Math.sin(yaw) * 2.05;
+  MAP.potJet = pouring ? { x: sx, z: sz, yaw } : null;
+  if (MAP.potPour && MAP.potPourCrate) {
+    MAP.potPour.visible = pouring;
+    MAP.potPour.position.set(sx, 0.78, sz);
+    MAP.potPour.rotation.y = yaw;
+    MAP.potPourCrate.dead = !pouring;
+    MAP.potPourCrate.pos.set(sx, 0, sz);
+    if (pouring) MAP.potPour.material.opacity = 0.32 + Math.sin(performance.now() * 0.02) * 0.1;
+  }
+  if (MAP.potLadle) MAP.potLadle.rotation.z = pouring ? 0.7 : 0;
+  if (pouring && Math.hypot(MAP.potDx, MAP.potDz) > 0.002) {
+    MAP.pot.crustCd = (MAP.pot.crustCd || 0) - dt;
+    if (MAP.pot.crustCd <= 0) {
+      MAP.pot.crustCd = 1.55;
+      const slabs = MAP.potCrusts || [];
+      if (slabs.length) {
+        const sl = slabs[MAP.potCrustI % slabs.length];
+        MAP.potCrustI = (MAP.potCrustI + 1) % slabs.length;
+        sl.live = true;
+        sl.life = 14;
+        sl.hard = 0.05;
+        sl.crate.dead = true;
+        sl.crate.pos.set(sx, 0, sz);
+        sl.mesh.visible = true;
+        sl.mesh.position.set(sx, 0.16, sz);
+        sl.mesh.rotation.y = yaw;
+        sl.mesh.scale.y = 0.3;
+      }
+    }
+  }
+  for (const sl of MAP.potCrusts || []) {
+    if (!sl.live) continue;
+    sl.life -= dt;
+    sl.hard = Math.min(1, sl.hard + dt * 0.22);
+    const sy = 0.22 + sl.hard * 0.5;
+    sl.crate.sy = sy;
+    sl.crate.dead = sl.hard < 0.42;
+    sl.mesh.scale.y = 0.3 + sl.hard * 0.9;
+    sl.mesh.position.y = sy * 0.4;
+    if (sl.mesh.material && sl.mesh.material.color) sl.mesh.material.color.setHex(sl.hard > 0.65 ? 0x4a4038 : 0xc45a28);
+    if (sl.life <= 0) {
+      sl.live = false;
+      sl.crate.dead = true;
+      sl.mesh.visible = false;
+    }
+  }
+  if (MAP.potGate) {
+    MAP.potGate.open += (MAP.potGate.target - MAP.potGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.potGate.open < 0.45;
+    if (MAP.potArm) {
+      MAP.potArm.rotation.x = down ? 0 : -1.15;
+      MAP.potArm.position.y = down ? 0.55 : 1.15;
+    }
+    if (MAP.potArmCrate) MAP.potArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.x - 6) < 1.6 && c.pos.z < -37.6 && c.pos.z > -43.0) {
+      c.pos.x -= MAP.potDx;
+      c.pos.z -= MAP.potDz;
+      MAP.potMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.potDx = 0;
+      MAP.potDz = 0;
+    }
+  }
+  if (MAP.potSmoke) MAP.potSmoke.visible = !!MAP.pot.stalled;
+  if (pouring && MAP.fuel && MAP.fuel.burn > 0 && MAP.fuelFireCrate) {
+    const f = MAP.fuelFireCrate.pos;
+    if (Math.hypot(f.x - sx, f.z - sz) < 2.2) MAP.fuel.burn = Math.max(0, MAP.fuel.burn - dt * 0.8);
+  }
+}
+

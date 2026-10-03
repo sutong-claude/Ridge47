@@ -658,6 +658,97 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           }
         }
       }
+      if (MAP.potCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.potCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._potRide)) {
+          b.pos.x += MAP.potDx || 0;
+          b.pos.z += MAP.potDz || 0;
+          b.mesh.position.y = 1.02;
+          b._potRide = true;
+        }
+        const want = playerPos && playerPos.z < -28 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.pot && MAP.pot.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._potRide = true;
+        } else if (!onBed && b._potRide) {
+          b.mesh.position.y = 0;
+          b._potRide = false;
+        }
+        if (MAP.potGate && MAP.potGate.open < 0.4 && MAP.potGatePost && playerPos && playerPos.distanceTo(MAP.potGatePost) < 7 && b.pos.distanceTo(MAP.potGatePost) < 2.2) {
+          b._potKick = (b._potKick || 0) + dt;
+          if (b._potKick > 0.8) {
+            MAP.potGate.target = 1;
+            b._potKick = 0;
+          }
+        }
+        const skull = MAP.potSkull;
+        if (skull && playerPos && Math.abs(playerPos.x - skull.x) < 2.4 && Math.abs(playerPos.z - skull.z) < 2.2 && b.pos.distanceTo(skull) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(skull.x - b.pos.x) * Math.min(2.4 * dt, Math.abs(skull.x - b.pos.x));
+          b.pos.z += Math.sign(skull.z - b.pos.z) * Math.min(2.4 * dt, Math.abs(skull.z - b.pos.z));
+        }
+        if (MAP.potJet && Math.hypot(b.pos.x - MAP.potJet.x, b.pos.z - MAP.potJet.z) < 1.3 && b.pos.y < 1.8) {
+          b.hp -= 12 * dt;
+          b.pos.x += Math.cos(MAP.potJet.yaw) * 2.3 * dt;
+          b.pos.z -= Math.sin(MAP.potJet.yaw) * 2.3 * dt;
+        }
+      }
+      if (MAP.creteCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.creteCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._crRide)) {
+          b.pos.x += MAP.creteDx || 0;
+          b.pos.z += MAP.creteDz || 0;
+          b.mesh.position.y = 1.05;
+          b._crRide = true;
+        }
+        const want = playerPos && playerPos.x < -18 && playerPos.z > 16 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.crete && MAP.crete.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._crRide = true;
+        } else if (!onBed && b._crRide) {
+          b.mesh.position.y = 0;
+          b._crRide = false;
+        }
+        if (MAP.creteGate && MAP.creteGate.open < 0.4 && MAP.creteGatePost && playerPos && playerPos.distanceTo(MAP.creteGatePost) < 7 && b.pos.distanceTo(MAP.creteGatePost) < 2.2) {
+          b._crKick = (b._crKick || 0) + dt;
+          if (b._crKick > 0.8) {
+            MAP.creteGate.target = 1;
+            b._crKick = 0;
+          }
+        }
+        const face = MAP.creteFace;
+        if (face && playerPos && Math.abs(playerPos.x - face.x) < 2.4 && Math.abs(playerPos.z - face.z) < 2.2 && b.pos.distanceTo(face) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(face.x - b.pos.x) * Math.min(2.4 * dt, Math.abs(face.x - b.pos.x));
+          b.pos.z += Math.sign(face.z - b.pos.z) * Math.min(2.4 * dt, Math.abs(face.z - b.pos.z));
+        }
+        if (MAP.creteJet && Math.hypot(b.pos.x - MAP.creteJet.x, b.pos.z - MAP.creteJet.z) < 1.3 && b.pos.y < 1.8) {
+          b.hp -= 8 * dt;
+          b.pos.x += Math.cos(MAP.creteJet.yaw) * 2.1 * dt;
+          b.pos.z -= Math.sin(MAP.creteJet.yaw) * 2.1 * dt;
+        }
+      }
+      if (MAP.hoistCrate && MAP.hoist && b.hp > 0 && b.state !== "down") {
+        const c = MAP.hoistCrate;
+        const onDeck = Math.abs(b.pos.x - c.pos.x) < 0.7 && Math.abs(b.pos.z - c.pos.z) < 0.6;
+        if (onDeck) {
+          b.mesh.position.y = 0.7 + MAP.hoist.h;
+          b._hoistRide = true;
+        } else if (b._hoistRide) {
+          b.mesh.position.y = 0;
+          b._hoistRide = false;
+        }
+        if (playerPos && (Math.abs(playerPos.x - c.pos.x) < 1.4 && Math.abs(playerPos.z - c.pos.z) < 1.4) && b.pos.distanceTo(c.pos) < 12 && !onDeck && b.pos.y < 2) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.0 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.0 * dt, Math.abs(c.pos.z - b.pos.z));
+        }
+      }
       if (MAP.monitorCrate && b.hp > 0 && b.state !== "down") {
         const c = MAP.monitorCrate;
         const dx = b.pos.x - c.pos.x;
