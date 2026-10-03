@@ -658,6 +658,44 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           }
         }
       }
+      if (MAP.tripCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.tripCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._tripRide)) {
+          b.pos.x += MAP.tripDx || 0;
+          b.pos.z += MAP.tripDz || 0;
+          b.mesh.position.y = 1.02;
+          b._tripRide = true;
+        }
+        const want = playerPos && playerPos.z > 32 && playerPos.x > 10 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.trip && MAP.trip.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._tripRide = true;
+        } else if (!onBed && b._tripRide) {
+          b.mesh.position.y = 0;
+          b._tripRide = false;
+        }
+        if (MAP.tripGate && MAP.tripGate.open < 0.4 && MAP.tripGatePost && playerPos && playerPos.distanceTo(MAP.tripGatePost) < 7 && b.pos.distanceTo(MAP.tripGatePost) < 2.2) {
+          b._tripKick = (b._tripKick || 0) + dt;
+          if (b._tripKick > 0.8) {
+            MAP.tripGate.target = 1;
+            b._tripKick = 0;
+          }
+        }
+        const wind = MAP.tripWind;
+        if (wind && playerPos && Math.abs(playerPos.x - wind.x) < 2.4 && Math.abs(playerPos.z - wind.z) < 2.2 && b.pos.distanceTo(wind) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(wind.x - b.pos.x) * Math.min(2.4 * dt, Math.abs(wind.x - b.pos.x));
+          b.pos.z += Math.sign(wind.z - b.pos.z) * Math.min(2.4 * dt, Math.abs(wind.z - b.pos.z));
+        }
+        if (MAP.tripJet && Math.hypot(b.pos.x - MAP.tripJet.x, b.pos.z - MAP.tripJet.z) < 1.3 && b.pos.y < 1.8) {
+          b.hp -= 9 * dt;
+          b.pos.x += Math.cos(MAP.tripJet.yaw) * 2.1 * dt;
+          b.pos.z -= Math.sin(MAP.tripJet.yaw) * 2.1 * dt;
+        }
+      }
       if (MAP.potCrate && b.hp > 0 && b.state !== "down") {
         const c = MAP.potCrate;
         const dx = b.pos.x - c.pos.x;

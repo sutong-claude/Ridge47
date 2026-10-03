@@ -7398,6 +7398,97 @@ export function buildMap(scene) {
   MAP.potArmCrate = potArmCrate;
   MAP.potGate = { x: 6, z: -40.3, open: 1, target: 1 };
   MAP.potGatePost = new THREE.Vector3(7.7, 0, -40.3);
+
+  // Northeast tripper — driveable stacker. Ctrl opens the chute; ore curtain blocks hitscan, shoves, and drops windrows that harden then crumble.
+  const trip = new THREE.Group();
+  const tripBody = box(scene, 0, 0, 0, 1.7, 0.62, 1.05, new THREE.MeshStandardMaterial({ color: 0x5a5348, roughness: 0.7, metalness: 0.18 }));
+  tripBody.position.set(0.15, 0.92, 0);
+  const tripCabM = box(scene, 0, 0, 0, 0.7, 0.64, 0.92, rust);
+  tripCabM.position.set(-0.92, 0.98, 0);
+  const tripDeck = box(scene, 0, 0, 0, 2.35, 0.18, 1.05, steel);
+  tripDeck.position.set(0.08, 0.56, 0);
+  const tripBoom = box(scene, 0, 0, 0, 1.15, 0.16, 0.28, new THREE.MeshStandardMaterial({ color: 0xc4a060, roughness: 0.5, metalness: 0.3 }));
+  tripBoom.position.set(1.2, 1.28, 0);
+  trip.add(tripBody, tripCabM, tripDeck, tripBoom);
+  const tripPath = [
+    new THREE.Vector3(18.4, 0, 40.2),
+    new THREE.Vector3(34.2, 0, 40.2),
+    new THREE.Vector3(34.2, 0, 45.6),
+    new THREE.Vector3(18.4, 0, 45.6),
+  ];
+  MAP.tripPath = tripPath;
+  MAP.tripT = 0.18;
+  MAP.trip = { hp: 64, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, pour: 0, rowCd: 0 };
+  MAP.tripMesh = trip;
+  MAP.tripBoom = tripBoom;
+  trip.position.copy(tripPath[0]);
+  scene.add(trip);
+  const tripCrate = { pos: tripPath[0].clone(), mesh: trip, sx: 2.45, sy: 1.4, sz: 1.2, trip: true, climb: true };
+  MAP.crates.push(tripCrate);
+  MAP.tripCrate = tripCrate;
+  MAP.tripDx = 0;
+  MAP.tripDz = 0;
+  MAP.tripPlat = { x: 18.4, z: 40.2, sx: 1.05, sz: 0.8, top: 0.92 };
+  tripCrate.climbTo = MAP.tripPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.tripPlat);
+  const tripSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.15, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x6a6048, transparent: true, opacity: 0.4 })
+  );
+  tripSmoke.position.set(-1.05, 1.26, 0);
+  tripSmoke.visible = false;
+  trip.add(tripSmoke);
+  MAP.tripSmoke = tripSmoke;
+  const tripTin = box(scene, 0, 0, 0, 0.26, 0.14, 0.2, rust);
+  tripTin.position.set(0.2, 0.8, 0.28);
+  trip.add(tripTin);
+  MAP.tripTin = tripTin;
+  const tripCurtainMat = new THREE.MeshBasicMaterial({ color: 0xc8a060, transparent: true, opacity: 0.38 });
+  const tripPour = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.4, 1.7), tripCurtainMat);
+  tripPour.visible = false;
+  scene.add(tripPour);
+  const tripPourCrate = { pos: new THREE.Vector3(18.4, 0, 40.2), mesh: tripPour, sx: 0.72, sy: 1.4, sz: 1.75, dead: true, dust: true, tripPour: true };
+  MAP.crates.push(tripPourCrate);
+  MAP.tripPour = tripPour;
+  MAP.tripPourCrate = tripPourCrate;
+  MAP.tripRows = [];
+  const rowMat = new THREE.MeshLambertMaterial({ color: 0xb89048 });
+  for (let i = 0; i < 4; i++) {
+    const sm = box(scene, -60, 0.26, -60, 1.35, 0.5, 0.42, rowMat);
+    sm.visible = false;
+    const sc = { pos: new THREE.Vector3(-60, 0, -60), mesh: sm, sx: 1.35, sy: 0.5, sz: 0.42, dead: true, tripRow: true };
+    MAP.crates.push(sc);
+    MAP.tripRows.push({ live: false, life: 0, hard: 0, mesh: sm, crate: sc });
+  }
+  MAP.tripRowI = 0;
+  const tripArm = box(scene, 18.4, 0.58, 42.9, 0.16, 0.16, 2.2, steel);
+  const tripArmCrate = { pos: new THREE.Vector3(18.4, 0, 42.9), mesh: tripArm, sx: 0.22, sy: 1.35, sz: 2.2, dead: true, tripArm: true };
+  MAP.crates.push(tripArmCrate);
+  MAP.tripArm = tripArm;
+  MAP.tripArmCrate = tripArmCrate;
+  MAP.tripGate = { x: 18.4, z: 42.9, open: 1, target: 1 };
+  MAP.tripGatePost = new THREE.Vector3(16.6, 0, 42.9);
+  const windX = 14.6;
+  const windZ = 42.8;
+  const windMat = new THREE.MeshStandardMaterial({ color: 0x6a5a40, roughness: 0.9 });
+  const wdL = box(scene, windX, 0.7, windZ - 1.15, 0.28, 1.35, 0.85, windMat);
+  const wdR = box(scene, windX, 0.7, windZ + 1.15, 0.28, 1.35, 0.85, windMat);
+  const wdBack = box(scene, windX - 0.7, 0.7, windZ, 0.28, 1.35, 2.4, windMat);
+  MAP.crates.push({ pos: new THREE.Vector3(windX, 0, windZ - 1.15), mesh: wdL, sx: 0.28, sy: 1.35, sz: 0.85 });
+  MAP.crates.push({ pos: new THREE.Vector3(windX, 0, windZ + 1.15), mesh: wdR, sx: 0.28, sy: 1.35, sz: 0.85 });
+  MAP.crates.push({ pos: new THREE.Vector3(windX - 0.7, 0, windZ), mesh: wdBack, sx: 0.28, sy: 1.35, sz: 2.4, minY: 0 });
+  box(scene, windX - 0.2, 1.45, windZ, 1.1, 0.18, 2.5, windMat);
+  MAP.tripWind = new THREE.Vector3(windX + 0.15, 0, windZ);
+  MAP.tripWindAmmo = new THREE.Vector3(windX - 0.15, 0, windZ);
+  const laneT = box(scene, 26.2, 0.5, 43.4, 0.42, 0.95, 1.35, windMat);
+  const laneU = box(scene, 26.2, 0.5, 38.6, 0.42, 0.95, 1.35, windMat);
+  MAP.crates.push({ pos: new THREE.Vector3(26.2, 0, 43.4), mesh: laneT, sx: 0.42, sy: 0.95, sz: 1.35 });
+  MAP.crates.push({ pos: new THREE.Vector3(26.2, 0, 38.6), mesh: laneU, sx: 0.42, sy: 0.95, sz: 1.35 });
+  const tripWreck = box(scene, 16.2, 0.45, 36.4, 2.1, 0.85, 1.15, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(16.2, 0, 36.4), mesh: tripWreck, sx: 2.1, sy: 0.9, sz: 1.15 });
+  MAP.tripWreck = new THREE.Vector3(16.2, 0, 36.4);
+
   const skullX = -18.4;
   const skullZ = -40.2;
   const skullMat = new THREE.MeshStandardMaterial({ color: 0x5a4638, roughness: 0.9 });
@@ -13715,6 +13806,8 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.monitor && pos.y > 1.05) continue;
     if (c.crete && pos.y > 1.05) continue;
     if (c.pot && pos.y > 1.05) continue;
+    if (c.trip && pos.y > 1.05) continue;
+    if (c.tripRow && pos.y > (c.sy || 0.5) + 0.15) continue;
     if (c.potCrust && pos.y > (c.sy || 0.55) + 0.15) continue;
     if (c.creteSlab && pos.y > (c.sy || 0.7) + 0.15) continue;
     if (c.dust) continue;
@@ -13905,3 +13998,171 @@ export function updatePot(dt) {
   }
 }
 
+export function onTrip(pos) {
+  const c = MAP.tripCrate;
+  if (!c || !pos) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.2 && Math.abs(pos.z - c.pos.z) < 1.02 && pos.y < 2.3 && pos.y > 0.35;
+}
+export function tripCab(pos) {
+  const c = MAP.tripCrate;
+  if (!c || !MAP.trip || !pos) return false;
+  const yaw = MAP.trip.yaw || 0;
+  const dx = pos.x - c.pos.x;
+  const dz = pos.z - c.pos.z;
+  const fwd = Math.cos(yaw) * dx - Math.sin(yaw) * dz;
+  return Math.hypot(dx, dz) < 2.1 && fwd < -0.25 && pos.y < 2.2;
+}
+export function inTripWind(pos) {
+  const p = MAP.tripWind;
+  if (!p || !pos) return false;
+  return Math.abs(pos.x - p.x) < 1.05 && Math.abs(pos.z - p.z) < 0.85 && pos.y < 2.2;
+}
+export function inTripRow(pos) {
+  if (!pos) return false;
+  for (const sl of MAP.tripRows || []) {
+    if (!sl.live || sl.hard > 0.7) continue;
+    if (Math.abs(pos.x - sl.crate.pos.x) < 0.9 && Math.abs(pos.z - sl.crate.pos.z) < 0.55 && pos.y < 1.4) return true;
+  }
+  return false;
+}
+export function updateTrip(dt) {
+  const path = MAP.tripPath;
+  const c = MAP.tripCrate;
+  if (!path || !c || !MAP.tripMesh || !MAP.trip) return;
+  MAP.tripDx = 0;
+  MAP.tripDz = 0;
+  const yaw0 = MAP.trip.yaw || 0;
+  const pourTarget = MAP.trip.pour > 0.5 ? 1 : 0;
+  MAP.trip.pour += (pourTarget - MAP.trip.pour) * Math.min(1, dt * 3.4);
+  if (MAP.trip.driven && !MAP.trip.stalled) {
+    const yaw = yaw0 + (MAP.trip.steer || 0) * dt * 1.0;
+    MAP.trip.yaw = yaw;
+    const sp = (MAP.trip.throttle || 0) * (MAP.trip.pour > 0.45 ? 1.8 : 3.5);
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.tripDx = nx - c.pos.x;
+    MAP.tripDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.tripMesh.position.set(nx, 0, nz);
+    MAP.tripMesh.rotation.y = yaw;
+    if (MAP.tripPlat) {
+      MAP.tripPlat.x = nx + Math.cos(yaw) * 0.12;
+      MAP.tripPlat.z = nz - Math.sin(yaw) * 0.12;
+      c.climbTo = MAP.tripPlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.trip.stalled ? 0 : (MAP.trip.pour > 0.45 ? 1.15 : 2.45);
+    if (speed > 0) {
+      const nextT = (MAP.tripT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      MAP.tripT = nextT;
+      MAP.trip.yaw = yaw;
+      MAP.tripDx = nx - c.pos.x;
+      MAP.tripDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.tripMesh.position.set(nx, 0, nz);
+      MAP.tripMesh.rotation.y = yaw;
+      if (MAP.tripPlat) {
+        MAP.tripPlat.x = nx + Math.cos(yaw) * 0.12;
+        MAP.tripPlat.z = nz - Math.sin(yaw) * 0.12;
+        c.climbTo = MAP.tripPlat;
+      }
+    }
+  }
+  const yaw = MAP.trip.yaw || 0;
+  const pouring = MAP.trip.pour > 0.35 && !MAP.trip.stalled;
+  const sx = c.pos.x + Math.cos(yaw) * 1.55;
+  const sz = c.pos.z - Math.sin(yaw) * 1.55;
+  MAP.tripJet = pouring ? { x: sx, z: sz, yaw } : null;
+  if (MAP.tripPour && MAP.tripPourCrate) {
+    MAP.tripPour.visible = pouring;
+    MAP.tripPour.position.set(sx, 0.74, sz);
+    MAP.tripPour.rotation.y = yaw;
+    MAP.tripPourCrate.dead = !pouring;
+    MAP.tripPourCrate.pos.set(sx, 0, sz);
+    if (pouring) MAP.tripPour.material.opacity = 0.28 + Math.sin(performance.now() * 0.018) * 0.1;
+  }
+  if (MAP.tripBoom) MAP.tripBoom.rotation.z = pouring ? 0.55 : 0;
+  if (pouring && Math.hypot(MAP.tripDx, MAP.tripDz) > 0.002) {
+    MAP.trip.rowCd = (MAP.trip.rowCd || 0) - dt;
+    if (MAP.trip.rowCd <= 0) {
+      MAP.trip.rowCd = 1.45;
+      const slabs = MAP.tripRows || [];
+      if (slabs.length) {
+        const sl = slabs[MAP.tripRowI % slabs.length];
+        MAP.tripRowI = (MAP.tripRowI + 1) % slabs.length;
+        sl.live = true;
+        sl.life = 13;
+        sl.hard = 0.04;
+        sl.crate.dead = true;
+        sl.crate.pos.set(sx, 0, sz);
+        sl.mesh.visible = true;
+        sl.mesh.position.set(sx, 0.14, sz);
+        sl.mesh.rotation.y = yaw;
+        sl.mesh.scale.y = 0.28;
+      }
+    }
+  }
+  for (const sl of MAP.tripRows || []) {
+    if (!sl.live) continue;
+    sl.life -= dt;
+    sl.hard = Math.min(1, sl.hard + dt * 0.2);
+    const sy = 0.2 + sl.hard * 0.48;
+    sl.crate.sy = sy;
+    sl.crate.dead = sl.hard < 0.4;
+    sl.mesh.scale.y = 0.28 + sl.hard * 0.85;
+    sl.mesh.position.y = sy * 0.4;
+    if (sl.mesh.material && sl.mesh.material.color) sl.mesh.material.color.setHex(sl.hard > 0.62 ? 0x6a5840 : 0xb89048);
+    if (sl.life <= 0) {
+      sl.live = false;
+      sl.crate.dead = true;
+      sl.mesh.visible = false;
+    }
+  }
+  if (MAP.tripGate) {
+    MAP.tripGate.open += (MAP.tripGate.target - MAP.tripGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.tripGate.open < 0.45;
+    if (MAP.tripArm) {
+      MAP.tripArm.rotation.x = down ? 0 : -1.15;
+      MAP.tripArm.position.y = down ? 0.55 : 1.15;
+    }
+    if (MAP.tripArmCrate) MAP.tripArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.x - 18.4) < 1.7 && c.pos.z > 40.0 && c.pos.z < 45.8) {
+      c.pos.x -= MAP.tripDx;
+      c.pos.z -= MAP.tripDz;
+      MAP.tripMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.tripDx = 0;
+      MAP.tripDz = 0;
+    }
+  }
+  if (MAP.tripSmoke) MAP.tripSmoke.visible = !!MAP.trip.stalled;
+}

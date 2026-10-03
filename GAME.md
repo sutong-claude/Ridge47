@@ -983,4 +983,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] South skull slit (SKULL pip) with a firing gap; bots board the deck on the south rim and push the skull
 - [x] Pot drop-arm on the east leg (F at the post, blocks walk + hitscan, stops patrol and driven pot; bots kick it if the player camps the post)
 - [x] Lane berms; ram if you stand in the lane; wrecked pot north of the loop; pour cooks nearby drums
+- [x] Northeast tripper patrol (TRIP pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl opens the chute from cab or deck
+- [x] Ore curtain blocks hitscan, shoves, chips the player and bots, and kicks live grenades
+- [x] Moving chute drops windrows that slow, then harden into cover and crumble
+- [x] Cab shots stall it; F crank restarts; deck tin and wind tin restock half a mag
+- [x] Northeast wind slit (WIND pip) with a firing gap; bots board the deck on the northeast rim and push the slit
+- [x] Trip drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven tripper; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked tripper south of the loop
 - [ ] Next: owner topics or more juice
