@@ -2346,6 +2346,200 @@ export function buildMap(scene) {
   MAP.powderGate = { x: 41.5, z: 16.4, open: 1, target: 1 };
   MAP.powderGatePost = new THREE.Vector3(41.5, 0, 14.85);
 
+  // Southwest bench jumbo — driveable drill. Ctrl lowers the mast; bit dust blocks shots and shoves.
+  const jumbo = new THREE.Group();
+  const jbDeck = box(scene, 0, 0, 0, 2.2, 0.28, 1.22, steel);
+  jbDeck.position.set(-0.25, 0.7, 0);
+  const jbCab = box(scene, 0, 0, 0, 0.78, 0.72, 1.1, rust);
+  jbCab.position.set(0.85, 1.02, 0);
+  const jbMast = box(scene, 0, 0, 0, 0.22, 1.35, 0.22, steel);
+  jbMast.position.set(1.55, 1.15, 0);
+  const jbBit = box(scene, 0, 0, 0, 0.16, 0.55, 0.16, rust);
+  jbBit.position.set(1.55, 0.42, 0);
+  jumbo.add(jbDeck, jbCab, jbMast, jbBit);
+  const jumboPath = [
+    new THREE.Vector3(-42.4, 0, -36.6),
+    new THREE.Vector3(-31.6, 0, -36.6),
+    new THREE.Vector3(-31.6, 0, -30.2),
+    new THREE.Vector3(-42.4, 0, -30.2),
+  ];
+  MAP.jumboPath = jumboPath;
+  MAP.jumboT = 0.2;
+  MAP.jumbo = { hp: 70, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, mast: 0, spoilCd: 0 };
+  MAP.jumboMesh = jumbo;
+  MAP.jumboMast = jbMast;
+  MAP.jumboBitMesh = jbBit;
+  jumbo.position.copy(jumboPath[0]);
+  scene.add(jumbo);
+  const jumboCrate = { pos: jumboPath[0].clone(), mesh: jumbo, sx: 2.5, sy: 1.55, sz: 1.35, jumbo: true, climb: true };
+  MAP.crates.push(jumboCrate);
+  MAP.jumboCrate = jumboCrate;
+  MAP.jumboDx = 0;
+  MAP.jumboDz = 0;
+  MAP.jumboPlat = { x: -42.4, z: -36.6, sx: 1.1, sz: 0.9, top: 1.05 };
+  jumboCrate.climbTo = MAP.jumboPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.jumboPlat);
+  const jumboSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.4 })
+  );
+  jumboSmoke.position.set(1.15, 1.28, 0);
+  jumboSmoke.visible = false;
+  jumbo.add(jumboSmoke);
+  MAP.jumboSmoke = jumboSmoke;
+  const jumboTin = box(scene, 0, 0, 0, 0.28, 0.16, 0.22, rust);
+  jumboTin.position.set(-0.7, 0.96, 0.32);
+  jumbo.add(jumboTin);
+  MAP.jumboTin = jumboTin;
+  const jumboDust = new THREE.Mesh(
+    new THREE.SphereGeometry(1.05, 7, 6),
+    new THREE.MeshBasicMaterial({ color: 0xc4b08a, transparent: true, opacity: 0.28 })
+  );
+  jumboDust.visible = false;
+  scene.add(jumboDust);
+  const jumboDustCrate = { pos: new THREE.Vector3(-40, 0, -40), mesh: jumboDust, sx: 2.1, sy: 1.6, sz: 2.1, dead: true, dust: true };
+  MAP.crates.push(jumboDustCrate);
+  MAP.jumboDust = jumboDust;
+  MAP.jumboDustCrate = jumboDustCrate;
+  const mastCrate = { pos: new THREE.Vector3(-40, 0, -40), mesh: jbMast, sx: 0.36, sy: 1.5, sz: 0.36, dead: true, mast: true };
+  MAP.crates.push(mastCrate);
+  MAP.jumboMastCrate = mastCrate;
+  MAP.jumboSpoils = [];
+  const jbSpoilMat = new THREE.MeshLambertMaterial({ color: 0x8a7348 });
+  for (let i = 0; i < 3; i++) {
+    const sm = box(scene, -40, -2, -40, 0.8, 0.55, 1.2, jbSpoilMat);
+    const sc = { pos: new THREE.Vector3(-40, 0, -40), mesh: sm, sx: 0.8, sy: 0.55, sz: 1.2, dead: true, spoil: true };
+    MAP.crates.push(sc);
+    MAP.jumboSpoils.push(sc);
+  }
+  MAP.jumboSpoilI = 0;
+  MAP.jumboBit = { x: -40, z: -40, on: false };
+  const jbBerm = new THREE.MeshLambertMaterial({ color: 0x7a6848 });
+  for (const bz of [-34.2, -31.4]) {
+    const bm = box(scene, -37.2, 0.34, bz, 1.3, 0.68, 0.4, jbBerm);
+    MAP.crates.push({ pos: new THREE.Vector3(-37.2, 0, bz), mesh: bm, sx: 1.3, sy: 0.68, sz: 0.4 });
+  }
+  const jbWreck = box(scene, -28.6, 0.42, -34.2, 2.0, 0.65, 1.1, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-28.6, 0, -34.2), mesh: jbWreck, sx: 2.0, sy: 0.85, sz: 1.1 });
+  MAP.jumboWreck = new THREE.Vector3(-28.6, 0, -34.2);
+  const jbArm = box(scene, -37.0, 1.12, -30.2, 0.16, 0.85, 2.3, steel);
+  const jbArmCrate = { pos: new THREE.Vector3(-37.0, 0, -30.2), mesh: jbArm, sx: 0.2, sy: 1.55, sz: 2.3, dead: true, jumboArm: true };
+  MAP.crates.push(jbArmCrate);
+  MAP.jumboArm = jbArm;
+  MAP.jumboArmCrate = jbArmCrate;
+  MAP.jumboGate = { x: -37.0, z: -30.2, open: 1, target: 1 };
+  MAP.jumboGatePost = new THREE.Vector3(-35.4, 0, -30.2);
+  const benchX = -40.2;
+  const benchZ = -39.2;
+  const benchMat = new THREE.MeshLambertMaterial({ color: 0x6a6254 });
+  const bL = box(scene, benchX - 1.15, 0.7, benchZ, 0.85, 1.35, 0.28, benchMat);
+  const bR = box(scene, benchX + 1.15, 0.7, benchZ, 0.85, 1.35, 0.28, benchMat);
+  const bBack = box(scene, benchX, 0.7, benchZ - 0.85, 2.6, 1.35, 0.28, benchMat);
+  MAP.crates.push({ pos: new THREE.Vector3(benchX - 1.15, 0, benchZ), mesh: bL, sx: 0.85, sy: 1.35, sz: 0.28 });
+  MAP.crates.push({ pos: new THREE.Vector3(benchX + 1.15, 0, benchZ), mesh: bR, sx: 0.85, sy: 1.35, sz: 0.28 });
+  MAP.crates.push({ pos: new THREE.Vector3(benchX, 0, benchZ - 0.85), mesh: bBack, sx: 2.6, sy: 1.35, sz: 0.28 });
+  box(scene, benchX, 1.45, benchZ, 2.6, 0.22, 1.5, benchMat);
+  MAP.jumboBench = new THREE.Vector3(benchX, 0, benchZ);
+  MAP.jumboBenchAmmo = new THREE.Vector3(benchX, 0, benchZ - 0.35);
+
+
+
+  // North-rim grader — driveable. Ctrl drops the moldboard; blade dust blocks shots and windrows cover.
+  const grader = new THREE.Group();
+  const grDeck = box(scene, 0, 0, 0, 2.4, 0.26, 1.18, steel);
+  grDeck.position.set(-0.15, 0.68, 0);
+  const grCab = box(scene, 0, 0, 0, 0.72, 0.7, 1.05, rust);
+  grCab.position.set(-0.85, 1.0, 0);
+  const grBlade = box(scene, 0, 0, 0, 0.16, 0.42, 1.55, steel);
+  grBlade.position.set(1.35, 0.55, 0);
+  const grFrame = box(scene, 0, 0, 0, 0.7, 0.12, 0.16, rust);
+  grFrame.position.set(0.85, 0.72, 0);
+  grader.add(grDeck, grCab, grBlade, grFrame);
+  const graderPath = [
+    new THREE.Vector3(-16.2, 0, 40.4),
+    new THREE.Vector3(12.4, 0, 40.4),
+    new THREE.Vector3(12.4, 0, 45.2),
+    new THREE.Vector3(-16.2, 0, 45.2),
+  ];
+  MAP.graderPath = graderPath;
+  MAP.graderT = 0.15;
+  MAP.grader = { hp: 68, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, blade: 0, spoilCd: 0 };
+  MAP.graderMesh = grader;
+  MAP.graderBlade = grBlade;
+  grader.position.copy(graderPath[0]);
+  scene.add(grader);
+  const graderCrate = { pos: graderPath[0].clone(), mesh: grader, sx: 2.6, sy: 1.5, sz: 1.35, grader: true, climb: true };
+  MAP.crates.push(graderCrate);
+  MAP.graderCrate = graderCrate;
+  MAP.graderDx = 0;
+  MAP.graderDz = 0;
+  MAP.graderPlat = { x: -16.2, z: 40.4, sx: 1.15, sz: 0.9, top: 1.02 };
+  graderCrate.climbTo = MAP.graderPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.graderPlat);
+  const graderSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.2, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.4 })
+  );
+  graderSmoke.position.set(-1.05, 1.28, 0);
+  graderSmoke.visible = false;
+  grader.add(graderSmoke);
+  MAP.graderSmoke = graderSmoke;
+  const graderTin = box(scene, 0, 0, 0, 0.28, 0.16, 0.22, rust);
+  graderTin.position.set(0.15, 0.94, 0.32);
+  grader.add(graderTin);
+  MAP.graderTin = graderTin;
+  const graderDust = new THREE.Mesh(
+    new THREE.SphereGeometry(1.15, 7, 6),
+    new THREE.MeshBasicMaterial({ color: 0xc8b48a, transparent: true, opacity: 0.3 })
+  );
+  graderDust.visible = false;
+  scene.add(graderDust);
+  const graderDustCrate = { pos: new THREE.Vector3(-16, 0, 40), mesh: graderDust, sx: 2.4, sy: 1.5, sz: 1.6, dead: true, dust: true };
+  MAP.crates.push(graderDustCrate);
+  MAP.graderDust = graderDust;
+  MAP.graderDustCrate = graderDustCrate;
+  const bladeCrate = { pos: new THREE.Vector3(-16, 0, 40), mesh: grBlade, sx: 0.4, sy: 0.7, sz: 1.7, dead: true, blade: true };
+  MAP.crates.push(bladeCrate);
+  MAP.graderBladeCrate = bladeCrate;
+  MAP.graderSpoils = [];
+  const spoilMat = new THREE.MeshLambertMaterial({ color: 0x8a7a58 });
+  for (let i = 0; i < 5; i++) {
+    const sm = box(scene, -40, 0.28, -40, 0.7, 0.55, 1.6, spoilMat);
+    sm.visible = false;
+    const sc = { pos: new THREE.Vector3(-40, 0, -40), mesh: sm, sx: 0.7, sy: 0.55, sz: 1.6, dead: true };
+    MAP.crates.push(sc);
+    MAP.graderSpoils.push(sc);
+  }
+  MAP.graderSpoilI = 0;
+  const laneMat = new THREE.MeshLambertMaterial({ color: 0x6e6454 });
+  const laneA = box(scene, -2, 0.42, 38.6, 10, 0.84, 0.55, laneMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-2, 0, 38.6), mesh: laneA, sx: 10, sy: 0.84, sz: 0.55 });
+  const laneB = box(scene, -2, 0.42, 46.6, 10, 0.84, 0.55, laneMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-2, 0, 46.6), mesh: laneB, sx: 10, sy: 0.84, sz: 0.55 });
+  const wreck = box(scene, 4.2, 0.42, 37.4, 2.2, 0.7, 1.15, rust);
+  wreck.rotation.y = 0.4;
+  MAP.crates.push({ pos: new THREE.Vector3(4.2, 0, 37.4), mesh: wreck, sx: 2.2, sy: 0.7, sz: 1.2 });
+  const grArm = box(scene, -16.2, 0.68, 42.8, 0.18, 0.16, 2.4, steel);
+  const grArmCrate = { pos: new THREE.Vector3(-16.2, 0, 42.8), mesh: grArm, sx: 0.22, sy: 1.5, sz: 2.4, dead: true, graderArm: true };
+  MAP.crates.push(grArmCrate);
+  MAP.graderArm = grArm;
+  MAP.graderArmCrate = grArmCrate;
+  MAP.graderGate = { x: -16.2, z: 42.8, open: 1, target: 1 };
+  MAP.graderGatePost = new THREE.Vector3(-14.6, 0, 42.8);
+  const cutX = -8.4;
+  const cutZ = 47.4;
+  const cutMat = new THREE.MeshLambertMaterial({ color: 0x6a6254 });
+  const cL = box(scene, cutX - 1.2, 0.7, cutZ, 0.85, 1.35, 0.28, cutMat);
+  const cR = box(scene, cutX + 1.2, 0.7, cutZ, 0.85, 1.35, 0.28, cutMat);
+  const cBack = box(scene, cutX, 0.7, cutZ + 0.85, 2.6, 1.35, 0.28, cutMat);
+  MAP.crates.push({ pos: new THREE.Vector3(cutX - 1.2, 0, cutZ), mesh: cL, sx: 0.85, sy: 1.35, sz: 0.28 });
+  MAP.crates.push({ pos: new THREE.Vector3(cutX + 1.2, 0, cutZ), mesh: cR, sx: 0.85, sy: 1.35, sz: 0.28 });
+  MAP.crates.push({ pos: new THREE.Vector3(cutX, 0, cutZ + 0.85), mesh: cBack, sx: 2.6, sy: 1.35, sz: 0.28 });
+  box(scene, cutX, 1.45, cutZ, 2.6, 0.22, 1.5, cutMat);
+  MAP.graderCut = new THREE.Vector3(cutX, 0, cutZ);
+  MAP.graderCutAmmo = new THREE.Vector3(cutX, 0, cutZ + 0.35);
 
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
@@ -12549,6 +12743,316 @@ export function updatePowder(dt) {
   }
 }
 
+
+export function onJumbo(pos) {
+  const c = MAP.jumboCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.35 && Math.abs(pos.z - c.pos.z) < 1.1 && pos.y < 2.4 && pos.y > 0.58;
+}
+
+export function jumboCab(pos) {
+  const c = MAP.jumboCrate;
+  if (!c || !MAP.jumbo) return false;
+  const yaw = MAP.jumbo.yaw || 0;
+  const cx = c.pos.x + Math.cos(yaw) * 0.85;
+  const cz = c.pos.z - Math.sin(yaw) * 0.85;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.3 && pos.y < 2.2;
+}
+
+export function inJumboBench(pos) {
+  const p = MAP.jumboBench;
+  if (!p) return false;
+  return Math.abs(pos.x - p.x) < 1.15 && Math.abs(pos.z - p.z) < 0.7 && pos.y < 2.1;
+}
+
+export function updateJumbo(dt) {
+  const path = MAP.jumboPath;
+  const c = MAP.jumboCrate;
+  if (!path || !c || !MAP.jumboMesh || !MAP.jumbo) return;
+  MAP.jumboDx = 0;
+  MAP.jumboDz = 0;
+  const yaw0 = MAP.jumbo.yaw || 0;
+  const mastTarget = MAP.jumbo.mast > 0.5 ? 1 : 0;
+  MAP.jumbo.mast += (mastTarget - MAP.jumbo.mast) * Math.min(1, dt * 3.4);
+  if (MAP.jumbo.driven && !MAP.jumbo.stalled) {
+    const yaw = yaw0 + (MAP.jumbo.steer || 0) * dt * 1.2;
+    MAP.jumbo.yaw = yaw;
+    const sp = (MAP.jumbo.throttle || 0) * (MAP.jumbo.mast > 0.45 ? 2.4 : 4.2);
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.jumboDx = nx - c.pos.x;
+    MAP.jumboDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.jumboMesh.position.set(nx, 0, nz);
+    MAP.jumboMesh.rotation.y = yaw;
+    if (MAP.jumboPlat) {
+      MAP.jumboPlat.x = nx - Math.cos(yaw) * 0.45;
+      MAP.jumboPlat.z = nz + Math.sin(yaw) * 0.45;
+      c.climbTo = MAP.jumboPlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.jumbo.stalled ? 0 : (MAP.jumbo.mast > 0.45 ? 1.6 : 3.1);
+    if (speed > 0) {
+      const nextT = (MAP.jumboT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      if (!vehicleBlocked(nx, nz, c)) {
+        MAP.jumboT = nextT;
+        MAP.jumbo.yaw = yaw;
+        MAP.jumboDx = nx - c.pos.x;
+        MAP.jumboDz = nz - c.pos.z;
+        c.pos.set(nx, 0, nz);
+        MAP.jumboMesh.position.set(nx, 0, nz);
+        MAP.jumboMesh.rotation.y = yaw;
+        if (MAP.jumboPlat) {
+          MAP.jumboPlat.x = nx - Math.cos(yaw) * 0.45;
+          MAP.jumboPlat.z = nz + Math.sin(yaw) * 0.45;
+          c.climbTo = MAP.jumboPlat;
+        }
+      }
+    } else {
+      MAP.jumboMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.jumboMesh.rotation.y = yaw0;
+    }
+  }
+  const yaw = MAP.jumbo.yaw || 0;
+  const bitX = c.pos.x + Math.cos(yaw) * 1.7;
+  const bitZ = c.pos.z - Math.sin(yaw) * 1.7;
+  const drilling = MAP.jumbo.mast > 0.55 && !MAP.jumbo.stalled;
+  MAP.jumboBit = { x: bitX, z: bitZ, on: drilling };
+  if (MAP.jumboMast) {
+    MAP.jumboMast.rotation.z = drilling ? 0.15 : -0.85;
+    MAP.jumboMast.position.y = drilling ? 0.72 : 1.2;
+  }
+  if (MAP.jumboBitMesh) MAP.jumboBitMesh.position.y = drilling ? 0.22 + Math.sin(performance.now() * 0.04) * 0.04 : 0.55;
+  if (MAP.jumboMastCrate) {
+    MAP.jumboMastCrate.dead = !drilling;
+    MAP.jumboMastCrate.pos.set(bitX, 0, bitZ);
+  }
+  if (MAP.jumboDust && MAP.jumboDustCrate) {
+    MAP.jumboDust.visible = drilling;
+    MAP.jumboDust.position.set(bitX, 0.9, bitZ);
+    MAP.jumboDustCrate.dead = !drilling;
+    MAP.jumboDustCrate.pos.set(bitX, 0, bitZ);
+    if (drilling) MAP.jumboDust.material.opacity = 0.22 + Math.sin(performance.now() * 0.01) * 0.06;
+  }
+  if (drilling && Math.hypot(MAP.jumboDx, MAP.jumboDz) > 0.002) {
+    MAP.jumbo.spoilCd = (MAP.jumbo.spoilCd || 0) - dt;
+    if (MAP.jumbo.spoilCd <= 0) {
+      MAP.jumbo.spoilCd = 2.6;
+      const spoils = MAP.jumboSpoils || [];
+      if (spoils.length) {
+        const sc = spoils[MAP.jumboSpoilI % spoils.length];
+        MAP.jumboSpoilI = (MAP.jumboSpoilI + 1) % spoils.length;
+        sc.dead = false;
+        sc.pos.set(bitX, 0, bitZ);
+        if (sc.mesh) sc.mesh.position.set(bitX, 0.28, bitZ);
+      }
+    }
+  }
+  if (MAP.jumboGate) {
+    MAP.jumboGate.open += (MAP.jumboGate.target - MAP.jumboGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.jumboGate.open < 0.45;
+    if (MAP.jumboArm) {
+      MAP.jumboArm.rotation.x = down ? 0 : -1.15;
+      MAP.jumboArm.position.y = down ? 0.68 : 1.28;
+    }
+    if (MAP.jumboArmCrate) MAP.jumboArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.z - (-30.2)) < 1.45 && c.pos.x > -39.2 && c.pos.x < -34.6) {
+      c.pos.x -= MAP.jumboDx;
+      c.pos.z -= MAP.jumboDz;
+      MAP.jumboMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.jumboDx = 0;
+      MAP.jumboDz = 0;
+    }
+  }
+  if (MAP.jumboSmoke) MAP.jumboSmoke.visible = !!MAP.jumbo.stalled;
+}
+
+
+export function onGrader(pos) {
+  const c = MAP.graderCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.4 && Math.abs(pos.z - c.pos.z) < 1.1 && pos.y < 2.4 && pos.y > 0.55;
+}
+
+export function graderCab(pos) {
+  const c = MAP.graderCrate;
+  if (!c || !MAP.grader) return false;
+  const yaw = MAP.grader.yaw || 0;
+  const cx = c.pos.x - Math.cos(yaw) * 0.85;
+  const cz = c.pos.z + Math.sin(yaw) * 0.85;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.3 && pos.y < 2.2;
+}
+
+export function inGraderCut(pos) {
+  const p = MAP.graderCut;
+  if (!p) return false;
+  return Math.abs(pos.x - p.x) < 1.15 && Math.abs(pos.z - p.z) < 0.7 && pos.y < 2.1;
+}
+
+export function updateGrader(dt) {
+  const path = MAP.graderPath;
+  const c = MAP.graderCrate;
+  if (!path || !c || !MAP.graderMesh || !MAP.grader) return;
+  MAP.graderDx = 0;
+  MAP.graderDz = 0;
+  const yaw0 = MAP.grader.yaw || 0;
+  const bladeTarget = MAP.grader.blade > 0.5 ? 1 : 0;
+  MAP.grader.blade += (bladeTarget - MAP.grader.blade) * Math.min(1, dt * 3.6);
+  if (MAP.grader.driven && !MAP.grader.stalled) {
+    const yaw = yaw0 + (MAP.grader.steer || 0) * dt * 1.15;
+    MAP.grader.yaw = yaw;
+    const sp = (MAP.grader.throttle || 0) * (MAP.grader.blade > 0.45 ? 2.2 : 4.4);
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.graderDx = nx - c.pos.x;
+    MAP.graderDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.graderMesh.position.set(nx, 0, nz);
+    MAP.graderMesh.rotation.y = yaw;
+    if (MAP.graderPlat) {
+      MAP.graderPlat.x = nx + Math.cos(yaw) * 0.2;
+      MAP.graderPlat.z = nz - Math.sin(yaw) * 0.2;
+      c.climbTo = MAP.graderPlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.grader.stalled ? 0 : (MAP.grader.blade > 0.45 ? 1.5 : 3.2);
+    if (speed > 0) {
+      const nextT = (MAP.graderT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      if (!vehicleBlocked(nx, nz, c)) {
+        MAP.graderT = nextT;
+        MAP.grader.yaw = yaw;
+        MAP.graderDx = nx - c.pos.x;
+        MAP.graderDz = nz - c.pos.z;
+        c.pos.set(nx, 0, nz);
+        MAP.graderMesh.position.set(nx, 0, nz);
+        MAP.graderMesh.rotation.y = yaw;
+        if (MAP.graderPlat) {
+          MAP.graderPlat.x = nx + Math.cos(yaw) * 0.2;
+          MAP.graderPlat.z = nz - Math.sin(yaw) * 0.2;
+          c.climbTo = MAP.graderPlat;
+        }
+      }
+    }
+  }
+  const yaw = MAP.grader.yaw || 0;
+  const grading = MAP.grader.blade > 0.45 && !MAP.grader.stalled;
+  const bitX = c.pos.x + Math.cos(yaw) * 1.45;
+  const bitZ = c.pos.z - Math.sin(yaw) * 1.45;
+  const sideX = c.pos.x + Math.cos(yaw) * 1.2 + Math.sin(yaw) * 1.15;
+  const sideZ = c.pos.z - Math.sin(yaw) * 1.2 + Math.cos(yaw) * 1.15;
+  MAP.graderBit = { x: bitX, z: bitZ, on: grading, sx: sideX, sz: sideZ };
+  if (MAP.graderBlade) {
+    MAP.graderBlade.position.y = grading ? 0.38 : 0.78;
+    MAP.graderBlade.rotation.x = grading ? 0.15 : -0.7;
+  }
+  if (MAP.graderBladeCrate) {
+    MAP.graderBladeCrate.dead = !grading;
+    MAP.graderBladeCrate.pos.set(bitX, 0, bitZ);
+  }
+  if (MAP.graderDust && MAP.graderDustCrate) {
+    MAP.graderDust.visible = grading;
+    MAP.graderDust.position.set(bitX, 0.8, bitZ);
+    MAP.graderDustCrate.dead = !grading;
+    MAP.graderDustCrate.pos.set(bitX, 0, bitZ);
+    if (grading) MAP.graderDust.material.opacity = 0.22 + Math.sin(performance.now() * 0.012) * 0.06;
+  }
+  if (grading && Math.hypot(MAP.graderDx, MAP.graderDz) > 0.002) {
+    MAP.grader.spoilCd = (MAP.grader.spoilCd || 0) - dt;
+    if (MAP.grader.spoilCd <= 0) {
+      MAP.grader.spoilCd = 2.4;
+      const spoils = MAP.graderSpoils || [];
+      if (spoils.length) {
+        const sc = spoils[MAP.graderSpoilI % spoils.length];
+        MAP.graderSpoilI = (MAP.graderSpoilI + 1) % spoils.length;
+        sc.dead = false;
+        sc.pos.set(sideX, 0, sideZ);
+        if (sc.mesh) {
+          sc.mesh.visible = true;
+          sc.mesh.position.set(sideX, 0.28, sideZ);
+          sc.mesh.rotation.y = yaw;
+        }
+      }
+    }
+  }
+  if (MAP.graderGate) {
+    MAP.graderGate.open += (MAP.graderGate.target - MAP.graderGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.graderGate.open < 0.45;
+    if (MAP.graderArm) {
+      MAP.graderArm.rotation.x = down ? 0 : -1.15;
+      MAP.graderArm.position.y = down ? 0.62 : 1.22;
+    }
+    if (MAP.graderArmCrate) MAP.graderArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.x - (-16.2)) < 1.5 && c.pos.z > 40.8 && c.pos.z < 44.6) {
+      c.pos.x -= MAP.graderDx;
+      c.pos.z -= MAP.graderDz;
+      MAP.graderMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.graderDx = 0;
+      MAP.graderDz = 0;
+    }
+  }
+  if (MAP.graderSmoke) MAP.graderSmoke.visible = !!MAP.grader.stalled;
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -12581,6 +13085,8 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.wreck && pos.y > 1.05) continue;
     if (c.apc && pos.y > 1.15) continue;
     if (c.powder && pos.y > 1.15) continue;
+    if (c.jumbo && pos.y > 1.15) continue;
+    if (c.grader && pos.y > 1.05) continue;
     if (c.dust) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;

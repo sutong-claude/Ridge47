@@ -6,7 +6,7 @@ export function spawnBots(scene, n = 6) {
   const bodyMat = new THREE.MeshLambertMaterial({ color: 0x4a3a28 });
   const helmMat = new THREE.MeshLambertMaterial({ color: 0x2a3228 });
   const spots = [
-    [-16, 18], [10, -14], [20, 16], [-18, -18], [28, -8], [-8, 24], [6, 8], [-22, 26], [26, 20], [-26, 10], [34, -12],
+    [-16, 18], [10, -14], [20, 16], [-18, -18], [28, -8], [-8, 24], [6, 8], [-22, 26], [26, 20], [-26, 10], [-40, -35], [34, -12],
   ];
   for (let i = 0; i < n; i++) {
     const g = new THREE.Group();
@@ -656,6 +656,88 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
             b.pos.x = MAP.apcRampWorld.x;
             b.pos.z = MAP.apcRampWorld.z;
           }
+        }
+      }
+      if (MAP.graderCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.graderCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._graderRide)) {
+          b.pos.x += MAP.graderDx || 0;
+          b.pos.z += MAP.graderDz || 0;
+          b.mesh.position.y = 1.08;
+          b._graderRide = true;
+        }
+        const want = playerPos && playerPos.z > 32 && playerPos.x > -22 && playerPos.x < 18 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.grader && MAP.grader.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._graderRide = true;
+        } else if (!onBed && b._graderRide) {
+          b.mesh.position.y = 0;
+          b._graderRide = false;
+        }
+        if (MAP.graderGate && MAP.graderGate.open < 0.4 && MAP.graderGatePost && playerPos && playerPos.distanceTo(MAP.graderGatePost) < 7 && b.pos.distanceTo(MAP.graderGatePost) < 2.2) {
+          b._grKick = (b._grKick || 0) + dt;
+          if (b._grKick > 0.8) {
+            MAP.graderGate.target = 1;
+            b._grKick = 0;
+          }
+        }
+        const cut = MAP.graderCut;
+        if (cut && playerPos && Math.abs(playerPos.x - cut.x) < 2.4 && Math.abs(playerPos.z - cut.z) < 2.2 && b.pos.distanceTo(cut) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(cut.x - b.pos.x) * Math.min(1.8 * dt, Math.abs(cut.x - b.pos.x));
+          b.pos.z += Math.sign(cut.z - b.pos.z) * Math.min(1.8 * dt, Math.abs(cut.z - b.pos.z));
+        }
+        if (MAP.graderBit && MAP.graderBit.on && Math.hypot(b.pos.x - MAP.graderBit.x, b.pos.z - MAP.graderBit.z) < 1.25 && b.pos.y < 1.8) {
+          b.hp -= 10 * dt;
+          const yaw = MAP.grader.yaw || 0;
+          b.pos.x += Math.sin(yaw) * 1.8 * dt;
+          b.pos.z += Math.cos(yaw) * 1.8 * dt;
+          b._graderRide = false;
+          b.mesh.position.y = 0;
+        }
+      }
+      if (MAP.jumboCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.jumboCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._jumboRide)) {
+          b.pos.x += MAP.jumboDx || 0;
+          b.pos.z += MAP.jumboDz || 0;
+          b.mesh.position.y = 1.1;
+          b._jumboRide = true;
+        }
+        const want = playerPos && playerPos.x < -26 && playerPos.z < -26 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.jumbo && MAP.jumbo.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._jumboRide = true;
+        } else if (!onBed && b._jumboRide) {
+          b.mesh.position.y = 0;
+          b._jumboRide = false;
+        }
+        if (MAP.jumboGate && MAP.jumboGate.open < 0.4 && MAP.jumboGatePost && playerPos && playerPos.distanceTo(MAP.jumboGatePost) < 7 && b.pos.distanceTo(MAP.jumboGatePost) < 2.2) {
+          b._jbKick = (b._jbKick || 0) + dt;
+          if (b._jbKick > 0.8) {
+            MAP.jumboGate.target = 1;
+            b._jbKick = 0;
+          }
+        }
+        const bench = MAP.jumboBench;
+        if (bench && playerPos && Math.abs(playerPos.x - bench.x) < 2.4 && Math.abs(playerPos.z - bench.z) < 2.2 && b.pos.distanceTo(bench) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(bench.x - b.pos.x) * Math.min(1.8 * dt, Math.abs(bench.x - b.pos.x));
+          b.pos.z += Math.sign(bench.z - b.pos.z) * Math.min(1.8 * dt, Math.abs(bench.z - b.pos.z));
+        }
+        if (MAP.jumboBit && MAP.jumboBit.on && Math.hypot(b.pos.x - MAP.jumboBit.x, b.pos.z - MAP.jumboBit.z) < 1.2 && b.pos.y < 1.8) {
+          b.hp -= 12 * dt;
+          const yaw = MAP.jumbo.yaw || 0;
+          b.pos.x -= Math.cos(yaw) * 1.8 * dt;
+          b.pos.z += Math.sin(yaw) * 1.8 * dt;
+          b._jumboRide = false;
+          b.mesh.position.y = 0;
         }
       }
       if (MAP.powderCrate && b.hp > 0 && b.state !== "down") {

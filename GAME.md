@@ -942,4 +942,20 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] East blast pit with a firing slit (PIT pip); bots board the bed on the east rim and push the pit
 - [x] Bots dive off a live charge; ram if you stand in the lane; wrecked powder truck west of the loop
 - [x] Powder drop-arm on the south leg (F at the post, blocks walk + hitscan, stops patrol and driven mule; bots kick it if the player camps the post)
+- [x] Southwest bench jumbo patrol (JUMBO pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl lowers the mast from cab or deck
+- [x] Mast down slows the rig; bit dust blocks hitscan, shoves, and chips the player and bots
+- [x] Spoil berms drop under a moving bit (walk + hitscan cover)
+- [x] Cab shots stall it; F crank restarts; deck tin and bench tin restock half a mag
+- [x] Southwest bench slit (BENCH pip) with a firing gap; bots board the deck in the southwest corner and push the slit
+- [x] Jumbo drop-arm on the north leg (F at the post, blocks walk + hitscan, stops patrol and driven jumbo; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked jumbo east of the loop
+- [x] North-rim grader patrol (GRADE pip, rideable deck, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl drops the moldboard from cab or deck
+- [x] Blade down slows the rig; blade dust blocks hitscan, shoves bodies aside, and chips the player and bots
+- [x] Windrow berms drop beside a moving blade (walk + hitscan cover)
+- [x] Cab shots stall it; F crank restarts; deck tin and cut tin restock half a mag
+- [x] North cut slit (CUT pip) with a firing gap; bots board the deck on the north rim and push the cut
+- [x] Grader drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven grader; bots kick it if the player camps the post)
+- [x] Lane berms; ram if you stand in the lane; wrecked grader south of the loop
 - [ ] Next: owner topics or more juice
