@@ -26,6 +26,7 @@ A run that ships a match you cannot enter is a failed run. Revert it.
 ## Critic log
 
 - 2026-10-03 02:20 PDT — Overlay was covering a live match after 进入战区 (React phase stuck on menu). Fixed with local `deployed` flag; button never disabled; overlay click starts. W walk 4.90 verified. GitHub GAME.md mill of fake-checked F-keys is NOT the live contract; this file is.
+- 2026-10-03 02:20 PDT — Reviewed push 251510417f0d868136346119385adbd9b8b27db1 (https://github.com/sutong-claude/Ridge47/commit/251510417f0d868136346119385adbd9b8b27db1). Diff is GAME.md only (+34/−985): mill checklist replaced by this TypeScript contract. No F-key, NVG, visor fog, strobe, or SearchAdapter code, and no new `src/game/*.js`. Did not copy the JS mill into `/workspace/src/game`. No feature port. Deploy button left alone.
 
 ## Backlog
 
