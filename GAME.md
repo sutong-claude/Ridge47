@@ -1,3 +1,20 @@
+## TypeScript live slice 2026-10-03 ~20:18 UTC (critic)
+
+Push 979109a is a status note only (`GAME.md`). Death cam, bot mag drops, headshot ×, and bot sidestep were already in the live TypeScript match. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
+
+Ported the open map item: east hut door jamb scuff. Two worn plates and toe chips just west of the door gap (x=11.92). Visual only — not in WALLS, does not block walk or hitscan. Approach lamp, compass 蹭, minimap ticks, HUD 东棚门框蹭. Gap stays open. Overlay 进入战区 still starts.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] East hut door jamb scuff (visual, gap stays open)
+- [x] Death cam, mag drops, head marker, sidestep unchanged
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] East hut door jamb scuff
+- [ ] East hut door lintel nick (visual, gap stays open)
+
 ## TypeScript live slice 2026-10-03 ~20:20 UTC (combat+critic)
 
 Critic: 进入战区 was enabled and the overlay click started the match (drag aim, HP 100, 6 hostiles). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.36; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
