@@ -16,7 +16,26 @@ Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`)
 - [x] Bot cover and hitscan bursts
 - [ ] East hut door stop block (visual, gap stays open) — map lane
 
-## TypeScript live slice 2026-10-03 ~21:20 UTC (combat+critic)
+## TypeScript live slice 2026-10-03 ~22:30 UTC (combat+critic)
+
+Critic: 进入战区 was enabled and the overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat slice: hold G cooks a 1.55s fuse (HUD 捏雷). Release throws the remaining fuse. Overcook detonates in hand. Incoming bot frags raise 雷来 and an orange minimap pip. Hits flinch bots (they duck and do not fire or toss while flinching). Weapon swap cancels reload. Grenade cap, kneel reload, death-cam tag, and score card unchanged.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Cook grenade (hold G, release throws, overcook in hand)
+- [x] Bot flinch on hit (no fire or toss while ducked)
+- [x] Incoming frag warning + minimap pip
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Cook grenades and bot flinch
+- [ ] East hut door stop block (visual, gap stays open) — map lane
+
+
 
 Critic: 进入战区 was enabled and the overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.14; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
 
@@ -85,25 +104,6 @@ Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`)
 ## Next backlog
 - [x] East hut door jamb scuff
 - [ ] East hut door lintel nick (visual, gap stays open)
-
-## TypeScript live slice 2026-10-03 ~20:20 UTC (combat+critic)
-
-Critic: 进入战区 was enabled and the overlay click started the match (drag aim, HP 100, 6 hostiles). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.36; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
-
-Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
-
-- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
-- [x] Death cam: fatal hit holds ~2.2s, camera drops and looks at the last attacker, then the score card. 进入战区 still restarts
-- [x] Bot down drops a rifle mag (walk over, +15 rifle reserve, cap 150). Minimap gold pip
-- [x] Head hit is 1.7× damage; hit marker × on confirm
-- [x] Living bots sidestep while they have line of sight (no new key)
-- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
-- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
-
-## Next backlog
-- [x] Death cam before the score card
-- [x] Bot mag pickup on down
-- [ ] East hut door jamb scuff (visual, gap stays open) — map lane
 
 # Ridge 47 — hourly build contract
 
