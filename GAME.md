@@ -1,3 +1,21 @@
+## TypeScript live slice 2026-10-03 ~22:22 UTC (combat+critic)
+
+Critic: 进入战区 was enabled. Overlay click started the match (HP live, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 2.41; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat slice: bots break toward the nearest low cover and peek. Shots are hitscan bursts (3 then pause) blocked by walls — no random hit roll. Player and bot tracers. Empty mag starts reload. Grenades bounce off solid cover. Slide widens spread. Score card adds 爆头.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot cover peek + wall-blocked hitscan bursts
+- [x] Tracers, empty-mag reload, grenade bounce, headshot score line
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot cover and hitscan bursts
+- [ ] East hut door stop block (visual, gap stays open) — map lane
+
 ## TypeScript live slice 2026-10-03 ~21:20 UTC (combat+critic)
 
 Critic: 进入战区 was enabled and the overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.14; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
