@@ -2138,6 +2138,215 @@ export function buildMap(scene) {
   med.add(medLamp);
   MAP.medLamp = medLamp;
 
+  // Southwest wrecker — driveable, winch hook is moving cover and yanks bodies.
+  const wreck = new THREE.Group();
+  const wrBed = box(scene, 0, 0, 0, 2.2, 0.28, 1.25, steel);
+  wrBed.position.set(-0.15, 0.7, 0);
+  const wrCab = box(scene, 0, 0, 0, 0.85, 0.72, 1.15, rust);
+  wrCab.position.set(0.95, 0.98, 0);
+  const wrBoom = new THREE.Group();
+  wrBoom.position.set(-1.15, 1.15, 0);
+  const wrArm = box(scene, 0, 0, 0, 1.55, 0.12, 0.12, steel);
+  wrArm.position.set(-0.7, 0.35, 0);
+  const wrHook = box(scene, 0, 0, 0, 0.28, 0.42, 0.28, rust);
+  wrHook.position.set(-1.45, -0.15, 0);
+  wrBoom.add(wrArm, wrHook);
+  wreck.add(wrBed, wrCab, wrBoom);
+  const wreckPath = [
+    new THREE.Vector3(-34.2, 0, -16.4),
+    new THREE.Vector3(-22.6, 0, -16.4),
+    new THREE.Vector3(-22.6, 0, -6.2),
+    new THREE.Vector3(-34.2, 0, -6.2),
+  ];
+  MAP.wreckPath = wreckPath;
+  MAP.wreckT = 0.2;
+  MAP.wreck = { hp: 70, stalled: false, driven: false, throttle: 0, steer: 0, winch: 0, yaw: 0 };
+  MAP.wreckMesh = wreck;
+  MAP.wreckBoom = wrBoom;
+  wreck.position.copy(wreckPath[0]);
+  scene.add(wreck);
+  const wreckCrate = { pos: wreckPath[0].clone(), mesh: wreck, sx: 2.5, sy: 1.45, sz: 1.4, wreck: true, climb: true };
+  MAP.crates.push(wreckCrate);
+  MAP.wreckCrate = wreckCrate;
+  MAP.wreckDx = 0;
+  MAP.wreckDz = 0;
+  MAP.wreckPlat = { x: -34, z: -16.4, sx: 1.05, sz: 0.85, top: 1.12 };
+  const wreckSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.4 })
+  );
+  wreckSmoke.position.set(1.35, 1.35, 0);
+  wreckSmoke.visible = false;
+  wreck.add(wreckSmoke);
+  MAP.wreckSmoke = wreckSmoke;
+  const hookCrate = { pos: wreckPath[0].clone(), mesh: wrHook, sx: 0.55, sy: 1.15, sz: 0.55, dead: true, hook: true };
+  MAP.crates.push(hookCrate);
+  MAP.wreckHookCrate = hookCrate;
+  MAP.wreckHookPos = wreckPath[0].clone();
+  const wrTin = box(scene, 0, 0, 0, 0.34, 0.22, 0.28, rust);
+  wrTin.position.set(-0.55, 0.96, 0.35);
+  wreck.add(wrTin);
+  MAP.wreckTin = wrTin;
+  const wreckBerm = new THREE.MeshLambertMaterial({ color: 0x6a5a40 });
+  for (const bz of [-11.2, -9.4]) {
+    const bm = box(scene, -28.4, 0.36, bz, 1.5, 0.72, 0.42, wreckBerm);
+    MAP.crates.push({ pos: new THREE.Vector3(-28.4, 0, bz), mesh: bm, sx: 1.5, sy: 0.72, sz: 0.42 });
+  }
+
+  // Southeast APC — patrols, drops a ramp, and dismounts a rifleman when the squad is thin.
+  const apc = new THREE.Group();
+  const apcHull = box(scene, 0, 0, 0, 2.6, 0.7, 1.45, steel);
+  apcHull.position.set(0.1, 0.85, 0);
+  const apcCab = box(scene, 0, 0, 0, 0.7, 0.45, 1.2, rust);
+  apcCab.position.set(1.05, 1.35, 0);
+  const apcCmd = box(scene, 0, 0, 0, 0.3, 0.48, 0.3, rust);
+  apcCmd.position.set(0.15, 1.45, 0);
+  const apcRamp = box(scene, 0, 0, 0, 0.12, 0.9, 1.15, steel);
+  apcRamp.position.set(-1.35, 0.7, 0);
+  apc.add(apcHull, apcCab, apcCmd, apcRamp);
+  const apcPath = [
+    new THREE.Vector3(12.4, 0, -24.6),
+    new THREE.Vector3(30.2, 0, -24.6),
+    new THREE.Vector3(30.2, 0, -18.2),
+    new THREE.Vector3(12.4, 0, -18.2),
+  ];
+  MAP.apcPath = apcPath;
+  MAP.apcT = 0.55;
+  MAP.apc = { hp: 84, stalled: false, cmd: 36, ramp: 0, dropCd: 8, yaw: 0, dropAsk: false };
+  MAP.apcMesh = apc;
+  MAP.apcCmdMesh = apcCmd;
+  MAP.apcRampMesh = apcRamp;
+  apc.position.copy(apcPath[0]);
+  scene.add(apc);
+  const apcCrate = { pos: apcPath[0].clone(), mesh: apc, sx: 2.7, sy: 1.55, sz: 1.5, apc: true, climb: true };
+  MAP.crates.push(apcCrate);
+  MAP.apcCrate = apcCrate;
+  MAP.apcDx = 0;
+  MAP.apcDz = 0;
+  MAP.apcPlat = { x: 12.6, z: -24.6, sx: 1.15, sz: 0.95, top: 1.22 };
+  const apcRampCrate = { pos: apcPath[0].clone(), mesh: apcRamp, sx: 0.9, sy: 1.05, sz: 1.2, dead: true, apcRamp: true };
+  MAP.crates.push(apcRampCrate);
+  MAP.apcRampCrate = apcRampCrate;
+  const apcSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.38 })
+  );
+  apcSmoke.position.set(1.4, 1.2, 0);
+  apcSmoke.visible = false;
+  apc.add(apcSmoke);
+  MAP.apcSmoke = apcSmoke;
+  const apcTin = box(scene, 0, 0, 0, 0.32, 0.2, 0.26, rust);
+  apcTin.position.set(-0.2, 1.28, 0.4);
+  apc.add(apcTin);
+  MAP.apcTin = apcTin;
+  const apcBerm = new THREE.MeshLambertMaterial({ color: 0x7a6848 });
+  for (const bx of [18.4, 24.2]) {
+    const bm = box(scene, bx, 0.36, -21.4, 1.4, 0.72, 0.42, apcBerm);
+    MAP.crates.push({ pos: new THREE.Vector3(bx, 0, -21.4), mesh: bm, sx: 1.4, sy: 0.72, sz: 0.42 });
+  }
+
+  // East-rim powder mule — driveable ANFO truck. Ctrl drops a timed charge; blast dust blocks shots.
+  const powder = new THREE.Group();
+  const pwBed = box(scene, 0, 0, 0, 2.35, 0.32, 1.28, steel);
+  pwBed.position.set(-0.15, 0.72, 0);
+  const pwCab = box(scene, 0, 0, 0, 0.82, 0.7, 1.16, rust);
+  pwCab.position.set(1.05, 0.98, 0);
+  const pwTank = box(scene, 0, 0, 0, 1.35, 0.62, 1.05, rust);
+  pwTank.position.set(-0.35, 1.18, 0);
+  const pwDrum = box(scene, 0, 0, 0, 0.28, 0.28, 0.28, steel);
+  pwDrum.position.set(-1.05, 1.05, 0.28);
+  powder.add(pwBed, pwCab, pwTank, pwDrum);
+  const powderPath = [
+    new THREE.Vector3(38.6, 0, 16.4),
+    new THREE.Vector3(44.4, 0, 16.4),
+    new THREE.Vector3(44.4, 0, 26.6),
+    new THREE.Vector3(38.6, 0, 26.6),
+  ];
+  MAP.powderPath = powderPath;
+  MAP.powderT = 0.25;
+  MAP.powder = { hp: 72, stalled: false, driven: false, throttle: 0, steer: 0, yaw: 0, cd: 0 };
+  MAP.powderMesh = powder;
+  powder.position.copy(powderPath[0]);
+  scene.add(powder);
+  const powderCrate = { pos: powderPath[0].clone(), mesh: powder, sx: 2.55, sy: 1.55, sz: 1.4, powder: true, climb: true };
+  MAP.crates.push(powderCrate);
+  MAP.powderCrate = powderCrate;
+  MAP.powderDx = 0;
+  MAP.powderDz = 0;
+  MAP.powderPlat = { x: 38.2, z: 16.4, sx: 1.15, sz: 0.95, top: 1.12 };
+  powderCrate.climbTo = MAP.powderPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.powderPlat);
+  const powderSmoke = new THREE.Mesh(
+    new THREE.SphereGeometry(0.24, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0x686058, transparent: true, opacity: 0.4 })
+  );
+  powderSmoke.position.set(1.4, 1.25, 0);
+  powderSmoke.visible = false;
+  powder.add(powderSmoke);
+  MAP.powderSmoke = powderSmoke;
+  const powderTin = box(scene, 0, 0, 0, 0.3, 0.18, 0.24, rust);
+  powderTin.position.set(-0.55, 1.02, 0.38);
+  powder.add(powderTin);
+  MAP.powderTin = powderTin;
+  const powderBerm = new THREE.MeshLambertMaterial({ color: 0x7a6848 });
+  for (const bz of [18.8, 24.2]) {
+    const bm = box(scene, 41.5, 0.36, bz, 1.35, 0.72, 0.4, powderBerm);
+    MAP.crates.push({ pos: new THREE.Vector3(41.5, 0, bz), mesh: bm, sx: 1.35, sy: 0.72, sz: 0.4 });
+  }
+  const pitX = 41.5;
+  const pitZ = 21.5;
+  const pitMat = new THREE.MeshLambertMaterial({ color: 0x6a6254 });
+  const pitWall = (x, z, sx, sz, sy = 1.05, minY = 0) => {
+    const m = box(scene, x, minY + sy * 0.5, z, sx, sy, sz, pitMat);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: m, sx, sy: minY + sy, sz, minY });
+  };
+  pitWall(pitX - 1.2, pitZ, 0.32, 1.45);
+  pitWall(pitX + 1.2, pitZ, 0.32, 1.45);
+  pitWall(pitX, pitZ + 0.72, 2.05, 0.28);
+  pitWall(pitX - 0.7, pitZ - 0.72, 0.7, 0.28, 0.62);
+  pitWall(pitX + 0.7, pitZ - 0.72, 0.7, 0.28, 0.62);
+  pitWall(pitX, pitZ - 0.72, 0.95, 0.24, 0.38, 1.2);
+  box(scene, pitX, 0.04, pitZ, 1.9, 0.08, 1.15, concrete);
+  MAP.powderPit = new THREE.Vector3(pitX, 0, pitZ);
+  MAP.powderPitAmmo = new THREE.Vector3(pitX + 0.45, 0, pitZ + 0.15);
+  MAP.powderCharges = [];
+  MAP.powderDusts = [];
+  MAP.powderSpoils = [];
+  const spoilMat = new THREE.MeshLambertMaterial({ color: 0x8a7348 });
+  for (let i = 0; i < 3; i++) {
+    const chMesh = box(scene, -40, -3, -40, 0.42, 0.32, 0.42, rust);
+    chMesh.visible = false;
+    const chCrate = { pos: new THREE.Vector3(-40, 0, -40), mesh: chMesh, sx: 0.42, sy: 0.42, sz: 0.42, dead: true, charge: true };
+    MAP.crates.push(chCrate);
+    MAP.powderCharges.push({ live: false, fuse: 0, x: -40, z: -40, mesh: chMesh, crate: chCrate });
+    const dust = new THREE.Mesh(
+      new THREE.SphereGeometry(1.15, 7, 6),
+      new THREE.MeshBasicMaterial({ color: 0xc4b08a, transparent: true, opacity: 0.32 })
+    );
+    dust.visible = false;
+    scene.add(dust);
+    const dustCrate = { pos: new THREE.Vector3(-40, 0, -40), mesh: dust, sx: 2.3, sy: 1.7, sz: 2.3, dead: true, dust: true };
+    MAP.crates.push(dustCrate);
+    MAP.powderDusts.push({ t: 0, mesh: dust, crate: dustCrate });
+    const sm = box(scene, -40, -2, -40, 0.85, 0.58, 1.35, spoilMat);
+    const sc = { pos: new THREE.Vector3(-40, 0, -40), mesh: sm, sx: 0.85, sy: 0.58, sz: 1.35, dead: true, spoil: true };
+    MAP.crates.push(sc);
+    MAP.powderSpoils.push(sc);
+  }
+  MAP.powderSpoilI = 0;
+  const pwWreck = box(scene, 36.2, 0.45, 21.4, 2.1, 0.7, 1.15, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(36.2, 0, 21.4), mesh: pwWreck, sx: 2.1, sy: 0.9, sz: 1.15 });
+  MAP.powderWreck = new THREE.Vector3(36.2, 0, 21.4);
+  const pwArm = box(scene, 41.5, 1.15, 16.4, 0.16, 0.9, 2.4, steel);
+  const pwArmCrate = { pos: new THREE.Vector3(41.5, 0, 16.4), mesh: pwArm, sx: 0.2, sy: 1.6, sz: 2.4, dead: true, powderArm: true };
+  MAP.crates.push(pwArmCrate);
+  MAP.powderArm = pwArm;
+  MAP.powderArmCrate = pwArmCrate;
+  MAP.powderGate = { x: 41.5, z: 16.4, open: 1, target: 1 };
+  MAP.powderGatePost = new THREE.Vector3(41.5, 0, 14.85);
+
+
   // North radio bunker — door gap on south wall at x≈2, z≈30
   const rx = 2;
   const rz = 33;
@@ -11399,7 +11608,7 @@ function vehicleBlocked(nx, nz, self) {
   const h = MAP.half || 48;
   if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
   for (const c of MAP.crates) {
-    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.blade || c.dust || c.spoil) continue;
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.wreck || c.apc || c.hook || c.apcRamp || c.blade || c.dust || c.spoil) continue;
     if (c.sy && c.sy < 0.45) continue;
     const hx = (c.sx || 0.6) * 0.5 + 1.15;
     const hz = (c.sz || 0.6) * 0.5 + 0.7;
@@ -11966,6 +12175,380 @@ export function updateMed(dt) {
   if (MAP.medLamp) MAP.medLamp.intensity = hold ? 1.1 : 0.28;
 }
 
+
+export function onWreck(pos) {
+  const c = MAP.wreckCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.35 && Math.abs(pos.z - c.pos.z) < 1.15 && pos.y < 2.4 && pos.y > 0.6;
+}
+
+export function wreckCab(pos) {
+  const c = MAP.wreckCrate;
+  if (!c || !MAP.wreck) return false;
+  const yaw = MAP.wreck.yaw || 0;
+  const cx = c.pos.x + Math.cos(yaw) * 0.95;
+  const cz = c.pos.z - Math.sin(yaw) * 0.95;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.35 && pos.y < 2.2;
+}
+
+export function updateWrecker(dt) {
+  const path = MAP.wreckPath;
+  const c = MAP.wreckCrate;
+  if (!path || !c || !MAP.wreckMesh || !MAP.wreck) return;
+  MAP.wreckDx = 0;
+  MAP.wreckDz = 0;
+  MAP.wreck.yank = 0;
+  const placeHook = (yaw) => {
+    const out = MAP.wreck.winch > 0.45;
+    if (MAP.wreckBoom) MAP.wreckBoom.rotation.z = out ? 0.85 : 0.15;
+    const dist = out ? 2.35 : 1.35;
+    const hx = c.pos.x - Math.cos(yaw) * dist;
+    const hz = c.pos.z + Math.sin(yaw) * dist;
+    if (MAP.wreckHookPos) MAP.wreckHookPos.set(hx, 0, hz);
+    if (MAP.wreckHookCrate) {
+      MAP.wreckHookCrate.pos.set(hx, 0, hz);
+      MAP.wreckHookCrate.dead = !out;
+    }
+    if (out) MAP.wreck.yank = 1;
+  };
+  if (MAP.wreck.driven && !MAP.wreck.stalled) {
+    const yaw = (MAP.wreck.yaw || 0) + (MAP.wreck.steer || 0) * dt * 1.4;
+    MAP.wreck.yaw = yaw;
+    const sp = (MAP.wreck.throttle || 0) * 5.2;
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.wreckDx = nx - c.pos.x;
+    MAP.wreckDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.wreckMesh.position.set(nx, 0, nz);
+    MAP.wreckMesh.rotation.y = yaw;
+    if (MAP.wreckPlat) {
+      MAP.wreckPlat.x = nx - Math.cos(yaw) * 0.35;
+      MAP.wreckPlat.z = nz + Math.sin(yaw) * 0.35;
+      c.climbTo = MAP.wreckPlat;
+    }
+    placeHook(yaw);
+    if (MAP.wreckSmoke) MAP.wreckSmoke.visible = false;
+    return;
+  }
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.wreck.stalled ? 0 : 3.6;
+  if (speed > 0) {
+    const nextT = (MAP.wreckT + dt * speed) % total;
+    let remain = nextT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = MAP.wreck.yaw || 0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      MAP.wreckT = nextT;
+      MAP.wreck.yaw = yaw;
+      MAP.wreckDx = nx - c.pos.x;
+      MAP.wreckDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.wreckMesh.position.set(nx, 0, nz);
+      MAP.wreckMesh.rotation.y = yaw;
+      if (MAP.wreckPlat) {
+        MAP.wreckPlat.x = nx - Math.cos(yaw) * 0.35;
+        MAP.wreckPlat.z = nz + Math.sin(yaw) * 0.35;
+        c.climbTo = MAP.wreckPlat;
+      }
+    }
+  } else {
+    MAP.wreckMesh.position.set(c.pos.x, 0, c.pos.z);
+    MAP.wreckMesh.rotation.y = MAP.wreck.yaw || 0;
+  }
+  placeHook(MAP.wreck.yaw || 0);
+  if (MAP.wreckSmoke) MAP.wreckSmoke.visible = !!MAP.wreck.stalled;
+}
+
+export function onApc(pos) {
+  const c = MAP.apcCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.45 && Math.abs(pos.z - c.pos.z) < 1.2 && pos.y < 2.5 && pos.y > 0.65;
+}
+
+export function updateApc(dt, living = 6) {
+  const path = MAP.apcPath;
+  const c = MAP.apcCrate;
+  if (!path || !c || !MAP.apcMesh || !MAP.apc) return;
+  MAP.apcDx = 0;
+  MAP.apcDz = 0;
+  const yaw0 = MAP.apc.yaw || 0;
+  const placeRamp = (yaw) => {
+    const down = MAP.apc.ramp > 0.55;
+    if (MAP.apcRampMesh) {
+      MAP.apcRampMesh.rotation.z = down ? 1.15 : 0;
+      MAP.apcRampMesh.position.set(down ? -1.7 : -1.35, down ? 0.35 : 0.7, 0);
+    }
+    const rx = c.pos.x - Math.cos(yaw) * (down ? 2.15 : 1.4);
+    const rz = c.pos.z + Math.sin(yaw) * (down ? 2.15 : 1.4);
+    MAP.apcRampWorld = { x: rx, z: rz };
+    if (MAP.apcRampCrate) {
+      MAP.apcRampCrate.pos.set(rx, 0, rz);
+      MAP.apcRampCrate.dead = !down;
+    }
+  };
+  if ((MAP.apc.dropCd || 0) > 0) MAP.apc.dropCd -= dt;
+  const nearDrop = Math.hypot(c.pos.x - 12.4, c.pos.z + 24.6) < 1.6;
+  const wantDrop = !MAP.apc.stalled && MAP.apc.cmd > 0 && living < 5 && (MAP.apc.dropCd || 0) <= 0 && nearDrop;
+  if (wantDrop) MAP.apc.ramp = Math.min(1, (MAP.apc.ramp || 0) + dt * 0.8);
+  else MAP.apc.ramp = Math.max(0, (MAP.apc.ramp || 0) - dt * 0.7);
+  if (MAP.apc.ramp > 0.9 && wantDrop && !MAP.apc._dropped) {
+    MAP.apc._dropped = true;
+    MAP.apc.dropAsk = true;
+    MAP.apc.dropCd = 22;
+  }
+  if (MAP.apc.ramp < 0.2) MAP.apc._dropped = false;
+  const hold = MAP.apc.ramp > 0.4;
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < path.length; i++) {
+    const L = path[i].distanceTo(path[(i + 1) % path.length]);
+    lens.push(L);
+    total += L;
+  }
+  const speed = MAP.apc.stalled || hold ? 0 : 4.1;
+  if (speed > 0) {
+    MAP.apcT = (MAP.apcT + dt * speed) % total;
+    let remain = MAP.apcT;
+    let nx = path[0].x;
+    let nz = path[0].z;
+    let yaw = yaw0;
+    for (let i = 0; i < lens.length; i++) {
+      const a = path[i];
+      const b = path[(i + 1) % path.length];
+      if (remain <= lens[i] || i === lens.length - 1) {
+        const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+        nx = a.x + (b.x - a.x) * t;
+        nz = a.z + (b.z - a.z) * t;
+        yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+        break;
+      }
+      remain -= lens[i];
+    }
+    if (!vehicleBlocked(nx, nz, c)) {
+      MAP.apcDx = nx - c.pos.x;
+      MAP.apcDz = nz - c.pos.z;
+      c.pos.set(nx, 0, nz);
+      MAP.apcMesh.position.set(nx, 0, nz);
+      MAP.apcMesh.rotation.y = yaw;
+      MAP.apc.yaw = yaw;
+      if (MAP.apcPlat) {
+        MAP.apcPlat.x = nx + Math.cos(yaw) * 0.15;
+        MAP.apcPlat.z = nz - Math.sin(yaw) * 0.15;
+        c.climbTo = MAP.apcPlat;
+      }
+    }
+  } else {
+    MAP.apcMesh.position.set(c.pos.x, 0, c.pos.z);
+    MAP.apcMesh.rotation.y = MAP.apc.yaw || 0;
+  }
+  placeRamp(MAP.apc.yaw || 0);
+  if (MAP.apcCmdMesh) MAP.apcCmdMesh.visible = MAP.apc.cmd > 0;
+  if (MAP.apcSmoke) MAP.apcSmoke.visible = !!MAP.apc.stalled;
+}
+
+
+export function onPowder(pos) {
+  const c = MAP.powderCrate;
+  if (!c) return false;
+  return Math.abs(pos.x - c.pos.x) < 1.4 && Math.abs(pos.z - c.pos.z) < 1.15 && pos.y < 2.45 && pos.y > 0.62;
+}
+
+export function powderCab(pos) {
+  const c = MAP.powderCrate;
+  if (!c || !MAP.powder) return false;
+  const yaw = MAP.powder.yaw || 0;
+  const cx = c.pos.x + Math.cos(yaw) * 1.0;
+  const cz = c.pos.z - Math.sin(yaw) * 1.0;
+  return Math.hypot(pos.x - cx, pos.z - cz) < 1.35 && pos.y < 2.2;
+}
+
+export function inPowderPit(pos) {
+  const p = MAP.powderPit;
+  if (!p) return false;
+  return Math.abs(pos.x - p.x) < 1.05 && Math.abs(pos.z - p.z) < 0.7 && pos.y < 2.2;
+}
+
+export function dropPowderCharge() {
+  if (!MAP.powder || MAP.powder.stalled || !MAP.powderCrate) return false;
+  if ((MAP.powder.cd || 0) > 0) return false;
+  const slot = (MAP.powderCharges || []).find((ch) => !ch.live);
+  if (!slot) return false;
+  const yaw = MAP.powder.yaw || 0;
+  const x = MAP.powderCrate.pos.x - Math.cos(yaw) * 1.85;
+  const z = MAP.powderCrate.pos.z + Math.sin(yaw) * 1.85;
+  slot.live = true;
+  slot.fuse = 3.15;
+  slot.x = x;
+  slot.z = z;
+  slot.mesh.visible = true;
+  slot.mesh.position.set(x, 0.28, z);
+  slot.crate.dead = false;
+  slot.crate.pos.set(x, 0, z);
+  MAP.powder.cd = 9;
+  MAP.powder.dropAsk = true;
+  return true;
+}
+
+export function updatePowder(dt) {
+  const path = MAP.powderPath;
+  const c = MAP.powderCrate;
+  if (!path || !c || !MAP.powderMesh || !MAP.powder) return;
+  MAP.powderDx = 0;
+  MAP.powderDz = 0;
+  if ((MAP.powder.cd || 0) > 0) MAP.powder.cd -= dt;
+  const yaw0 = MAP.powder.yaw || 0;
+  if (MAP.powder.driven && !MAP.powder.stalled) {
+    const yaw = yaw0 + (MAP.powder.steer || 0) * dt * 1.35;
+    MAP.powder.yaw = yaw;
+    const sp = (MAP.powder.throttle || 0) * 4.8;
+    let nx = c.pos.x + Math.cos(yaw) * sp * dt;
+    let nz = c.pos.z - Math.sin(yaw) * sp * dt;
+    const h = MAP.half || 48;
+    nx = Math.max(-h + 2, Math.min(h - 2, nx));
+    nz = Math.max(-h + 2, Math.min(h - 2, nz));
+    if (vehicleBlocked(nx, nz, c)) {
+      nx = c.pos.x;
+      nz = c.pos.z;
+    }
+    MAP.powderDx = nx - c.pos.x;
+    MAP.powderDz = nz - c.pos.z;
+    c.pos.set(nx, 0, nz);
+    MAP.powderMesh.position.set(nx, 0, nz);
+    MAP.powderMesh.rotation.y = yaw;
+    if (MAP.powderPlat) {
+      MAP.powderPlat.x = nx - Math.cos(yaw) * 0.4;
+      MAP.powderPlat.z = nz + Math.sin(yaw) * 0.4;
+      c.climbTo = MAP.powderPlat;
+    }
+  } else {
+    const lens = [];
+    let total = 0;
+    for (let i = 0; i < path.length; i++) {
+      const L = path[i].distanceTo(path[(i + 1) % path.length]);
+      lens.push(L);
+      total += L;
+    }
+    const speed = MAP.powder.stalled ? 0 : 3.5;
+    if (speed > 0) {
+      const nextT = (MAP.powderT + dt * speed) % total;
+      let remain = nextT;
+      let nx = path[0].x;
+      let nz = path[0].z;
+      let yaw = yaw0;
+      for (let i = 0; i < lens.length; i++) {
+        const a = path[i];
+        const b = path[(i + 1) % path.length];
+        if (remain <= lens[i] || i === lens.length - 1) {
+          const t = lens[i] > 0 ? Math.min(1, remain / lens[i]) : 0;
+          nx = a.x + (b.x - a.x) * t;
+          nz = a.z + (b.z - a.z) * t;
+          yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
+          break;
+        }
+        remain -= lens[i];
+      }
+      if (!vehicleBlocked(nx, nz, c)) {
+        MAP.powderT = nextT;
+        MAP.powder.yaw = yaw;
+        MAP.powderDx = nx - c.pos.x;
+        MAP.powderDz = nz - c.pos.z;
+        c.pos.set(nx, 0, nz);
+        MAP.powderMesh.position.set(nx, 0, nz);
+        MAP.powderMesh.rotation.y = yaw;
+        if (MAP.powderPlat) {
+          MAP.powderPlat.x = nx - Math.cos(yaw) * 0.4;
+          MAP.powderPlat.z = nz + Math.sin(yaw) * 0.4;
+          c.climbTo = MAP.powderPlat;
+        }
+      }
+    } else {
+      MAP.powderMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.powderMesh.rotation.y = yaw0;
+    }
+  }
+  if (MAP.powderGate) {
+    MAP.powderGate.open += (MAP.powderGate.target - MAP.powderGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.powderGate.open < 0.45;
+    if (MAP.powderArm) {
+      MAP.powderArm.rotation.x = down ? 0 : -1.15;
+      MAP.powderArm.position.y = down ? 0.7 : 1.35;
+    }
+    if (MAP.powderArmCrate) MAP.powderArmCrate.dead = !down;
+    if (down && Math.abs(c.pos.z - 16.4) < 1.5 && c.pos.x > 39.2 && c.pos.x < 43.8) {
+      c.pos.x -= MAP.powderDx;
+      c.pos.z -= MAP.powderDz;
+      MAP.powderMesh.position.set(c.pos.x, 0, c.pos.z);
+      MAP.powderDx = 0;
+      MAP.powderDz = 0;
+    }
+  }
+  if (MAP.powderSmoke) MAP.powderSmoke.visible = !!MAP.powder.stalled;
+  for (const ch of MAP.powderCharges || []) {
+    if (!ch.live) continue;
+    ch.fuse -= dt;
+    ch.mesh.position.y = 0.28 + Math.sin((3.15 - ch.fuse) * 14) * 0.03;
+    if (ch.fuse <= 0) {
+      ch.live = false;
+      ch.mesh.visible = false;
+      ch.crate.dead = true;
+      const dust = (MAP.powderDusts || []).find((d) => d.t <= 0);
+      if (dust) {
+        dust.t = 4.2;
+        dust.mesh.visible = true;
+        dust.mesh.position.set(ch.x, 0.9, ch.z);
+        dust.crate.dead = false;
+        dust.crate.pos.set(ch.x, 0, ch.z);
+      }
+      const spoils = MAP.powderSpoils || [];
+      if (spoils.length) {
+        const sc = spoils[MAP.powderSpoilI % spoils.length];
+        MAP.powderSpoilI = (MAP.powderSpoilI + 1) % spoils.length;
+        sc.dead = false;
+        sc.pos.set(ch.x, 0, ch.z + 0.8);
+        if (sc.mesh) sc.mesh.position.set(ch.x, 0.29, ch.z + 0.8);
+      }
+      MAP.powderBlast = { x: ch.x, z: ch.z, r: 4.6, dmg: 28 };
+    }
+  }
+  for (const dust of MAP.powderDusts || []) {
+    if (dust.t <= 0) continue;
+    dust.t -= dt;
+    dust.mesh.scale.setScalar(0.85 + Math.sin(dust.t * 8) * 0.08);
+    dust.mesh.material.opacity = Math.max(0.08, dust.t / 4.2) * 0.36;
+    if (dust.t <= 0) {
+      dust.mesh.visible = false;
+      dust.crate.dead = true;
+    }
+  }
+}
+
 export function updateBayDoor(dt) {
   const d = MAP.bayDoor;
   if (!d || !d.mesh) return;
@@ -11995,6 +12578,10 @@ export function collideXZ(pos, radius = 0.45) {
     if (c.fuel && pos.y > 1.55) continue;
     if (c.dozer && pos.y > 1.05) continue;
     if (c.med && pos.y > 1.15) continue;
+    if (c.wreck && pos.y > 1.05) continue;
+    if (c.apc && pos.y > 1.15) continue;
+    if (c.powder && pos.y > 1.15) continue;
+    if (c.dust) continue;
     if (c.cage && Math.abs(pos.x - c.pos.x) < 0.55 && Math.abs(pos.z - c.pos.z) < 0.48) continue;
     const dx = pos.x - c.pos.x;
     const dz = pos.z - c.pos.z;

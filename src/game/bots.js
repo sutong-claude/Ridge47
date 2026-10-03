@@ -599,6 +599,109 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           b._medRide = false;
         }
       }
+      if (MAP.wreckCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.wreckCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.2 && Math.abs(dz) < 0.9;
+        if (onBed && (b.pos.y > 0.4 || b._wreckRide)) {
+          b.pos.x += MAP.wreckDx || 0;
+          b.pos.z += MAP.wreckDz || 0;
+          b.mesh.position.y = 1.05;
+          b._wreckRide = true;
+        }
+        const want = playerPos && playerPos.x < -16 && playerPos.z < -2 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.wreck && MAP.wreck.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.0 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.0 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._wreckRide = true;
+        } else if (!onBed && b._wreckRide) {
+          b.mesh.position.y = 0;
+          b._wreckRide = false;
+        }
+        if (MAP.wreck && MAP.wreck.yank && MAP.wreckHookPos && !onBed && b.pos.y < 1.8) {
+          const hx = b.pos.x - MAP.wreckHookPos.x;
+          const hz = b.pos.z - MAP.wreckHookPos.z;
+          if (Math.hypot(hx, hz) < 2.8) {
+            b.pos.x -= hx * Math.min(1, dt * 1.5);
+            b.pos.z -= hz * Math.min(1, dt * 1.5);
+            b.hp -= 7 * dt;
+          }
+        }
+      }
+      if (MAP.apcCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.apcCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.3 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._apcRide)) {
+          b.pos.x += MAP.apcDx || 0;
+          b.pos.z += MAP.apcDz || 0;
+          b.mesh.position.y = 1.15;
+          b._apcRide = true;
+        }
+        const want = playerPos && playerPos.x > 8 && playerPos.z < -14 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.apc && MAP.apc.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.2 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.2 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.3) b._apcRide = true;
+        } else if (!onBed && b._apcRide) {
+          b.mesh.position.y = 0;
+          b._apcRide = false;
+        }
+        if (MAP.apc && MAP.apc.ramp > 0.7 && b._apcRide) {
+          b.mesh.position.y = 0;
+          b._apcRide = false;
+          if (MAP.apcRampWorld) {
+            b.pos.x = MAP.apcRampWorld.x;
+            b.pos.z = MAP.apcRampWorld.z;
+          }
+        }
+      }
+      if (MAP.powderCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.powderCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        const onBed = Math.abs(dx) < 1.25 && Math.abs(dz) < 1.0;
+        if (onBed && (b.pos.y > 0.4 || b._powderRide)) {
+          b.pos.x += MAP.powderDx || 0;
+          b.pos.z += MAP.powderDz || 0;
+          b.mesh.position.y = 1.15;
+          b._powderRide = true;
+        }
+        const want = playerPos && playerPos.x > 30 && playerPos.z > 10 && playerPos.z < 32 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.powder && MAP.powder.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.25) b._powderRide = true;
+        } else if (!onBed && b._powderRide) {
+          b.mesh.position.y = 0;
+          b._powderRide = false;
+        }
+        if (MAP.powderGate && MAP.powderGate.open < 0.4 && MAP.powderGatePost && playerPos && playerPos.distanceTo(MAP.powderGatePost) < 7 && b.pos.distanceTo(MAP.powderGatePost) < 2.2) {
+          b._powKick = (b._powKick || 0) + dt;
+          if (b._powKick > 0.8) {
+            MAP.powderGate.target = 1;
+            b._powKick = 0;
+          }
+        }
+        const pit = MAP.powderPit;
+        if (pit && playerPos && Math.abs(playerPos.x - pit.x) < 2.2 && Math.abs(playerPos.z - pit.z) < 2.2 && b.pos.distanceTo(pit) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(pit.x - b.pos.x) * Math.min(2.0 * dt, Math.abs(pit.x - b.pos.x));
+          b.pos.z += Math.sign(pit.z - b.pos.z) * Math.min(2.0 * dt, Math.abs(pit.z - b.pos.z));
+        }
+      }
+      for (const ch of MAP.powderCharges || []) {
+        if (!ch.live || ch.fuse > 2.1 || b.hp <= 0) continue;
+        const hx = b.pos.x - ch.x;
+        const hz = b.pos.z - ch.z;
+        if (Math.hypot(hx, hz) < 5.5 && b.pos.y < 2) {
+          b.pos.x += Math.sign(hx || 1) * 2.4 * dt;
+          b.pos.z += Math.sign(hz || 1) * 2.4 * dt;
+          b._powderRide = false;
+          b.mesh.position.y = 0;
+        }
+      }
       if (MAP.fuelCrate && b.hp > 0 && b.state !== "down" && !(MAP.fuel && MAP.fuel.cooked)) {
         const c = MAP.fuelCrate;
         const dx = b.pos.x - c.pos.x;

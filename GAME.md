@@ -925,4 +925,21 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] East medevac patrol (rideable bed, cab stall, F crank, MED pip)
 - [x] Stops on a downed hostile and channels them up if the medic lives
 - [x] High hit on the box drops the medic and stops the channel; bots board on the east road
+- [x] Southwest wrecker patrol (moving hitscan cover, rideable deck, WRECK pip)
+- [x] Cab shots stall it; F crank restarts; F at the cab drives (WASD, A left D right, F dismount)
+- [x] Ctrl toggles the winch while driving; patrol pays the hook out when the player is close
+- [x] Hook is moving hitscan cover and yanks the player and bots
+- [x] Southwest lane berms; bots board the deck on the southwest road; deck tin restocks half a mag
+- [x] Southeast APC patrol (moving hitscan cover, rideable bay, APC pip)
+- [x] Cab shots stall it; F crank restarts; high hit on the hatch drops the commander and stops the drop
+- [x] Stops on the west leg when living hostiles are under 5 and drops a ramp that blocks hitscan
+- [x] Ramp dismounts R-APC; bots board the bay on the southeast road and bail when the ramp is down
+- [x] APC lane berms; bay tin restocks half a mag; ram if you stand in the lane
+- [x] East-rim powder mule patrol (POWDER pip, rideable bed, moving hitscan cover)
+- [x] F at the cab drives (WASD, A left D right, F dismount); Ctrl drops a 3s charge from cab or bed
+- [x] Charge whistle, blast shove + bot damage, dust curtain blocks hitscan, spoil berm cover
+- [x] Cab shots stall it; F crank restarts; stall drops a charge; bed tin and pit tin restock half a mag
+- [x] East blast pit with a firing slit (PIT pip); bots board the bed on the east rim and push the pit
+- [x] Bots dive off a live charge; ram if you stand in the lane; wrecked powder truck west of the loop
+- [x] Powder drop-arm on the south leg (F at the post, blocks walk + hitscan, stops patrol and driven mule; bots kick it if the player camps the post)
 - [ ] Next: owner topics or more juice
