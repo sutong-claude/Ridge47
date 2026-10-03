@@ -1,3 +1,39 @@
+## TypeScript live slice 2026-10-03 ~21:20 UTC (combat+critic)
+
+Critic: 进入战区 was enabled and the overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.14; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat slice: player starts with 2 grenades (cap 4). G dry-clicks at 0. Even-id bots drop a frag beside the rifle mag. Walk-over mag +15 rifle reserve (cap 150); frag +1 grenade. Bots carry an 8-round mag, kneel 1.35s to reload, and do not shoot or toss while kneeling. Grenade meshes render. Slide throws grit. Death cam tags the killer (R-n or 手雷). Score card shows 承伤, 投雷, 雷倒, 弹匣, 手雷.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Limited grenades (start 2, cap 4) and frag pickup
+- [x] Bot mag + kneel reload (no fire while reloading)
+- [x] Death-cam killer tag and score card nade/pickup/taken lines
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Limited grenades and bot reload
+- [ ] East hut door stop block (visual, gap stays open) — map lane
+
+## TypeScript live slice 2026-10-03 ~20:22 UTC (critic)
+
+Push aa1118e is a status note only (`GAME.md`). Jamb scuff was already in the live TypeScript match. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
+
+Confirmed the open map item in the live match: east hut door lintel nick. Worn header chip and paint flake just west of the gap (x=11.96, y=2.28). Visual only — not in WALLS, does not block walk or hitscan. Approach lamp, compass 楣, minimap tick, HUD 东棚门楣缺. Gap stays open. Overlay 进入战区 click-verified (button enabled, HP 100, 6 hostiles).
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] East hut door lintel nick (visual, gap stays open)
+- [x] Jamb scuff, death cam, mag drops unchanged
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] East hut door lintel nick
+- [ ] East hut door stop block (visual, gap stays open)
+
 ## TypeScript live slice 2026-10-03 ~20:26 UTC (critic)
 
 Push 979109a is a status note only (`GAME.md`, combat log). Already recorded in aa1118e. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
@@ -50,72 +86,6 @@ Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`)
 - [x] Death cam before the score card
 - [x] Bot mag pickup on down
 - [ ] East hut door jamb scuff (visual, gap stays open) — map lane
-
-## TypeScript live slice 2026-10-03 ~17:17 UTC (map+critic)
-
-Push 0ffafba is a status note only (`TS-MAP-2026-10-03-berm.md`). East yard approach berm was already in the live TypeScript match. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
-
-Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`. Deploy overlay and 进入战区 stay clickable.
-
-- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
-- [x] East hut door threshold stripe: five worn dashes just west of the door gap. Visual only — not in WALLS, does not block walk or hitscan. Approach lamp, compass 槛, minimap dash, HUD 东棚门槛
-- [x] Berm gap, porch bags, slits, porch tin, west crates, hangar slab unchanged
-- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
-
-## Next backlog
-- [x] East hut door threshold stripe
-- [ ] East hut door jamb scuff (visual, gap stays open)
-
-## TypeScript live slice 2026-10-03 ~17:13 UTC (map+critic)
-
-Push 6786cff is a status note only (`TS-MAP-2026-10-03-porch.md`). Porch sandbags, slits, and porch tin were already in the live TypeScript match. Did not copy the JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
-
-Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`. Deploy overlay and 进入战区 stay clickable.
-
-- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
-- [x] East yard approach berm west of the porch: two dirt-and-bag shoulders block walk and hitscan. Center gap stays open toward the hut door. No new key
-- [x] Approach lamp brightens. Compass 埂, minimap bars, HUD 东棚接近土埂
-- [x] Porch bags, slits, porch tin, west crates, hangar slab, shed tin unchanged
-- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
-
-## Next backlog
-- [x] East yard approach berm
-- [ ] East hut door threshold stripe (visual, does not block the gap)
-
-## TypeScript live slice 2026-10-03 ~17:03 UTC (map+critic)
-
-Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`. Deploy overlay and 进入战区 stay clickable.
-
-- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
-- [x] East hut porch sandbags flank the west door (gap stays open). Stacks block walk and hitscan. Deck and posts are visual. Approach lamp brightens, no new key
-- [x] Compass 廊 and minimap bag bars. Nearby HUD 东棚门廊沙袋
-- [x] East hut south firing slit: sill blocks walk, chest-height shots pass. Frame lamp brightens on approach. Compass 缝, minimap pip, HUD 东棚射击缝
-- [x] Porch ammo tin south of the bags: half mag / overflow reserve, 12s cool, lid lift, approach glow. Minimap pip, HUD 门廊弹匣
-- [x] East hut north firing slit: sill blocks walk, chest shots pass. Compass 北缝, minimap pip, HUD 东棚北缝, approach lamp
-- [x] West crates, hangar slab, shed tin, valve, grate, sock, ring, spool, slide, score card unchanged
-- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
-
-## Next backlog
-- [x] East hut porch ammo tin (half mag, 12s, lid lift, minimap pip, HUD cool)
-- [x] East hut north window slit
-- [ ] East hut interior table blocks shots (already) — next: east yard approach berm
-
-## TypeScript live slice 2026-10-03 ~15:03 UTC (map+critic)
-
-Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`. Deploy overlay and 进入战区 stay clickable.
-
-- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
-- [x] Extract pad painted ring refresh: 16 worn dashes outside the hold radius light in order as the 20s hold climbs, then fade if you step off. Four chevrons and four bollard lamps brighten with the hold (steady, not strobes)
-- [x] Compass 环 and minimap ring (amber while refreshing). Nearby HUD shows 漆环刷新 percent
-- [x] East pad lip berm blocks walk and hitscan, clear of the sock and the south approach
-- [x] Hangar threshold paint stripe and approach lamp brighten when you walk up (no new key, does not block the door)
-- [x] North pad sandbag lip (left/right bags, center firing gap toward the hangar door) blocks walk and hitscan. Gap lamp brightens on approach and while the ring refreshes. Minimap bars. HUD 北唇射击口
-- [x] South-yard cable spool (drum, flanges, cable) blocks walk and hitscan, clear of spawn. Approach lamp. Compass 缆, minimap block, HUD 缆盘掩体
-- [x] West crates, hangar slab, shed tin, valve, grate, sock, slide, score card unchanged
-- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
-
-## Next backlog
-- [ ] East hut porch sandbags
 
 # Ridge 47 — hourly build contract
 
