@@ -696,6 +696,54 @@ export function updateBots(bots, playerPos, dt, fireAtPlayer, playerLook, player
           b.pos.z -= Math.sin(MAP.tripJet.yaw) * 2.1 * dt;
         }
       }
+      if (MAP.manCrate && b.hp > 0 && b.state !== "down") {
+        const c = MAP.manCrate;
+        const dx = b.pos.x - c.pos.x;
+        const dz = b.pos.z - c.pos.z;
+        let onBed = Math.abs(dx) < 1.05 && Math.abs(dz) < 0.9;
+        let ride = c;
+        if (!onBed) {
+          for (const car of MAP.manCars || []) {
+            if (Math.abs(b.pos.x - car.crate.pos.x) < 0.9 && Math.abs(b.pos.z - car.crate.pos.z) < 0.8) {
+              onBed = true;
+              ride = car.crate;
+              break;
+            }
+          }
+        }
+        if (onBed && (b.pos.y > 0.4 || b._manRide)) {
+          b.pos.x += MAP.manDx || 0;
+          b.pos.z += MAP.manDz || 0;
+          b.mesh.position.y = 0.95;
+          b._manRide = true;
+        }
+        const want = playerPos && playerPos.x < -28 && b.pos.distanceTo(c.pos) < 16 && !onBed && b.pos.y < 2 && !(MAP.man && MAP.man.stalled);
+        if (want) {
+          b.pos.x += Math.sign(c.pos.x - b.pos.x) * Math.min(2.1 * dt, Math.abs(c.pos.x - b.pos.x));
+          b.pos.z += Math.sign(c.pos.z - b.pos.z) * Math.min(2.1 * dt, Math.abs(c.pos.z - b.pos.z));
+          if (b.pos.distanceTo(c.pos) < 1.2) b._manRide = true;
+        } else if (!onBed && b._manRide) {
+          b.mesh.position.y = 0;
+          b._manRide = false;
+        }
+        if (MAP.manGate && MAP.manGate.open < 0.4 && MAP.manGatePost && playerPos && playerPos.distanceTo(MAP.manGatePost) < 7 && b.pos.distanceTo(MAP.manGatePost) < 2.2) {
+          b._manKick = (b._manKick || 0) + dt;
+          if (b._manKick > 0.8) {
+            MAP.manGate.target = 1;
+            b._manKick = 0;
+          }
+        }
+        const cut = MAP.manCut;
+        if (cut && playerPos && Math.abs(playerPos.x - cut.x) < 2.2 && Math.abs(playerPos.z - cut.z) < 2.0 && b.pos.distanceTo(cut) < 14 && b.pos.y < 2) {
+          b.pos.x += Math.sign(cut.x - b.pos.x) * Math.min(2.3 * dt, Math.abs(cut.x - b.pos.x));
+          b.pos.z += Math.sign(cut.z - b.pos.z) * Math.min(2.3 * dt, Math.abs(cut.z - b.pos.z));
+        }
+        if (MAP.manJet && Math.hypot(b.pos.x - MAP.manJet.x, b.pos.z - MAP.manJet.z) < 1.25 && b.pos.y < 1.8) {
+          b.hp -= 8 * dt;
+          b.pos.x += Math.cos(MAP.manJet.yaw) * 2.0 * dt;
+          b.pos.z -= Math.sin(MAP.manJet.yaw) * 2.0 * dt;
+        }
+      }
       if (MAP.potCrate && b.hp > 0 && b.state !== "down") {
         const c = MAP.potCrate;
         const dx = b.pos.x - c.pos.x;

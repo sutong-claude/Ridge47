@@ -7513,6 +7513,116 @@ export function buildMap(scene) {
   const potDrum2 = box(scene, -16.5, 0.55, -37.8, 0.52, 1.08, 0.52, rust);
   MAP.crates.push({ pos: new THREE.Vector3(-16.5, 0, -37.8), mesh: potDrum2, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
 
+  // West-bench mantrip — rail-locked loco. W/S along the steel, Ctrl side-dumps a curtain, switch throws the spur.
+  const man = new THREE.Group();
+  const manBody = box(scene, 0, 0, 0, 1.55, 0.55, 0.92, new THREE.MeshStandardMaterial({ color: 0x3e4a38, roughness: 0.68, metalness: 0.22 }));
+  manBody.position.set(0, 0.78, 0);
+  const manCabM = box(scene, 0, 0, 0, 0.62, 0.58, 0.84, rust);
+  manCabM.position.set(-0.55, 0.92, 0);
+  const manDeck = box(scene, 0, 0, 0, 1.7, 0.14, 0.96, steel);
+  manDeck.position.set(0.15, 0.52, 0);
+  const manDumpArm = box(scene, 0, 0, 0, 0.7, 0.12, 0.22, new THREE.MeshStandardMaterial({ color: 0xc4a060, roughness: 0.5, metalness: 0.3 }));
+  manDumpArm.position.set(0.35, 1.05, 0.42);
+  man.add(manBody, manCabM, manDeck, manDumpArm);
+  const manRailMat = new THREE.MeshStandardMaterial({ color: 0x6a6258, roughness: 0.55, metalness: 0.4 });
+  for (const z of [-16, -4, 8, 20]) {
+    const rail = box(scene, -41.6, 0.08, z, 0.18, 0.08, 11.2, manRailMat);
+    MAP.crates.push({ pos: new THREE.Vector3(-41.6, 0, z), mesh: rail, sx: 0.18, sy: 0.08, sz: 11.2, dead: true, manRail: true });
+  }
+  const spurRail = box(scene, -45.2, 0.08, 9.6, 7.4, 0.08, 0.18, manRailMat);
+  MAP.crates.push({ pos: new THREE.Vector3(-45.2, 0, 9.6), mesh: spurRail, sx: 7.4, sy: 0.08, sz: 0.18, dead: true, manRail: true });
+  MAP.man = { hp: 58, stalled: false, driven: false, throttle: 0, dump: 0, s: 0.18, dir: 1, spur: 0 };
+  MAP.manMesh = man;
+  MAP.manArm = manDumpArm;
+  const manStart = manPoint(MAP.man.s, 0);
+  man.position.set(manStart.x, 0, manStart.z);
+  man.rotation.y = manStart.yaw;
+  scene.add(man);
+  const manCrate = { pos: new THREE.Vector3(manStart.x, 0, manStart.z), mesh: man, sx: 1.85, sy: 1.25, sz: 1.05, man: true, climb: true };
+  MAP.crates.push(manCrate);
+  MAP.manCrate = manCrate;
+  MAP.manDx = 0;
+  MAP.manDz = 0;
+  MAP.manPlat = { x: manStart.x, z: manStart.z, sx: 0.85, sz: 0.7, top: 0.78 };
+  manCrate.climbTo = MAP.manPlat;
+  MAP.platforms = MAP.platforms || [];
+  MAP.platforms.push(MAP.manPlat);
+  const manSmoke = new THREE.Mesh(new THREE.SphereGeometry(0.14, 6, 5), new THREE.MeshBasicMaterial({ color: 0x6a6048, transparent: true, opacity: 0.4 }));
+  manSmoke.position.set(-0.85, 1.15, 0);
+  manSmoke.visible = false;
+  man.add(manSmoke);
+  MAP.manSmoke = manSmoke;
+  const manTin = box(scene, 0, 0, 0, 0.24, 0.12, 0.18, rust);
+  manTin.position.set(0.35, 0.68, -0.22);
+  man.add(manTin);
+  MAP.manTin = manTin;
+  const manCars = [];
+  for (let i = 0; i < 2; i++) {
+    const car = new THREE.Group();
+    const bed = box(scene, 0, 0, 0, 1.35, 0.42, 0.9, steel);
+    bed.position.set(0, 0.58, 0);
+    const lip = box(scene, 0, 0, 0, 1.28, 0.28, 0.12, rust);
+    lip.position.set(0, 0.82, 0.38);
+    car.add(bed, lip);
+    const cs = manPoint(MAP.man.s - 0.08 * (i + 1), 0);
+    car.position.set(cs.x, 0, cs.z);
+    car.rotation.y = cs.yaw;
+    scene.add(car);
+    const cc = { pos: new THREE.Vector3(cs.x, 0, cs.z), mesh: car, sx: 1.4, sy: 0.95, sz: 0.95, manCar: true, climb: true };
+    MAP.crates.push(cc);
+    const plat = { x: cs.x, z: cs.z, sx: 0.7, sz: 0.55, top: 0.82 };
+    cc.climbTo = plat;
+    MAP.platforms.push(plat);
+    manCars.push({ mesh: car, crate: cc, plat, lag: 0.08 * (i + 1) });
+  }
+  MAP.manCars = manCars;
+  const manCurtainMat = new THREE.MeshBasicMaterial({ color: 0xb09058, transparent: true, opacity: 0.36 });
+  const manPour = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.25, 1.35), manCurtainMat);
+  manPour.visible = false;
+  scene.add(manPour);
+  const manPourCrate = { pos: new THREE.Vector3(manStart.x, 0, manStart.z), mesh: manPour, sx: 1.2, sy: 1.25, sz: 1.4, dead: true, dust: true, manDump: true };
+  MAP.crates.push(manPourCrate);
+  MAP.manPour = manPour;
+  MAP.manPourCrate = manPourCrate;
+  MAP.manPiles = [];
+  MAP.manPileI = 0;
+  for (let i = 0; i < 5; i++) {
+    const sl = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.36, 1.15), new THREE.MeshStandardMaterial({ color: 0xb89048, roughness: 0.9 }));
+    sl.visible = false;
+    scene.add(sl);
+    const sc = { pos: new THREE.Vector3(0, -5, 0), mesh: sl, sx: 1.3, sy: 0.28, sz: 1.15, dead: true, manPile: true };
+    MAP.crates.push(sc);
+    MAP.manPiles.push({ mesh: sl, crate: sc, live: false, life: 0, hard: 0 });
+  }
+  const manSwitch = box(scene, -40.2, 0.55, 9.6, 0.28, 1.05, 0.28, rust);
+  MAP.manSwitch = new THREE.Vector3(-40.2, 0, 9.6);
+  MAP.crates.push({ pos: MAP.manSwitch.clone(), mesh: manSwitch, sx: 0.28, sy: 1.05, sz: 0.28 });
+  const manArmPost = box(scene, -40.15, 0.7, -15.4, 0.22, 1.35, 0.22, rust);
+  const manGateArm = box(scene, -40.7, 0.28, -15.4, 1.35, 0.16, 0.16, steel);
+  MAP.manGate = { x: -41.6, z: -15.4, open: 1, target: 1 };
+  MAP.manGatePost = new THREE.Vector3(-40.15, 0, -15.4);
+  MAP.manArmMesh = manGateArm;
+  MAP.crates.push({ pos: MAP.manGatePost.clone(), mesh: manArmPost, sx: 0.22, sy: 1.35, sz: 0.22 });
+  const manArmCrate = { pos: new THREE.Vector3(-40.7, 0, -15.4), mesh: manGateArm, sx: 1.35, sy: 0.9, sz: 0.2, dead: true, manArm: true };
+  MAP.crates.push(manArmCrate);
+  MAP.manArmCrate = manArmCrate;
+  const spurBerm = (x, z, sx, sz) => {
+    const bm = box(scene, x, 0.55, z, sx, 1.1, sz, rock);
+    MAP.crates.push({ pos: new THREE.Vector3(x, 0, z), mesh: bm, sx, sy: 1.1, sz, climb: true });
+  };
+  spurBerm(-48.6, 11.15, 1.2, 0.45);
+  spurBerm(-48.6, 8.05, 1.2, 0.45);
+  box(scene, -48.6, 1.35, 9.6, 1.2, 0.35, 0.4, rock);
+  MAP.manCut = new THREE.Vector3(-48.6, 0, 9.6);
+  const manCutTin = box(scene, -47.7, 0.35, 10.4, 0.26, 0.14, 0.2, rust);
+  MAP.manCutTin = manCutTin;
+  MAP.crates.push({ pos: new THREE.Vector3(-47.7, 0, 10.4), mesh: manCutTin, sx: 0.26, sy: 0.14, sz: 0.2, dead: true });
+  const manDrum = box(scene, -43.4, 0.55, 12.4, 0.52, 1.08, 0.52, rust);
+  MAP.crates.push({ pos: new THREE.Vector3(-43.4, 0, 12.4), mesh: manDrum, sx: 0.52, sy: 1.08, sz: 0.52, drum: true });
+  const manWreck = box(scene, -38.4, 0.55, 16.8, 1.6, 0.9, 1.05, rust);
+  MAP.manWreck = new THREE.Vector3(-38.4, 0, 16.8);
+  MAP.crates.push({ pos: MAP.manWreck.clone(), mesh: manWreck, sx: 1.6, sy: 0.9, sz: 1.05 });
+
   return MAP;
 }
 
@@ -12182,7 +12292,7 @@ function vehicleBlocked(nx, nz, self) {
   const h = MAP.half || 48;
   if (nx < -h + 2 || nx > h - 2 || nz < -h + 2 || nz > h - 2) return true;
   for (const c of MAP.crates) {
-    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.wreck || c.apc || c.hook || c.apcRamp || c.blade || c.dust || c.spoil || c.monitor || c.spray) continue;
+    if (!c || c === self || c.dead || c.walkOn || c.tech || c.bowser || c.gun || c.fuel || c.dozer || c.med || c.wreck || c.apc || c.hook || c.apcRamp || c.blade || c.dust || c.spoil || c.monitor || c.spray || c.man || c.manCar || c.manDump || c.manRail) continue;
     if (c.sy && c.sy < 0.45) continue;
     const hx = (c.sx || 0.6) * 0.5 + 1.15;
     const hz = (c.sz || 0.6) * 0.5 + 0.7;
@@ -14166,3 +14276,156 @@ export function updateTrip(dt) {
   }
   if (MAP.tripSmoke) MAP.tripSmoke.visible = !!MAP.trip.stalled;
 }
+
+
+export function manPoint(s, spur) {
+  const x0 = -41.6;
+  const z0 = 28;
+  const z1 = -18;
+  const junction = 0.4;
+  const clamped = Math.max(0, Math.min(spur ? 0.62 : 1, s));
+  if (!spur || clamped <= junction) {
+    const z = z0 + (z1 - z0) * clamped;
+    return { x: x0, z, yaw: Math.PI / 2 };
+  }
+  const t = Math.min(1, (clamped - junction) / 0.22);
+  return { x: x0 - t * 7.2, z: z0 + (z1 - z0) * junction, yaw: Math.PI };
+}
+
+export function onMan(pos) {
+  if (!MAP.manCrate) return false;
+  const c = MAP.manCrate;
+  if (Math.abs(pos.x - c.pos.x) < 0.95 && Math.abs(pos.z - c.pos.z) < 0.8 && pos.y < 2.1 && pos.y > 0.35) return true;
+  for (const car of MAP.manCars || []) {
+    if (Math.abs(pos.x - car.crate.pos.x) < 0.8 && Math.abs(pos.z - car.crate.pos.z) < 0.7 && pos.y < 2.1 && pos.y > 0.35) return true;
+  }
+  return false;
+}
+
+export function manCab(pos) {
+  if (!MAP.manCrate || !MAP.man) return false;
+  const yaw = MAP.man.yaw || Math.PI / 2;
+  const cx = MAP.manCrate.pos.x - Math.cos(yaw) * 0.45;
+  const cz = MAP.manCrate.pos.z + Math.sin(yaw) * 0.45;
+  return Math.abs(pos.x - cx) < 0.85 && Math.abs(pos.z - cz) < 0.85 && pos.y < 2.2;
+}
+
+export function inManCut(pos) {
+  const w = MAP.manCut;
+  if (!w) return false;
+  return Math.abs(pos.x - w.x) < 1.35 && Math.abs(pos.z - w.z) < 1.15 && pos.y < 1.7;
+}
+
+export function inManGravel(pos) {
+  for (const sl of MAP.manPiles || []) {
+    if (!sl.live || sl.hard > 0.55) continue;
+    if (Math.abs(pos.x - sl.crate.pos.x) < 0.75 && Math.abs(pos.z - sl.crate.pos.z) < 0.65) return true;
+  }
+  return false;
+}
+
+export function updateMantrip(dt) {
+  const c = MAP.manCrate;
+  if (!c || !MAP.manMesh || !MAP.man) return;
+  const prev = manPoint(MAP.man.s, MAP.man.spur > 0.5);
+  const dumping = MAP.man.dump > 0.35 && !MAP.man.stalled;
+  if (MAP.man.driven && !MAP.man.stalled) {
+    const spur = MAP.man.spur > 0.5;
+    const cap = spur ? 0.62 : 0.98;
+    MAP.man.s += (MAP.man.throttle || 0) * dt * (dumping ? 0.08 : 0.16);
+    MAP.man.s = Math.max(0.02, Math.min(cap, MAP.man.s));
+  } else if (!MAP.man.stalled) {
+    const spur = MAP.man.spur > 0.5;
+    const cap = spur ? 0.6 : 0.94;
+    MAP.man.s += (MAP.man.dir || 1) * dt * (dumping ? 0.045 : 0.09);
+    if (MAP.man.s >= cap) { MAP.man.s = cap; MAP.man.dir = -1; }
+    if (MAP.man.s <= 0.04) { MAP.man.s = 0.04; MAP.man.dir = 1; }
+  }
+  if (MAP.manGate && MAP.manGate.open < 0.45 && MAP.man.s > 0.9 && !(MAP.man.spur > 0.5)) {
+    MAP.man.s = 0.9;
+    MAP.man.dir = -1;
+    MAP.man.throttle = Math.min(0, MAP.man.throttle || 0);
+  }
+  const pose = manPoint(MAP.man.s, MAP.man.spur > 0.5);
+  MAP.man.yaw = pose.yaw;
+  MAP.manDx = pose.x - c.pos.x;
+  MAP.manDz = pose.z - c.pos.z;
+  c.pos.set(pose.x, 0, pose.z);
+  MAP.manMesh.position.set(pose.x, 0, pose.z);
+  MAP.manMesh.rotation.y = pose.yaw;
+  if (MAP.manPlat) {
+    MAP.manPlat.x = pose.x;
+    MAP.manPlat.z = pose.z;
+    c.climbTo = MAP.manPlat;
+  }
+  for (const car of MAP.manCars || []) {
+    const cp = manPoint(MAP.man.s - car.lag, MAP.man.spur > 0.5);
+    car.crate.pos.set(cp.x, 0, cp.z);
+    car.mesh.position.set(cp.x, 0, cp.z);
+    car.mesh.rotation.y = cp.yaw;
+    car.plat.x = cp.x;
+    car.plat.z = cp.z;
+  }
+  const yaw = pose.yaw;
+  const side = yaw + Math.PI / 2;
+  const sx = pose.x + Math.cos(side) * 1.25;
+  const sz = pose.z - Math.sin(side) * 1.25;
+  MAP.manJet = dumping ? { x: sx, z: sz, yaw: side } : null;
+  if (MAP.manPour && MAP.manPourCrate) {
+    MAP.manPour.visible = dumping;
+    MAP.manPour.position.set(sx, 0.7, sz);
+    MAP.manPour.rotation.y = yaw;
+    MAP.manPourCrate.dead = !dumping;
+    MAP.manPourCrate.pos.set(sx, 0, sz);
+    if (dumping) MAP.manPour.material.opacity = 0.26 + Math.sin(performance.now() * 0.02) * 0.1;
+  }
+  if (MAP.manArm) MAP.manArm.rotation.z = dumping ? -0.7 : 0;
+  if (dumping && Math.hypot(MAP.manDx, MAP.manDz) > 0.004) {
+    MAP.man.pileCd = (MAP.man.pileCd || 0) - dt;
+    if (MAP.man.pileCd <= 0) {
+      MAP.man.pileCd = 1.35;
+      const slabs = MAP.manPiles || [];
+      if (slabs.length) {
+        const sl = slabs[MAP.manPileI % slabs.length];
+        MAP.manPileI = (MAP.manPileI + 1) % slabs.length;
+        sl.live = true;
+        sl.life = 12;
+        sl.hard = 0.04;
+        sl.crate.dead = true;
+        sl.crate.pos.set(sx, 0, sz);
+        sl.mesh.visible = true;
+        sl.mesh.position.set(sx, 0.12, sz);
+        sl.mesh.rotation.y = yaw;
+        sl.mesh.scale.y = 0.3;
+      }
+    }
+  }
+  for (const sl of MAP.manPiles || []) {
+    if (!sl.live) continue;
+    sl.life -= dt;
+    sl.hard = Math.min(1, sl.hard + dt * 0.18);
+    const sy = 0.18 + sl.hard * 0.42;
+    sl.crate.sy = sy;
+    sl.crate.dead = sl.hard < 0.42;
+    sl.mesh.scale.y = 0.3 + sl.hard * 0.8;
+    sl.mesh.position.y = sy * 0.4;
+    if (sl.mesh.material && sl.mesh.material.color) sl.mesh.material.color.setHex(sl.hard > 0.6 ? 0x6a5840 : 0xb89048);
+    if (sl.life <= 0) {
+      sl.live = false;
+      sl.crate.dead = true;
+      sl.mesh.visible = false;
+    }
+  }
+  if (MAP.manGate) {
+    MAP.manGate.open += (MAP.manGate.target - MAP.manGate.open) * Math.min(1, dt * 3.2);
+    const down = MAP.manGate.open < 0.45;
+    if (MAP.manArmMesh) {
+      MAP.manArmMesh.position.y = down ? 0.72 : 0.28;
+      MAP.manArmMesh.rotation.z = down ? 0 : 1.15;
+    }
+    if (MAP.manArmCrate) MAP.manArmCrate.dead = !down;
+  }
+  if (MAP.manSmoke) MAP.manSmoke.visible = !!MAP.man.stalled;
+  if (Math.hypot(pose.x - prev.x, pose.z - prev.z) > 0.02) MAP.manClack = (MAP.manClack || 0) + dt;
+}
+

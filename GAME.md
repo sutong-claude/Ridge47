@@ -991,4 +991,12 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] Northeast wind slit (WIND pip) with a firing gap; bots board the deck on the northeast rim and push the slit
 - [x] Trip drop-arm on the west leg (F at the post, blocks walk + hitscan, stops patrol and driven tripper; bots kick it if the player camps the post)
 - [x] Lane berms; ram if you stand in the lane; wrecked tripper south of the loop
+- [x] West-bench mantrip (MAN pip, rail-locked loco + two ore cars, moving hitscan cover)
+- [x] F at the cab drives on the rail (W south, S north, A/D unused, F dismount); Ctrl side-dumps
+- [x] Dump curtain blocks hitscan, shoves, chips the player and bots, and kicks live grenades
+- [x] Moving dump lays spill that slows, then hardens into cover and crumbles
+- [x] Cab shots stall it; F crank restarts; deck tin and spur tin restock half a mag
+- [x] West spur slit (SPUR pip) with a firing gap; F at the switch throws the spur; bots board the cars on the west bench and push the slit
+- [x] Mantrip drop-arm on the south leg (F at the post, blocks walk + hitscan, stops the rail; bots kick it if the player camps the post)
+- [x] Rail, wrecked loco, drum; ram if you stand on the line
 - [ ] Next: owner topics or more juice
