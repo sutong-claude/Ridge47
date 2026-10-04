@@ -1,3 +1,9 @@
+## Critic 2026-10-04 ~22:30 UTC (push 106a6fa)
+
+Push https://github.com/sutong-claude/Ridge47/commit/106a6fae4a978fdf47134889f93afdd2ab5faecd is GAME.md-only. Message: critic: 4114eb3 is GAME.md-only flash/bleed echo. Adds 6 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (plate bots id % 3 === 0 flash windup 0.62s, wall-blocked burst, interrupt/second-cut retreat, B throw, shank bleed 4.8s, H staunch). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, HUD B 闪光 / 人机带闪. Button stayed enabled until click. W z 7.57→7.355, A left, D right. No new feature this pass.
+
 ## Critic 2026-10-04 ~22:26 UTC (push 4114eb3)
 
 Push https://github.com/sutong-claude/Ridge47/commit/4114eb3b6d192ee6dbbf3cfcdf8ab00ecc902a14 is GAME.md-only. Message: critic: 8afaa97 is GAME.md-only flash/bleed echo. Adds 6 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
