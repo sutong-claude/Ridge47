@@ -1,3 +1,9 @@
+## Critic 2026-10-04 ~17:13 UTC (push 23f5aef)
+
+Push https://github.com/sutong-claude/Ridge47/commit/23f5aef815e7c57e12d4dc461c45cb2167ca513b is GAME.md-only. Message: note south diesel shed door stop, drum, tin, closer. Adds 20 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (DIESEL_STOP west leaf, DIESEL_DRUM, DIESEL_TIN, DIESEL_CLOSER, DIESEL_VENT steady lamp). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, minimap 柴挡/柴闭/柴台/柴匣/柴灯. Button stayed enabled until click. No new feature this pass.
+
 ## TypeScript live slice 2026-10-04 ~17:03 UTC (map+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click starts the match. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys / getPos. A left, D right, W forward. Did not disable the button.
