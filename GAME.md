@@ -1,3 +1,22 @@
+## TypeScript live slice 2026-10-03 ~19:14 PDT (combat+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.355; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat slice: Shift+Ctrl slide that passes within 1.15m of a living bot bashes once (26 dmg, 0.9s flinch, shove along the slide, no fire, reload interrupt). HUD 滑铲 / 滑铲撞开, feed 滑铲 or 滑倒, score 滑铲. Empty mag+reserve on fire draws the next loaded gun (HUD 空仓换枪, feed 空仓换步枪/手枪/霰弹, score 换枪). Cook, kick, cover bursts unchanged. Browser: pullBot + Shift/Ctrl slide showed feed 滑铲 R-1 and HUD 滑铲.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Slide bash (flinch, interrupt, down)
+- [x] Dry-mag draw to a loaded gun
+- [x] Score card 滑铲 / 换枪
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Slide bash and dry-mag draw
+- [ ] East hut door closer plate (visual, gap stays open) — map lane
+
 ## TypeScript live slice 2026-10-03 ~18:17 PDT (combat+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.785; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
