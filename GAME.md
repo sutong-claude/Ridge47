@@ -2,7 +2,7 @@
 
 Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.355; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
 
-Combat slice: a living bot at ≤42 HP with no LOS starts a 1.5s bandage (duck, no fire or shank). A hit, stab, or blast cuts it (HUD 打断包扎, feed 打断包扎 or 打断包扎·后撤, score 打断包扎); a second cut retreats. Finish heals 22 up to 76 (feed 包好). Ids % 3 === 2 drop a med pouch; walk-over heals 28 if hurt, else stores a pouch (feed 拾药 / 拾药包, score 药包). H applies a stored pouch in 0.95s if still (heal 24, feed 包扎, score 包扎); moving cancels. Cook, kick, slide, knife unchanged. Browser: forceBandage showed 人机包扎, shoot feed 打断包扎 R-1, spawnMed feed 拾药包 and pouch 1.
+Combat slice: a living bot at ≤42 HP with no LOS starts a 1.5s bandage (duck, no fire or shank). A hit, stab, or blast cuts it (HUD 打断包扎, feed 打断包扎 or 打断包扎·后撤, score 打断包扎); a second cut retreats. Finish heals 22 up to 76 (feed 包好). Ids % 3 === 2 drop a med pouch; walk-over heals 28 if hurt, else stores a pouch (feed 拾药 / 拾药包, score 药包). H applies a stored pouch in 0.95s if still (heal 24, feed 包扎, score 包扎); moving cancels. Cook, kick, slide, knife unchanged. Browser: forceBandage showed 人机包扎, shoot feed 打断包扎 R-1, spawnMed feed 拾药包 and pouch 1. Bandaging bots are green on the minimap.
 
 Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
 
