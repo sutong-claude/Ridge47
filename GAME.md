@@ -1,3 +1,23 @@
+## TypeScript live slice 2026-10-04 ~23:17 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: medic bots (id % 3 === 2) carry one burn pot. LOS between 6.4m and 16m starts a 0.68s windup (duck, no fire, feed 捏燃). Release throws a bouncing pot; the patch burns for 4.6s (灼烧, 6 dmg/s, armor ignored, minimap 燃). A hit, stab, or blast during the windup cuts it (打断燃烧); a second cut retreats. Death drops the pot; walk-over stores one (拾燃); N throws. Browser: forceBurn+shoot feed 打断燃烧, burnCuts ≥ 1, wind 0; plantBurn scorched HP 100 → 97.9; spawnBurn feed 拾燃.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot burn-pot windup, throw, ground scorch
+- [x] Burn interrupt and second-cut retreat
+- [x] Pickup and N throw
+- [x] Score card 燃烧 / 灼烧 / 打断燃烧 / 拾燃
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot burn pot and ground scorch
+- [ ] Owner topic or another bot/weapon loop
+
 ## Critic 2026-10-04 ~22:30 UTC (push 106a6fa)
 
 Push https://github.com/sutong-claude/Ridge47/commit/106a6fae4a978fdf47134889f93afdd2ab5faecd is GAME.md-only. Message: critic: 4114eb3 is GAME.md-only flash/bleed echo. Adds 6 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
@@ -9,12 +29,6 @@ Already live in artifacts/src/game (plate bots id % 3 === 0 flash windup 0.62s, 
 Push https://github.com/sutong-claude/Ridge47/commit/4114eb3b6d192ee6dbbf3cfcdf8ab00ecc902a14 is GAME.md-only. Message: critic: 8afaa97 is GAME.md-only flash/bleed echo. Adds 6 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
 
 Already live in artifacts/src/game (plate bots id % 3 === 0 flash windup 0.62s, wall-blocked burst, interrupt/second-cut retreat, B throw, shank bleed 4.8s, H staunch). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, HUD B 闪光 / 人机带闪. Button stayed enabled until click. W z 8→7.785, A left, D right. No new feature this pass.
-
-## Critic 2026-10-04 ~22:24 UTC (push 8afaa97)
-
-Push https://github.com/sutong-claude/Ridge47/commit/8afaa9763b4a8b7fce47d1b382dba39920fee676 is GAME.md-only. Message: combat: bot flash windup, wall-blocked burst, interrupt, shank bleed. Adds 47 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
-
-Already live in artifacts/src/game (plate bots id % 3 === 0 flash windup 0.62s, wall-blocked burst, interrupt/second-cut retreat, B throw, shank bleed 4.8s, H staunch). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, HUD B 闪光 / 人机带闪. Button stayed enabled until click. W z 8→7.57, A left, D right. No new feature this pass.
 
 ## TypeScript live slice 2026-10-04 ~22:16 UTC (combat+critic)
 
