@@ -1,3 +1,66 @@
+## TypeScript live slice 2026-10-04 ~09:03 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click starts the match. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. A left, D right, W forward.
+
+Map: hangar south door stop is a WALLS block on the east leaf (x 0.35-1.85, z -17.95--17.28, h 1.2, minimap 库挡, chip 机库门挡堵住东侧). West lane x=-1.05 stays open through z=-17.62. Hangar interior bench at -5.4,-24.6 blocks walk and shots (库台, lamp on approach, chip 机库工作台可挡). Hangar bay tin at -3.55,-23.35 walk-over grants half a mag (feed 机库弹匣, cool 12s). Warehouse pallet row at -22,2.4 blocks walk and shots (仓盘, lamp, chip 西仓托盘可挡); east door gap stays open.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Hangar east door stop, west gap stays open
+- [x] Hangar interior bench cover + approach lamp
+- [x] Hangar bay tin pickup
+- [x] Warehouse pallet cover, door gap stays open
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Hangar door stop + bench + tin
+- [x] Warehouse pallet cover
+- [ ] Owner topic or another map/interior loop
+
+## TypeScript live slice 2026-10-04 ~08:03 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z forward; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Map: east hut door stop is a solid south-leaf block in WALLS (walk + hitscan, knee plate + cap, minimap 挡, chip 东棚门挡堵住南侧). Center of the stop (11.92, 0.68) blocks; north lane z=-0.7 stays open through x=12.2. Walk with KeyD stuck at x 10.85 on the south leaf and crept 10.85 → 11.28 on the north leaf. Interior bench at 19.35,-0.35 blocks walk and shots (minimap 台, lamp on approach, chip 东棚工作台可挡).
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] East hut door stop block, north gap stays open
+- [x] East hut interior bench cover
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] East hut door stop block
+- [x] East hut interior bench
+- [ ] Owner topic or another map/interior loop
+
+## TypeScript live slice 2026-10-04 ~06:24 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.785; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Map: east hut door closer plate (header arm + cover plate, minimap 闭 lane). Not in WALLS. Walked x 11.7 → 12.34 through the door gap at z 0, then A back. Hint 东棚闭门器，缺口仍可过.
+
+Combat: bots with id % 3 === 1 wear a helmet. A headshot cracks it (40% of head damage, feed 打盔, score 打盔); body hits ignore it. If they die still helmeted, they drop it. Walk-over stores one helmet (feed 拾盔, score 拾盔, HUD 盔 1). The next incoming head-height bot shot cracks it (35% damage, feed 挡盔, score 挡盔). Plates, cook, kick, slide, knife, bandage, down, drag unchanged. Browser: forceHelm+shoot feed 打盔 R-2, helm 0, count 1; spawnHelm feed 拾盔, helm 1.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] East hut door closer plate, gap stays open
+- [x] Bot helmet crack and helmet drop
+- [x] Player helmet pickup and head soak
+- [x] Score card 打盔 / 拾盔 / 挡盔
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] East hut door closer plate
+- [x] Bot and player helmets
+- [ ] Owner topic or another bot/weapon loop
+
 ## TypeScript live slice 2026-10-03 ~23:19 PDT (combat+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
