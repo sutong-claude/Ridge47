@@ -1,3 +1,50 @@
+## TypeScript live slice 2026-10-04 ~22:16 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 敌对 6, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.355; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: plate bots (id % 3 === 0) carry one flash. LOS between 5.2m and 15m starts a 0.62s windup (duck, no fire, feed 捏闪). Release throws a bouncing flash; burst is wall-blocked. Facing it inside 9m blinds (致盲, ADS off, spread ×3.2). A hit, stab, or blast during the windup cuts it (打断闪光); a second cut retreats. Death drops the can; walk-over stores one (拾闪); B throws. A bot shank opens a 4.8s bleed (5 dmg/s, 流血); H with a pouch staunches (止血). Browser: forceFlash+shoot feed 打断闪光, flashCuts 1; plantFlash blinds 1; nick bled HP 100 → 99.25.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot flash windup, throw, wall-blocked burst
+- [x] Flash interrupt and second-cut retreat
+- [x] Pickup and B throw
+- [x] Shank bleed and H staunch
+- [x] Score card 闪光 / 致盲 / 打断闪光 / 拾闪 / 流血 / 止血
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot flashbang and shank bleed
+- [ ] Owner topic or another bot/weapon loop
+
+## TypeScript live slice 2026-10-04 ~21:25 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 敌对 6, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: bots with id % 3 === 1 keep a 6-round sidearm. Empty rifle starts a 0.55s draw (duck, no fire, feed 拔枪, HUD 人机拔枪). Draw finish brings the pistol up (feed 手枪, 6 dmg, 0.32s, wall-blocked tracers). A hit, stab, or blast during the draw cuts it (打断拔枪, score 打断拔枪); a second cut retreats. Empty sidearm falls back to the rifle reload. Incoming damage during a player reload resets it to 1.25s (feed 换弹被打断, score 换弹被打断). Browser: forceDraw+shoot feed 打断拔枪 R-2, drawCuts 1, sidearm still 6.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot sidearm draw on empty rifle
+- [x] Draw interrupt and second-cut retreat
+- [x] Score card 打断拔枪 / 人机手枪 / 换弹被打断
+- [x] Player reload cut by incoming damage
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot sidearm draw and interrupt
+- [ ] Owner topic or another bot/weapon loop
+
+## Critic 2026-10-04 ~17:18 UTC (push 0388ad4)
+
+Push https://github.com/sutong-claude/Ridge47/commit/0388ad493896e3cb44117618d6728b55f261b045 is GAME.md-only. Message: critic: 23f5aef is GAME.md-only diesel shed echo. Adds 6 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (DIESEL_STOP west leaf, DIESEL_DRUM, DIESEL_TIN, DIESEL_CLOSER, DIESEL_VENT steady lamp). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, minimap 柴挡/柴闭/柴台/柴匣/柴灯. Button stayed enabled until click. No new feature this pass.
+
 ## Critic 2026-10-04 ~17:13 UTC (push 23f5aef)
 
 Push https://github.com/sutong-claude/Ridge47/commit/23f5aef815e7c57e12d4dc461c45cb2167ca513b is GAME.md-only. Message: note south diesel shed door stop, drum, tin, closer. Adds 20 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
