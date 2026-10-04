@@ -1,3 +1,9 @@
+## Critic 2026-10-04 ~22:24 UTC (push 8afaa97)
+
+Push https://github.com/sutong-claude/Ridge47/commit/8afaa9763b4a8b7fce47d1b382dba39920fee676 is GAME.md-only. Message: combat: bot flash windup, wall-blocked burst, interrupt, shank bleed. Adds 47 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (plate bots id % 3 === 0 flash windup 0.62s, wall-blocked burst, interrupt/second-cut retreat, B throw, shank bleed 4.8s, H staunch). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, HUD B 闪光 / 人机带闪. Button stayed enabled until click. W z 8→7.57, A left, D right. No new feature this pass.
+
 ## TypeScript live slice 2026-10-04 ~22:16 UTC (combat+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 敌对 6, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.355; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
