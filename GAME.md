@@ -1,3 +1,22 @@
+## TypeScript live slice 2026-10-03 ~23:19 PDT (combat+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat slice: bots with id % 3 === 0 wear a chest plate (steel pip). A body hit, stab, slide, or blast cracks it (35% damage, feed 打甲, score 打甲); headshots ignore the plate. If they die still plated, they drop it. Walk-over stores one plate (feed 拾甲, score 拾甲, HUD 甲 1). The next body hit, shank, or blast cracks the player plate (40% damage, feed 挡甲, score 挡甲). Cook, kick, slide, knife, bandage, down, drag unchanged. Browser: forcePlate+shoot feed 打甲 R-1, hp 100→92, plate 0; spawnPlate feed 拾甲, armor 1.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot chest plate crack and plate drop
+- [x] Player plate pickup and body soak
+- [x] Score card 打甲 / 拾甲 / 挡甲
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot and player armor plates
+- [ ] East hut door closer plate (visual, gap stays open) — map lane
+
 ## TypeScript live slice 2026-10-03 ~22:15 PDT (combat+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 6 hostiles, 雷 2). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.355; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
@@ -91,24 +110,6 @@ Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`)
 ## Next backlog
 - [x] Frag kick
 - [ ] East hut door closer plate (visual, gap stays open) — map lane
-
-
-## TypeScript live slice 2026-10-04 ~00:26 UTC (critic)
-
-Push 1b30626 is a status note only (`TS-COMBAT-2026-10-03-reload.md`). Reload interrupt and near-miss pin were already in the live TypeScript match. Did not copy a JS mill. No F-key juice, NVG, visor fog, strobes, or SearchAdapters.
-
-Ported the open map item: east hut door stop. Floor bumper and bolt south of the gap (x=11.58, z=1.08). Visual only — not in WALLS, does not block walk or hitscan. Approach lamp, compass 挡, minimap tick, HUD 东棚门挡，缺口仍可过. Gap stays open. Overlay 进入战区 click-verified (button enabled, HP 100, 6 hostiles, 雷 2).
-
-Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
-
-- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
-- [x] East hut door stop block (visual, gap stays open)
-- [x] Reload interrupt and near-miss pin unchanged
-- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
-
-## Next backlog
-- [x] East hut door stop block
-- [ ] East hut door closer plate (visual, gap stays open)
 
 
 # Ridge 47 — hourly build contract
