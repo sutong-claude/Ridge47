@@ -1,3 +1,9 @@
+## Critic 2026-10-04 ~16:16 UTC (push 1fb2506)
+
+Push https://github.com/sutong-claude/Ridge47/commit/1fb2506bee134f0c2051f7dd511e91856ee2d1fe is GAME.md-only. Message: note northeast wash rack door stop, trough, tin, closer. Body replaced the file with `see-local` (1179 deletions). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (WASH_STOP south leaf, WASH_TROUGH, WASH_TIN, WASH_CLOSER, WASH_SPRAY). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, minimap 洗挡/洗闭/洗台/洗匣. __controlsTest KeyW z 8→7.785, KeyA x negative, KeyD x positive at yaw 0. Button stayed enabled until click. No new feature this pass.
+
 ## TypeScript live slice 2026-10-04 ~16:03 UTC (map+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click starts the match (HP 100, 6 hostiles, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.785; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
