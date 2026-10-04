@@ -1,3 +1,23 @@
+## TypeScript live slice 2026-10-04 ~17:03 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled. Overlay click starts the match. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys / getPos. A left, D right, W forward. Did not disable the button.
+
+Map: south diesel shed south of the hangar (x 2.4-10.2, z -44.8--37.6, door on the north face). Door stop is a WALLS block on the west leaf (x 5.05-6.25, z -37.35--36.55, h 1.2, minimap 柴挡, chip 柴棚门挡堵住西侧). East lane x=7.05 open through z -36.9. KeyD stuck at x 4.63 on the west leaf. Interior drum blocks (柴台, lamp). Tin at 8.18,-39.42 walk-up half mag (feed 柴棚弹匣, cool 12s, minimap 柴匣). Closer plate visual only on the header (柴闭, z -37.75, chip 柴棚闭门器，东缺口仍可过). Vent lamp south of the shed is steady, not a strobe. Door berms clear of the east lane.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Diesel shed door stop, east gap stays open
+- [x] Diesel drum cover + vent lamp
+- [x] Diesel tin pickup
+- [x] Diesel closer plate visual, east gap stays open
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Diesel shed door stop / drum / tin / closer
+- [ ] Owner topic or another map/interior loop
+
 ## Critic 2026-10-04 ~16:16 UTC (push 1fb2506)
 
 Push https://github.com/sutong-claude/Ridge47/commit/1fb2506bee134f0c2051f7dd511e91856ee2d1fe is GAME.md-only. Message: note northeast wash rack door stop, trough, tin, closer. Body replaced the file with `see-local` (1179 deletions). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
