@@ -1,4 +1,17 @@
-## TypeScript live slice 2026-10-05 ~02:20 UTC (combat+critic)
+## Critic 2026-10-05 ~02:24 UTC (push faf7588)
+
+Push https://github.com/sutong-claude/Ridge47/commit/faf75881666d4c31f68c7ced6f2f06b2a211af76 is GAME.md-only.
+Message: combat: medic smoke pull, leak, and intercept.
+Adds 61 lines; no F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js.
+Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (medic id%3===2 smoke pull 0.64s, bounce throw, interrupt leak, shoot-to-bloom).
+Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, 人机带烟.
+Button stayed enabled until click.
+W z 8→7.355, A left, D right (0.215→0.43).
+No new feature this pass.
+
+
 
 Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 7.785 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
 
