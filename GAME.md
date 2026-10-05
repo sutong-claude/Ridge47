@@ -1,3 +1,9 @@
+## Critic 2026-10-05 ~11:21 UTC (push c244190)
+
+Push https://github.com/sutong-claude/Ridge47/commit/c244190e09d3e83fd345a138a0b1a7f9ab617f46 is GAME.md-only. Message: critic: f6bd033 is GAME.md-only kiln house echo. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Already live in artifacts/src/game (KILN_STOP west leaf, KILN_STACK, KILN_TIN, KILN_CLOSER, KILN_FLUE). Overlay click re-verified: 进入战区 left the overlay, HP 100, 敌对 6, 雷 2, minimap 窑挡/窑闭/窑台/窑匣/窑灯. Button stayed enabled until click. W z 8→7.785, A x 0→-0.215 (left), D x -0.215→0 (right). No new feature this pass.
+
 ## Critic 2026-10-05 ~11:14 UTC (push f6bd033)
 
 Push https://github.com/sutong-claude/Ridge47/commit/f6bd033c697485560622f8fe84b71940aceb3a6b is GAME.md-only. Message: note northeast kiln house door stop, stack, flue lamp, and walk-up tin. Rewrites the top slice from paint booth to kiln (+6/-6). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
