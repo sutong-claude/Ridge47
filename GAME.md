@@ -1,3 +1,9 @@
+## Critic 2026-10-05 ~18:14 UTC (push 07ce5ac)
+
+Push https://github.com/sutong-claude/Ridge47/commit/07ce5ac10f3c1ff47e55fdea873c2926f9942792 is GAME.md-only. Message: note southeast ash house and southwest thickener door stops, cover, lamps, and walk-up tins. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). __controlsTest.setKeys KeyW z 8→7.785, KeyA x 0→-0.215 (left), KeyD x back toward 0 (right) at yaw 0. HUD still shows 灰挡/灰闭/灰台/灰匣/灰灯 and 沉挡/沉闭/沉台/沉匣/沉灯. Did not disable the button. No new feature.
+
 ## TypeScript live slice 2026-10-05 ~18:03 UTC (map+critic)
 
 Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→7.785, KeyA x 0→-0.215 (left), KeyD x back toward 0 (right) at yaw 0. Did not disable the button.
