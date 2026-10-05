@@ -1,3 +1,64 @@
+## TypeScript live slice 2026-10-05 ~02:20 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 7.785 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: medic bots (id % 3 === 2) carry one smoke. Lost LOS or suppression between 3.4m and 14m starts a 0.64s pull (duck, no fire, feed 捏烟). Finish throws a bouncing smoke (投烟) that blooms. A hit, stab, or blast during the windup cuts it (打断捏烟) and drops a live can that blooms at their feet (漏烟); a second cut retreats. Death while pulling also leaks. Shooting a live smoke grenade blooms it early (截烟) instead of a frag blast. Browser: forceSmokePull+shoot feed 打断捏烟, smokeCuts 1, wind 0, leaks 1, HP 100→63; releaseSmoke smokePulls 1; plantLiveSmoke+shoot smokeSnips 1. W z 7.785→7.57, A left, D right.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Medic smoke pull windup and bounce throw
+- [x] Pull interrupt drops a live leak; second cut retreats
+- [x] Shoot live smoke to bloom it early
+- [x] Score card 人机捏烟 / 打断捏烟 / 漏烟 / 截烟
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Medic smoke pull, leak, and smoke intercept
+- [ ] Owner topic or another bot/weapon loop
+
+## TypeScript live slice 2026-10-05 ~01:20 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z forward; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: rifle bots (id % 3 === 1) carry one frag. LOS between 5.5m and 14m starts a 0.72s cook (duck, no fire, feed 捏雷). Finish throws a short-fuse frag (投出). A hit, stab, or blast during the windup cuts it (打断捏雷) and drops a live cook-off at their feet (炸手); a second cut retreats. Death while cooking also cooks off. Shooting a live grenade detonates it early (截雷). Browser: forceCook+shoot feed 打断捏雷, cookCuts 1, wind 0, cookoffs 1; plantLive+shoot feed 截雷, intercepts 1, HP 100→88; plantCook botCooks 1. W z 8→7.785, A left, D right.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot frag cook windup and short-fuse throw
+- [x] Cook interrupt drops a live cook-off; second cut retreats
+- [x] Shoot live grenades to intercept
+- [x] Score card 人机捏雷 / 打断捏雷 / 炸手 / 截雷
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot frag cook, cook-off, and grenade intercept
+- [ ] Owner topic or another bot/weapon loop
+
+## TypeScript live slice 2026-10-05 ~00:23 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: plate bots (id % 3 === 0) carry one claymore. After the flash is spent or locked, LOS between 8m and 16m starts a 0.66s plant (duck, no fire, feed 埋雷). Finish arms a ground mine 0.95m toward the player (0.55s arm delay, minimap 雷). Stepping inside 1.2m trips it (绊雷, up to 46 dmg, armor ignored). A hit, stab, or blast during the windup cuts it (打断埋雷); a second cut retreats. Shooting the mine disarms it (拆雷) and drops a pickup. Walk-over stores one (拾雷); M plants ahead. Browser: forceMine+shoot mineCuts 1, wind 0; spawnMine walk-over 拾雷, mineCans 1; plantMine trips 1, HP 100 → 57.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot claymore plant windup and armed mine
+- [x] Trip blast and shoot-to-disarm
+- [x] Plant interrupt and second-cut retreat
+- [x] Pickup and M plant
+- [x] Score card 埋雷 / 绊雷 / 打断埋雷 / 拾雷 / 拆雷
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot claymore plant, trip, and disarm
+- [ ] Owner topic or another bot/weapon loop
+
 ## TypeScript live slice 2026-10-04 ~23:17 UTC (combat+critic)
 
 Critic: 进入战区 stayed enabled. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
