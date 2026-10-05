@@ -1,3 +1,144 @@
+## TypeScript live slice 2026-10-05 ~18:03 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→7.785, KeyA x 0→-0.215 (left), KeyD x back toward 0 (right) at yaw 0. Did not disable the button.
+
+Map: southeast ash house (x 24.2-31.4, z 22.2-29.4, west door). South leaf stop x 23.98-25.18, z 25.02-25.82, h 1.2, minimap 灰挡. North lane z=26.4 open (blocked false at 26.2,26.4). KeyD stuck at x 23.615 z 25.42 on the south leaf. Cyclone 灰台 + stack lamp 灰灯. Tin 26.55,28.05 walk-up half mag (feed 灰棚弹匣, cool 12s observed 12, 灰匣). Closer visual 灰闭. Chip 灰棚门挡堵住南侧，北缺口可过.
+
+Map: southwest thickener (x -32.6--25.4, z -36.8--29.6, east door). South leaf stop x -25.62--24.42, z -34.15--33.35, h 1.2, minimap 沉挡. North lane z=-32.4 open (blocked false at -28,-32.4). KeyA step rejected at x -24 z -33.75 on the south leaf. Rake 沉台 + stack lamp 沉灯. Tin -27.4,-30.8 walk-up half mag (feed 沉棚弹匣, cool 12s observed 12, 沉匣). Closer visual 沉闭. Chip 沉棚门挡堵住南侧，北缺口可过.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Ash house door stop blocks the south leaf; north lane stays open
+- [x] Ash cyclone chest cover and stack lamp
+- [x] Walk-up ash tin grants half a mag, 12s cool
+- [x] Closer plate visual only
+- [x] Thickener door stop blocks the south leaf; north lane stays open
+- [x] Thickener rake chest cover and stack lamp
+- [x] Walk-up thickener tin grants half a mag, 12s cool
+- [x] Minimap 灰挡 / 灰闭 / 灰台 / 灰匣 / 灰灯 / 沉挡 / 沉闭 / 沉台 / 沉匣 / 沉灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
+
+## TypeScript live slice 2026-10-05 ~16:05 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→6.71, KeyA x 0→-0.215 (left), KeyD x 0→1.29 (right) at yaw 0. Did not disable the button.
+
+Map: north floc house (x -8.6--1.4, z 34.2-41.4, south door). West leaf stop x -5.78--4.78, z 34.58-35.38, h 1.2, minimap 絮挡. East lane x=-4.32 open through z 37.70. KeyS stuck at x -5.28 z 34.045 on the west leaf. Tank 絮台 + stack lamp 絮灯. Tin -2.22,36.88 walk-up half mag (feed 絮棚弹匣, cool 12s observed 11.9, 絮匣). Closer visual 絮闭. Overlay click-verified. Chip 絮棚门挡堵住西侧，东缺口可过.
+
+Map: east sack house (x 26.4-33.6, z -10.8--3.6, west door). South leaf stop x 26.18-26.98, z -7.85--6.65, h 1.2, minimap 袋挡. North lane z=-5.95 open through x 29.93. KeyD stuck at x 25.63 z -7.25 on the south leaf. Hopper 袋台 + stack lamp 袋灯. Tin 28.4,-4.55 walk-up half mag (feed 袋棚弹匣, cool 12s observed 11.9, 袋匣). Closer visual 袋闭. Chip 袋棚门挡堵住南侧，北缺口可过.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Floc house door stop blocks the west leaf; east lane stays open
+- [x] Floc tank chest cover and stack lamp
+- [x] Walk-up floc tin grants half a mag, 12s cool
+- [x] Closer plate visual only
+- [x] Sack house door stop blocks the south leaf; north lane stays open
+- [x] Sack hopper chest cover and stack lamp
+- [x] Walk-up sack tin grants half a mag, 12s cool
+- [x] Minimap 絮挡 / 絮闭 / 絮台 / 絮匣 / 絮灯 / 袋挡 / 袋闭 / 袋台 / 袋匣 / 袋灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
+
+## TypeScript live slice 2026-10-05 ~15:05 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→6.28, KeyA x 0→-0.215 (left), KeyD x positive (right) at yaw 0. Did not disable the button.
+
+Map: northeast grit house (x 40.4-47.6, z 22.4-29.6, west door). South leaf stop x 39.58-40.78, z 25.22-26.02, h 1.2, minimap 砂挡. North lane z=27.1 open through x 46.64. KeyD stuck at x 39.115 z 25.62 on the south leaf. Classifier 砂台 + stack lamp 砂灯. Tin 43.08,28.88 walk-up half mag (feed 砂棚弹匣, cool 12s observed 3.55 remaining after earlier pickup, 砂匣). Closer visual 砂闭. Chip 砂棚门挡堵住南侧，北缺口可过.
+
+Map: southeast sludge press (x 16.4-23.6, z -46.8--39.6, north door). West leaf stop x 18.82-19.62, z -40.38--39.18, h 1.2, minimap 泥挡. East lane x=20.55 open through z -45.35. KeyW stuck at x 19.22 z -38.9 on the west leaf (radius already in the stop). Press 泥台 + vent lamp 泥灯. Tin 22.55,-41.4 walk-up half mag (feed 泥棚弹匣, cool 12s observed 3.55 remaining, 泥匣). Closer visual 泥闭. Overlay click-verified. Chip 泥棚门挡堵住西侧，东缺口可过.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Grit house door stop blocks the south leaf; north lane stays open
+- [x] Grit classifier chest cover and stack lamp
+- [x] Walk-up grit tin grants half a mag, 12s cool
+- [x] Sludge press door stop blocks the west leaf; east lane stays open
+- [x] Sludge press chest cover and vent lamp
+- [x] Walk-up sludge tin grants half a mag, 12s cool
+- [x] Closer plates visual only
+- [x] Minimap 砂挡 / 砂闭 / 砂台 / 砂匣 / 砂灯 / 泥挡 / 泥闭 / 泥台 / 泥匣 / 泥灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [x] Owner topic or another map loop
+
+## TypeScript live slice 2026-10-05 ~14:11 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→6.28, KeyA x negative (left), KeyD x positive (right) at yaw 0. Did not disable the button.
+
+Map: east clarifier house (x 40.2-47.4, z 4.4-11.6, west door). South leaf stop x 39.38-40.58, z 8.22-9.02, h 1.2, minimap 澄挡. North lane z=9.9 open through x 46.5. KeyD stuck at x 38.98 z 8.62 on the south leaf. Tank 澄台 + weir lamp 澄灯. Tin 42.88,10.88 walk-up half mag (feed 澄棚弹匣, cool 12s observed 10.55 remaining, 澄匣). Closer visual 澄闭. Overlay click-verified. Chip 澄棚门挡堵住南侧，北缺口可过.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Clarifier house door stop blocks the south leaf; north lane stays open
+- [x] Clarifier tank chest cover and weir lamp
+- [x] Walk-up tin grants half a mag, 12s cool
+- [x] Closer plate visual only
+- [x] Minimap 澄挡 / 澄闭 / 澄台 / 澄匣 / 澄灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
+
+## TypeScript live slice 2026-10-05 ~13:20 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill. Did not disable the button.
+
+Map: southwest brine shed (x -44.2--36.4, z -47.6--40.4, north door). West leaf stop x -40.82--39.62, z -40.38--39.58, h 1.2, minimap 卤挡. East lane x=-39.05 open through z -43.5. KeyW stuck at x -40.22 z -39.2 on the west leaf. Vat 卤台 + vent lamp 卤灯. Tin -37.22,-43.18 walk-up half mag (feed 卤棚弹匣, cool 12s observed 11.9, 卤匣). Closer visual 卤闭. Overlay click-verified.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Brine shed door stop blocks the west leaf; east lane stays open
+- [x] Brine vat chest cover and vent lamp
+- [x] Walk-up tin grants half a mag, 12s cool
+- [x] Closer plate visual only
+- [x] Minimap 卤挡 / 卤闭 / 卤台 / 卤匣 / 卤灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
+
+## TypeScript live slice 2026-10-05 ~13:08 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→6.28, KeyA x 0→-0.215 (left), KeyD right. Did not disable the button.
+
+Map: northwest filter house (x -44.2--36.4, z 40.4-47.6, south door). West leaf stop x -40.82--39.62, z 39.58-40.38, h 1.2, minimap 滤挡. East lane x=-39.05 open through z 44.36. KeyS stuck at x -40.22 z 39.2 on the west leaf. Filter bed 滤台 + stack lamp 滤灯. Tin -37.22,43.18 walk-up half mag (feed 滤棚弹匣, cool 12s observed 11.85, 滤匣). Closer visual 滤闭. Overlay click-verified. Chip 滤棚门挡堵住西侧，东缺口可过.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Filter house door stop blocks the west leaf; east lane stays open
+- [x] Filter bed chest cover and stack lamp
+- [x] Walk-up tin grants half a mag, 12s cool
+- [x] Closer plate visual only
+- [x] Minimap 滤挡 / 滤闭 / 滤台 / 滤匣 / 滤灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
+
+## TypeScript live slice 2026-10-05 ~12:10 UTC (map+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys KeyW z 8→6.925, KeyA x 0→-0.215 (left), KeyD x 0→0.215 (right). Did not disable the button.
+
+Map: southwest boiler house west of the warehouse (x -44.2--36.4, z -16.8--9.6, door on the east face). Door stop is a WALLS block on the south leaf (x -36.22--35.02, z -14.42--13.62, h 1.2, minimap 炉挡, chip 炉房门挡堵住南侧，北缺口可过). North lane z=-12.4 open through x -36.35. KeyA stuck at x -34.63 on the south leaf. Drum 炉台 + steady stack lamp 炉灯. Tin -37.85,-11.4 walk-up half mag (feed 炉房弹匣, cool 12s observed 8.6 remaining, 炉匣). Closer visual 炉闭. Overlay click-verified. Chip 炉房门挡堵住南侧.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Boiler house door stop blocks the south leaf; north lane stays open
+- [x] Boiler drum chest cover and stack lamp
+- [x] Walk-up tin grants half a mag, 12s cool
+- [x] Closer plate visual only
+- [x] Minimap 炉挡 / 炉闭 / 炉台 / 炉匣 / 炉灯
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
+
 ## Critic 2026-10-05 ~11:21 UTC (push c244190)
 
 Push https://github.com/sutong-claude/Ridge47/commit/c244190e09d3e83fd345a138a0b1a7f9ab617f46 is GAME.md-only. Message: critic: f6bd033 is GAME.md-only kiln house echo. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
