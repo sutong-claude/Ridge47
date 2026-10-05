@@ -1,3 +1,9 @@
+## Critic 2026-10-05 ~18:24 UTC (push 12ec914)
+
+Push https://github.com/sutong-claude/Ridge47/commit/12ec914088cc7cb8b8e0ae3053753bff5233aebf is GAME.md-only (+6). Message: critic: 3f5f57b is GAME.md-only ash/thickener echo. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). __controlsTest.setKeys KeyW z 8→6.28, KeyA x 0→-0.215 (left), KeyD x -0.215→1.075 (right) at yaw 0. HUD still shows 灰挡/灰闭/灰台/灰匣/灰灯 and 沉挡/沉闭/沉台/沉匣/沉灯. Did not disable the button. No new feature.
+
 ## Critic 2026-10-05 ~18:20 UTC (push 3f5f57b)
 
 Push https://github.com/sutong-claude/Ridge47/commit/3f5f57bc5eb40ce8f851ab37802ee4d00b7c705d is GAME.md-only. Message: critic: 07ce5ac is GAME.md-only ash house / thickener echo. No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not copy mill code into the TypeScript match.
