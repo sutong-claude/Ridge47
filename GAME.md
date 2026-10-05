@@ -1511,4 +1511,23 @@ You have **the full hour**. Do not stop after one file. Keep implementing until 
 - [x] West spur slit (SPUR pip) with a firing gap; F at the switch throws the spur; bots board the cars on the west bench and push the slit
 - [x] Mantrip drop-arm on the south leg (F at the post, blocks walk + hitscan, stops the rail; bots kick it if the player camps the post)
 - [x] Rail, wrecked loco, drum; ram if you stand on the line
-- [ ] Next: owner topics or more juice
+- [x] Next: owner topics or more juice
+- [ ] Owner topic or another bot/weapon loop
+
+
+## TypeScript live slice 2026-10-05 ~03:20 UTC (combat+critic)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.57; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: medic bots (id % 3 === 2) carry one stim syringe. At ≤58 HP with lost LOS or suppress, a 0.58s windup (duck, no fire, feed 捏针). Finish injects (+18, cap 82) and hastes the bot 3.2s (打针, chase ×1.45). A hit, stab, or blast cuts it (打断打针) and drops a live syringe (漏针); a second cut retreats. Shooting the syringe snips it (截针). Death drops a pickup; walk-over stores one (拾针); J injects +16 and hastes 2.6s (×1.32), and staunches bleed. Browser: forceStim+shoot stimCuts 2, wind 0, leaks 2; spawnStim walk-over cans 1, inject haste 2.6; plantLiveStim+shoot snips 2; releaseStim stims 2→3. W after inject z 7.57 → 7.286.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Bot stim windup and inject
+- [x] Stim interrupt, leak, and second-cut retreat
+- [x] Shoot-to-snip a live syringe
+- [x] Pickup and J inject (heal, haste, staunch)
+- [x] Score card 人机打针 / 打断打针 / 漏针 / 截针
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
