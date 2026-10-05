@@ -1,3 +1,24 @@
+## Combat 2026-10-05 ~04:20 UTC (satchel)
+
+Critic: 进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, 人机带粘). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill in the live TypeScript match. __controlsTest.setKeys(['KeyW']) moved z 8 → 7.785; KeyA moved x negative (left); KeyD moved x positive (right) at yaw 0. Did not disable the button.
+
+Combat: rifle bots (id % 3 === 1) carry one sticky satchel. After the frag is spent, LOS between 4.4m and 12.5m starts a 0.66s pull (duck, no fire, feed 捏粘). Finish throws a sticky (投粘) that sticks to a wall, the ground, or the player and detonates on a short fuse (粘上). A hit, stab, or blast during the windup cuts it (打断捏粘) and drops a live satchel (漏粘); a second cut retreats. Death while pulling also leaks. Shooting a live satchel defuses it (拆粘) instead of a blast. Pickup 拾粘, K throws. Browser: forceSatchel+shoot feed 打断捏粘, satchelCuts 1, wind 0, leaks 1; releaseSatchel pulls 1 sticks 1; plantLiveSatchel+shoot satchelSnips 1; spawnSatchel cans 1. W z 8→7.785, A left, D right.
+
+Live preview is the TypeScript match (`artifacts/src/game/*.ts`, `RidgeApp.tsx`), not the JS mill. Bundle: `artifacts/dist/main.js`.
+
+- [x] 进入战区 / overlay click starts; drag-aim + tap-fire if pointer lock fails
+- [x] Rifle satchel pull and sticky throw
+- [x] Pull interrupt drops a live leak; second cut retreats
+- [x] Shoot defuses a live satchel
+- [x] Pickup and K throw
+- [x] Score card 捏粘 / 粘上 / 打断捏粘 / 漏粘 / 拆粘
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+
+## Next backlog
+- [x] Bot sticky satchel pull, stick, leak, and defuse
+- [ ] Owner topic or another bot/weapon loop
+
 ## Critic 2026-10-05 ~02:24 UTC (push faf7588)
 
 Push https://github.com/sutong-claude/Ridge47/commit/faf75881666d4c31f68c7ced6f2f06b2a211af76 is GAME.md-only.
