@@ -1,6 +1,15 @@
-## Critic 2026-10-07 ~06:20 UTC (pre-acid)
+## Map+critic 2026-10-07 ~07:15 UTC (alkali feed + blower)
 
-进入战区 stayed enabled until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or parallel src/game/*.js. Did not disable the button. __controlsTest.setKeys KeyW z 8→7.785, KeyA x 0→-0.215 (left), KeyD x -0.215→0 (right) at yaw 0. First unchecked combat item was another bot/weapon loop; medic acid vial follows.
+Critic: 进入战区 stayed enabled (disabled false) until click. Overlay click started the match (HP 100, 敌对 6, 雷 2, button left the overlay). No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill. __controlsTest.setKeys KeyW z 8→6.71, KeyA x 0→-0.215 (left), KeyD x -0.215→0.645 (right) at yaw 0. Did not disable the button.
+
+Map: first unchecked map item was another interior loop (combat backlog already checked). Northwest caustic feed, south door, west leaf stop (minimap 碱挡, east lane x=-17.15 open, KeyW yaw PI stuck on the west leaf). Vat 碱台, stack lamp 碱灯, tin walk-up half mag (feed 碱棚弹匣, cool 11.3, 碱匣), closer 碱闭. East blower house, west door, south leaf stop (鼓挡, north lane z=-18.15 open, KeyD stuck on the south leaf). Housing 鼓台, stack lamp 鼓灯, tin (鼓棚弹匣, 鼓匣), closer 鼓闭. Bundle artifacts/dist/main.js.
+
+- [x] 进入战区 / overlay click starts; button stays enabled
+- [x] Caustic feed west-leaf stop, east lane open, vat cover, tin, closer, lamp
+- [x] Blower house south-leaf stop, north lane open, fan cover, tin, closer, lamp
+- [x] __controlsTest.setKeys / getPos. A left, D right, W forward
+- [x] No F-key juice, NVG, visor fog, strobes, SearchAdapters, or JS mill
+- [ ] Owner topic or another map loop
 
 ## Combat 2026-10-07 ~06:40 UTC (acid)
 
