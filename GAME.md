@@ -25,6 +25,7 @@ A run that ships a match you cannot enter is a failed run. Revert it.
 
 ## Critic log
 
+- 2026-10-13 ~06:30 UTC — Owner emailed confirmation that tumble dryer (TB) shed already live (x 413.4-420.6). No new feature, no code change. Overlay 进入战区 clickable. spawnProtect 6s. Death small text. Fog 0x1b2430 not black. No F-key/NVG/visor/JS mill. Reply sent.
 - 2026-10-07 04:30 PDT — Owner could not play: enter → black frame → Hawk kill in ~2s → death overlay ate the world. Causes: bot spawn 2m behind player, no i-frames, death gate full-screen, fog near 18 + dark ambient. Fixed: south spawn (0,36), 6s protect, bots reset north of mid-yard, no full-screen death, brighter light/fog. GitHub mill (acid/frost/oil) is still NOT the live game.
 - 2026-10-03 02:20 PDT — Overlay was covering a live match after 进入战区 (React phase stuck on menu). Fixed with local `deployed` flag; button never disabled; overlay click starts. W walk 4.90 verified. GitHub GAME.md mill of fake-checked F-keys is NOT the live contract; this file is.
 
