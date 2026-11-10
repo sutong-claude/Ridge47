@@ -25,6 +25,7 @@ A run that ships a match you cannot enter is a failed run. Revert it.
 
 ## Critic log
 
+- 2026-11-10 ~06:32 UTC — Owner emailed confirmation that far-east vacuum omega-xxxxxxxxxxxxxxx dryer (VOMXXXXXXXXXXXXXXX) shed already live (x 13803.4-13810.6). No new feature, no code change. Overlay 进入战区 clickable. spawnProtect 6s. Fog 0x1b2430 not black. No F-key/NVG/visor/JS mill. Reply sent.
 - 2026-10-15 ~06:34 UTC — Owner emailed confirmation that far-east heat pump dryer (HP) shed already live (x≈907). No new feature, no code change. Overlay 进入战区 clickable. spawnProtect 6s. Fog 0x1b2430 not black. No F-key/NVG/visor/JS mill. Reply sent.
 - 2026-10-13 ~06:30 UTC — Owner emailed confirmation that tumble dryer (TB) shed already live (x 413.4-420.6). No new feature, no code change. Overlay 进入战区 clickable. spawnProtect 6s. Death small text. Fog 0x1b2430 not black. No F-key/NVG/visor/JS mill. Reply sent.
 - 2026-10-07 04:30 PDT — Owner could not play: enter → black frame → Hawk kill in ~2s → death overlay ate the world. Causes: bot spawn 2m behind player, no i-frames, death gate full-screen, fog near 18 + dark ambient. Fixed: south spawn (0,36), 6s protect, bots reset north of mid-yard, no full-screen death, brighter light/fog. GitHub mill (acid/frost/oil) is still NOT the live game.
